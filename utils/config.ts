@@ -8,20 +8,11 @@
 import * as t from "io-ts";
 import { ValidationError } from "io-ts";
 import { readableReport } from "italia-ts-commons/lib/reporters";
-import { NonEmptyString } from "italia-ts-commons/lib/strings";
 
 // global app configuration
 export type IConfig = t.TypeOf<typeof IConfig>;
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const IConfig = t.interface({
-  AzureWebJobsStorage: NonEmptyString,
-
-  COSMOSDB_KEY: NonEmptyString,
-  COSMOSDB_NAME: NonEmptyString,
-  COSMOSDB_URI: NonEmptyString,
-
-  QueueStorageConnection: NonEmptyString,
-
   isProduction: t.boolean
 });
 

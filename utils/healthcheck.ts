@@ -1,13 +1,3 @@
-import { CosmosClient } from "@azure/cosmos";
-import {
-  common as azurestorageCommon,
-  createBlobService,
-  createFileService,
-  createQueueService,
-  createTableService
-} from "azure-storage";
-import { sequenceT } from "fp-ts/lib/Apply";
-import { array } from "fp-ts/lib/Array";
 import { toError } from "fp-ts/lib/Either";
 import {
   fromEither,
@@ -19,7 +9,7 @@ import { readableReport } from "italia-ts-commons/lib/reporters";
 import fetch from "node-fetch";
 import { getConfig, IConfig } from "./config";
 
-type ProblemSource = "AzureCosmosDB" | "AzureStorage" | "Config" | "Url";
+type ProblemSource = "Config" | "Url";
 // eslint-disable-next-line functional/prefer-readonly-type, @typescript-eslint/naming-convention
 export type HealthProblem<S extends ProblemSource> = string & { __source: S };
 export type HealthCheck<
@@ -54,65 +44,6 @@ export const checkConfigHealth = (): HealthCheck<"Config", IConfig> =>
   );
 
 /**
- * Check the application can connect to an Azure CosmosDb instances
- *
- * @param dbUri uri of the database
- * @param dbUri connection string for the storage
- *
- * @returns either true or an array of error messages
- */
-export const checkAzureCosmosDbHealth = (
-  dbUri: string,
-  dbKey?: string
-): HealthCheck<"AzureCosmosDB", true> =>
-  tryCatch(() => {
-    const client = new CosmosClient({
-      endpoint: dbUri,
-      key: dbKey
-    });
-    return client.getDatabaseAccount();
-  }, toHealthProblems("AzureCosmosDB")).map(_ => true);
-
-/**
- * Check the application can connect to an Azure Storage
- *
- * @param connStr connection string for the storage
- *
- * @returns either true or an array of error messages
- */
-export const checkAzureStorageHealth = (
-  connStr: string
-): HealthCheck<"AzureStorage"> =>
-  array
-    .sequence(taskEither)(
-      // try to instantiate a client for each product of azure storage
-      [
-        createBlobService,
-        createFileService,
-        createQueueService,
-        createTableService
-      ]
-        // for each, create a task that wraps getServiceProperties
-        .map(createService =>
-          tryCatch(
-            () =>
-              new Promise<
-                azurestorageCommon.models.ServicePropertiesResult.ServiceProperties
-              >((resolve, reject) =>
-                createService(connStr).getServiceProperties((err, result) => {
-                  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-                  err
-                    ? reject(err.message.replace(/\n/gim, " ")) // avoid newlines
-                    : resolve(result);
-                })
-              ),
-            toHealthProblems("AzureStorage")
-          )
-        )
-    )
-    .map(_ => true);
-
-/**
  * Check a url is reachable
  *
  * @param url url to connect with
@@ -133,15 +64,4 @@ export const checkApplicationHealth = (): HealthCheck<ProblemSource, true> =>
   taskEither
     .of<ReadonlyArray<HealthProblem<ProblemSource>>, void>(void 0)
     .chain(_ => checkConfigHealth())
-    .chain(config =>
-      // TODO: once we upgrade to fp-ts >= 1.19 we can use Validation to collect all errors, not just the first to happen
-      sequenceT(taskEither)<
-        ReadonlyArray<HealthProblem<ProblemSource>>,
-        /* eslint-disable functional/prefer-readonly-type */
-        Array<TaskEither<ReadonlyArray<HealthProblem<ProblemSource>>, true>>
-      >(
-        checkAzureCosmosDbHealth(config.COSMOSDB_URI, config.COSMOSDB_KEY),
-        checkAzureStorageHealth(config.QueueStorageConnection)
-      )
-    )
     .map(_ => true);

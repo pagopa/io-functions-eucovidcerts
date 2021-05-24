@@ -162,3 +162,17 @@ stages:
               sourceSlot: staging
               swapWithProduction: true
             displayName: Swap with production slot
+
+
+  # Publish client SDK to NPM
+  - stage: PublishClientSDKtoNPM
+    dependsOn: Release
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+      - job: publish_SDK   
+        steps:
+        # Template for generating and deploying client SDk to NPM
+        - template: templates/client-sdk-publish/template.yaml@pagopaCommons
+          parameters:
+            openapiSpecPath: 'openapi/index.yaml'

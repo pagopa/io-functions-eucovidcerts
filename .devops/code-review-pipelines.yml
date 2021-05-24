@@ -47,6 +47,13 @@ stages:
             yarn lint
           displayName: 'Lint'
 
+      - job: lint api     
+        steps:
+        - template: templates/node-job-setup/template.yaml@pagopaCommons
+        - script: |
+            yarn lint-api
+          displayName: 'Lint API'
+
       - job: danger
         condition: 
           and(
