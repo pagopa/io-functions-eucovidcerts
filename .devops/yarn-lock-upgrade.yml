@@ -1,0 +1,35 @@
+# 
+# Periodic Azure DevOps pipeline to check dependency upgraded and make a PR
+#
+
+# A pipeline with no CI trigger, just schedules
+trigger: none
+pr: none
+
+schedules:
+  # Every day at midnight 
+  - cron: "0 0 * * *"
+    displayName: Daily midnight upgrade
+    branches:
+      include:
+      - master
+    always: true # Run always irrespective of changes
+
+resources:
+  repositories:
+    - repository: pagopaCommons
+      type: github
+      name: pagopa/azure-pipeline-templates
+      ref: refs/tags/v14
+      endpoint: 'io-azure-devops-github-ro'
+
+
+# Execute agents (jobs) on latest Ubuntu version.
+pool:
+  vmImage: 'ubuntu-latest'
+
+jobs:
+  - job: do_upgrade
+    steps:
+      #Call the Yarn.lock updated the first time
+      - template: templates/yarn-lock-upgrade/template.yaml@pagopaCommons
