@@ -7,7 +7,7 @@
 
 import * as t from "io-ts";
 import { ValidationError } from "io-ts";
-import { readableReport } from "italia-ts-commons/lib/reporters";
+import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 
 // global app configuration
 export type IConfig = t.TypeOf<typeof IConfig>;
