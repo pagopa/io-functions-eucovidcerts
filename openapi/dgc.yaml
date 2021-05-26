@@ -96,6 +96,11 @@ definitions:
       id:
         description: Unique identifier of the Certificate
         type: string
+      status:
+        description: must be 'valid'
+        type: string
+        enum:
+          - valid
       valid_until:
         description: Expiration date of the retrieved Certificate.
         $ref: "#/definitions/Timestamp"
@@ -107,6 +112,7 @@ definitions:
         $ref: "#/definitions/QRCode"
     required:
       - id
+      - status
       - valid_until
       - markdown
       - qr_code
@@ -116,6 +122,11 @@ definitions:
       id:
         description: Unique identifier of the Certificate
         type: string
+      status:
+        description: must be 'expired'
+        type: string
+        enum:
+          - expired
       valid_until:
         description: Expiration date of the retrieved Certificate.
         $ref: "#/definitions/Timestamp"
@@ -124,6 +135,7 @@ definitions:
         type: string
     required:
       - id
+      - status
       - valid_until
       - markdown
   RevokedCertificate:
@@ -132,6 +144,11 @@ definitions:
       id:
         description: Unique identifier of the Certificate
         type: string
+      status:
+        description: must be 'revoked'
+        type: string
+        enum:
+          - revoked
       markdown:
         description: A markdown-formatted text in which show Certificate information for the Citizen to read.
         type: string
@@ -144,6 +161,7 @@ definitions:
         $ref: "#/definitions/Timestamp"
     required:
       - id
+      - status
       - markdown
       - revoke_reason
       - revoked_on
