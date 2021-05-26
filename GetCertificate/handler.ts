@@ -9,7 +9,7 @@ import {
   ResponseSuccessJson,
   ResponseErrorInternal
 } from "@pagopa/ts-commons/lib/responses";
-import { Certificate } from "../generated/dgc/Certificate";
+import { Certificate } from "../generated/definitions/Certificate";
 
 // type IProva = t.TypeOf<typeof IProva>;
 
@@ -23,9 +23,9 @@ export const GetCertificateHandler = (): GetCertificateHandler => (): Promise<
     .fromEither(
       Certificate.decode({
         id: "000",
-        markdown: "bla bla bla",
-        status: "expired",
-        valid_until: Date.now().toString()
+        revoke_reason: "bla bla bla",
+        revoked_on: "1622041044426",
+        status: "revoked"
       })
     )
     .fold<IResponseSuccessJson<Certificate> | IResponseErrorInternal>(
