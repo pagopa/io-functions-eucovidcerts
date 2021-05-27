@@ -1,44 +1,11 @@
 swagger: '2.0'
 info:
   version: 1.0.0
-  title: IO Function API
-  contact:
-    name: IO team
-    url: https://forum.italia.it/c/progetto-io
-  x-logo:
-    url: https://io.italia.it/assets/img/io-logo-blue.svg
-  description: |
-    Documentation of the IO Function API here.
-host: api.cd.italia.it
-basePath: /template
+  title: EU Covid Certificate service for IO App
+host: example.com
 schemes:
   - https
 paths:
-  /echo/{input}:
-    parameters:
-      - name: input
-        in: path
-        type: string
-        required: true
-        description: test input.
-    get:
-      operationId: echo
-      summary: Echo API
-      description: Some API description here.
-      responses:
-        '200':
-          description: Found.
-          schema:
-            $ref: '#/definitions/Input'
-          examples:
-            application/json:
-              id: 10000AAAA
-              output: hello world !
-        '401':
-          description: Unauthorized
-        '404':
-          description: Not found.
-      parameters: []
   /certificate:
     post:
       operationId: getCertificate
@@ -68,6 +35,8 @@ paths:
             for the given Citizen
         '500':
           description: Generic server error
+        '504':
+          description: Gateway Timeout. Wait before retry
 definitions:
   GetCertificateParams:
     type: object
