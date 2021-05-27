@@ -11,8 +11,6 @@ import {
 } from "@pagopa/ts-commons/lib/responses";
 import { Certificate } from "../generated/definitions/Certificate";
 
-// type IProva = t.TypeOf<typeof IProva>;
-
 type GetCertificateHandler = () => Promise<
   IResponseSuccessJson<Certificate> | IResponseErrorInternal
 >;
@@ -23,6 +21,7 @@ export const GetCertificateHandler = (): GetCertificateHandler => (): Promise<
     .fromEither(
       Certificate.decode({
         id: "000",
+        info: "Revoked Certificate",
         revoke_reason: "bla bla bla",
         revoked_on: "1622041044426",
         status: "revoked"

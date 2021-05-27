@@ -7,6 +7,7 @@ describe("GetCertificate", () => {
     id: "000",
     revoke_reason: "bla bla bla",
     revoked_on: "1622041044426",
+    info: "Revoked Certificate",
     status: "revoked"
   };
 

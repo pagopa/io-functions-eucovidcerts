@@ -6,6 +6,7 @@ describe("Certificate", () => {
     const aRevokedCertificate = {
       id: "000",
       status: "revoked",
+      info: "Revoked Certificate",
       revoke_reason: "bla bla bla",
       revoked_on: Date.now().toString()
     };
