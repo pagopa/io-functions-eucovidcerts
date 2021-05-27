@@ -69,7 +69,6 @@ definitions:
           - valid
     required:
       - id
-      - info
       - qr_code
       - status
   RevokedCertificate:
@@ -95,7 +94,6 @@ definitions:
         $ref: "#/definitions/Timestamp"
     required:
       - id
-      - info
       - status
       - revoke_reason
       - revoked_on
