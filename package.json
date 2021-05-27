@@ -23,9 +23,9 @@
     "dist:modules": "modclean -r -n default:safe && yarn install --production",
     "predeploy": "npm-run-all generate build dist:*",
     "openapi:bundle": "bundle-api-spec -i openapi/index.yaml.template -o openapi/index.yaml -V $npm_package_version",
-    "generate:definitions": "shx rm -rf ./generated/definitions && mkdir -p ./generated/definitions && gen-api-models --api-spec ./openapi/index.yaml --out-dir ./generated/definitions",
-    "generate:dgc": "shx rm -rf ./generated/dgc && mkdir -p ./generated/dgc && gen-api-models --api-spec ./openapi/dgc.yaml --no-strict --out-dir ./generated/dgc --request-types --response-decoders --client",
-    "pregenerate": "npm run openapi:bundle",
+    "generate:definitions": "gen-api-models --api-spec ./openapi/index.yaml --out-dir ./generated/definitions",
+    "generate:dgc": "gen-api-models --api-spec ./openapi/dgc.yaml --no-strict --out-dir ./generated/dgc --request-types --response-decoders --client",
+    "pregenerate": "npm run openapi:bundle && rimraf ./generated",
     "generate": "npm-run-all generate:*",
     "preversion": "auto-changelog  --config .auto-changelog.json --unreleased --commit-limit false --stdout --template preview.hbs",
     "version": "auto-changelog -p --config .auto-changelog.json --unreleased && git add CHANGELOG.md"
