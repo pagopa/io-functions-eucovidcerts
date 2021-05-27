@@ -23,7 +23,7 @@ export const GetCertificateHandler = (): GetCertificateHandler => (): Promise<
         id: "000",
         info: "Revoked Certificate",
         revoke_reason: "bla bla bla",
-        revoked_on: "1622041044426",
+        revoked_on: "2018-10-13T00:00:00.000Z",
         status: "revoked"
       })
     )

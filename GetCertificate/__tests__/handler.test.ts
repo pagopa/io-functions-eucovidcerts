@@ -1,4 +1,7 @@
-import { ResponseSuccessJson } from "@pagopa/ts-commons/lib/responses";
+import {
+  RevokedCertificate,
+  StatusEnum as RevokedStatusEnum
+} from "../../generated/dgc/RevokedCertificate";
 
 import { GetCertificateHandler } from "../handler";
 
@@ -6,9 +9,9 @@ describe("GetCertificate", () => {
   const aRevokedCertificate = {
     id: "000",
     revoke_reason: "bla bla bla",
-    revoked_on: "1622041044426",
+    revoked_on: new Date("2018-10-13T00:00:00.000Z"),
     info: "Revoked Certificate",
-    status: "revoked"
+    status: RevokedStatusEnum.revoked
   };
 
   it("should return a Certificate", async () => {
