@@ -1,12 +1,11 @@
 swagger: '2.0'
 info:
   version: 0.0.1
-  title: DGC API for IO integration
+  title: EU Covid Certificate service for IO App
 host: example.com
 schemes:
   - https
 paths:
-  # arbitrary path, let's find a proper one togheter
   /certificate:
     post:
       operationId: getCertificate
@@ -14,8 +13,8 @@ paths:
       description: |-
         Given a Citizen's fiscal code and an OTP (the auth code previously sent via IO Message), a Certificate is returned with ID, encoded QR-code, expiration date and a markdown text with all meaningful information to be shown to Citizens.
       parameters:
-        - in: body
-          name: accessData
+        - name: accessData
+          in: body
           schema:
             $ref: "#/definitions/GetCertificateParams"
       responses:
@@ -30,43 +29,6 @@ paths:
           description: Access data provided are invalid or no Certificate has been emitted for the given Citizen
         '500':
           description: Generic server error
-
-  # arbitrary path, let's find a proper one togheter
-  /subscription:
-    post:
-      operationId: notifiySubscription
-      summary: Notify DGC service a new Citizen subscried to IO and it's now willing to receive her/his Certificate messages
-      description: |-
-        When a Citizen joins IO and therefore is willing to receive message from DGC, this endpoint is solicitated. DGC will then send messages with data to access Citizen's Certificate, if any.
-        DGC always accepts notifications regardless Citizen exists or it has Certificate yet
-      parameters:
-        - name: citizenId
-          in: body
-          schema:
-            type: object
-            properties:
-              fiscal_code:
-                type: string
-                description: fiscal code which identifies the Citizen requesting the Certificate
-            required:
-              - fiscal_code
-      responses:
-        '202':
-          description: The notification has been recorded
-        '400':
-          description: Payload has bad format
-        '410':
-          description: Certificate is expired
-          schema:
-            type: object
-            properties:              
-              id:
-                description: Unique identifier of the Certificate
-                type: string
-            required:
-              - id
-        '500':
-          description: Generic server error
 definitions:
   GetCertificateParams:
     type: object
@@ -77,10 +39,6 @@ definitions:
       auth_code:
         type: string
         description: OTP previously sent to the Citizen
-      #The following parameters is yet to be confirmed. It is the id of Citizen's Tessera Sanitaria 
-      #ts_code:
-      #  type: string
-      #  description: id of Citizen's personal Tessara Sanitaria
     required:
       - fiscal_code
       - auth_code
@@ -88,7 +46,6 @@ definitions:
     x-one-of: true
     allOf:
     - $ref: "#/definitions/ValidCertificate"
-    - $ref: "#/definitions/ExpiredCertificate"
     - $ref: "#/definitions/RevokedCertificate"
   ValidCertificate:
     type: object
@@ -96,62 +53,36 @@ definitions:
       id:
         description: Unique identifier of the Certificate
         type: string
-      status:
-        description: must be 'valid'
-        type: string
-        enum:
-          - valid
-      valid_until:
-        description: Expiration date of the retrieved Certificate.
-        $ref: "#/definitions/Timestamp"
-      markdown:
+      info:
         description: A markdown-formatted text in which show Certificate information for the Citizen to read.
         type: string
       qr_code:
         description: The qr-code image to be shown to authorities for Certificate validation
         $ref: "#/definitions/QRCode"
-    required:
-      - id
-      - status
-      - valid_until
-      - markdown
-      - qr_code
-  ExpiredCertificate:
-    type: object
-    properties:
-      id:
-        description: Unique identifier of the Certificate
-        type: string
       status:
-        description: must be 'expired'
+        description: must be 'valid'
         type: string
         enum:
-          - expired
-      valid_until:
-        description: Expiration date of the retrieved Certificate.
-        $ref: "#/definitions/Timestamp"
-      markdown:
-        description: A markdown-formatted text in which show Certificate information for the Citizen to read.
-        type: string
+          - valid
     required:
       - id
+      - info
+      - qr_code
       - status
-      - valid_until
-      - markdown
   RevokedCertificate:
     type: object
     properties:
       id:
         description: Unique identifier of the Certificate
         type: string
+      info:
+        description: A markdown-formatted text in which show Certificate information for the Citizen to read.
+        type: string
       status:
         description: must be 'revoked'
         type: string
         enum:
           - revoked
-      markdown:
-        description: A markdown-formatted text in which show Certificate information for the Citizen to read.
-        type: string
       revoke_reason:
         description: A human-readable plain text which explains why the certificate has been revoked
         type: string
@@ -161,8 +92,8 @@ definitions:
         $ref: "#/definitions/Timestamp"
     required:
       - id
+      - info
       - status
-      - markdown
       - revoke_reason
       - revoked_on
   Timestamp:
@@ -189,15 +120,7 @@ definitions:
     example:
       mime_type: "image/png"
       content: "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMyAyMyI+PHBhdGggZmlsbD0iYmxhY2siIGQ9Ik0xIDFoN3Y3aC03ek05IDFoMXYxaC0xek0xMSAxaDJ2MWgtMXYxaC0ydi0xaDF6TTE1IDFoN3Y3aC03ek0yIDJ2NWg1di01ek0xNiAydjVoNXYtNXpNMyAzaDN2M2gtM3pNOSAzaDF2MWgtMXpNMTIgM2gxdjJoMXY0aC0xdi0yaC0xdjNoLTF2MWgxdi0xaDF2MWgxdjFoLTF2MWgydi0xaDF2MmgtNHYtMmgtMXYxaC0xdi0yaC0xdi0xaDF2LTFoMXYtMmgtMXYxaC0xdi0yaDF2LTJoMnpNMTcgM2gzdjNoLTN6TTEgOWgxdjFoLTF6TTMgOWgxdjFoLTF6TTcgOWgydjFoLTJ6TTE2IDloMXYxaC0xek0xOSA5aDF2MWgtMXpNMjEgOWgxdjJoLTJ2LTFoMXpNNCAxMGgydjFoLTF2MWgtMXpNMTQgMTBoMnYxaC0yek0xIDExaDJ2MWgtMXYxaDF2LTFoMXYxaDF2LTFoMXYtMWgzdjFoLTJ2MWgtMXYxaC01ek0xNyAxMWgxdjFoMXYxaDF2MmgtMXYtMWgtMXYtMWgtMXpNMTkgMTFoMXYxaC0xek0yMCAxMmgydjZoLTF2LTJoLTF2LTFoMXYtMmgtMXpNNyAxM2gxdjFoLTF6TTkgMTNoMXYzaC0xek0xNiAxNGgydjFoLTF2MWgtM3YtMWgyek0xIDE1aDd2N2gtN3pNMTEgMTVoMXYxaC0xek0xOCAxNWgxdjFoLTF6TTIgMTZ2NWg1di01ek0xMyAxNmgxdjFoLTF6TTE5IDE2aDF2MWgtMXpNMyAxN2gzdjNoLTN6TTExIDE3aDF2MWgtMXpNMTQgMTdoNXYxaC0xdjNoLTF2LTFoLTF2LTFoLTF2MWgxdjJoLTR2LTFoLTJ2LTFoMXYtMWgxdi0xaDF2MWgxek0xMCAxOGgxdjFoLTF6TTE5IDE4aDF2MWgtMXpNOSAxOWgxdjFoLTF6TTIwIDE5aDJ2M2gtM3YtMWgydi0xaC0xek0xMyAyMHYxaDF2LTF6TTkgMjFoMXYxaC0xeiIvPjwvc3ZnPg=="
-  FiscalCode:
-    description: The fiscal code of the user, all upper case.
-    type: string
-    maxLength: 16
-    minLength: 16
-    pattern: >-
-      [A-Z]{6}[0-9LMNPQRSTUV]{2}[ABCDEHLMPRST][0-9LMNPQRSTUV]{2}[A-Z][0-9LMNPQRSTUV]{3}[A-Z]
-
-
+    
 consumes:
   - application/json
 produces:

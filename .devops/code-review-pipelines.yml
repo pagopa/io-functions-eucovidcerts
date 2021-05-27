@@ -47,7 +47,7 @@ stages:
             yarn lint
           displayName: 'Lint'
 
-      - job: lint api     
+      - job: lint_api     
         steps:
         - template: templates/node-job-setup/template.yaml@pagopaCommons
         - script: |

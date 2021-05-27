@@ -2,16 +2,17 @@ import { isRight } from "fp-ts/lib/Either";
 import { Certificate } from "../../generated/dgc/Certificate";
 
 describe("Certificate", () => {
-  it("should decode valid expired certificate", () => {
-    const anExpiredCertificate = {
+  it("should decode a revoked certificate", () => {
+    const aRevokedCertificate = {
       id: "000",
-      markdown: "bla bla bla",
-      status: "expired",
-      valid_until: Date.now().toString()
+      status: "revoked",
+      info: "Revoked Certificate",
+      revoke_reason: "bla bla bla",
+      revoked_on: Date.now().toString()
     };
 
-    const res = Certificate.decode(anExpiredCertificate);
+    const res = Certificate.decode(aRevokedCertificate);
     expect(isRight(res)).toBe(true);
-    expect(res.value).toEqual(anExpiredCertificate);
+    expect(res.value).toEqual(aRevokedCertificate);
   });
 });
