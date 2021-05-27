@@ -30,7 +30,7 @@ paths:
         '500':
           description: Generic server error
         '504':
-          description: Gateway Timeout. Wait before retry
+          description: Gateway Timeout
 
 definitions:
   GetCertificateParams:
