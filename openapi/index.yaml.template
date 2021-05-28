@@ -32,6 +32,13 @@ paths:
         '504':
           description: Gateway Timeout
 
+securityDefinitions:
+  ApiKey:
+    type: apiKey
+    name: X-Functions-Key
+    in: header
+    description: The API key to access this function app.
+
 definitions:
   GetCertificateParams:
     type: object
