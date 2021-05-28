@@ -5,6 +5,8 @@ info:
 host: example.com
 schemes:
   - https
+security:
+  - ApiKey: []
 paths:
   /certificate:
     post:
