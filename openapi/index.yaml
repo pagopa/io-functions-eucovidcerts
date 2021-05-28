@@ -31,6 +31,8 @@ paths:
             $ref: '#/definitions/Certificate'
         '400':
           description: Payload has bad format
+        '401':
+          description: Unauthorized
         '403':
           description: >-
             Access data provided are invalid or no Certificate has been emitted
