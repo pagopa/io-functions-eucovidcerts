@@ -17,8 +17,6 @@ import {
   ResponseSuccessJson
 } from "@pagopa/ts-commons/lib/responses";
 
-import {} from "@pagopa/io-functions-services-sdk/client";
-
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 
 const NewMessage = t.any;
