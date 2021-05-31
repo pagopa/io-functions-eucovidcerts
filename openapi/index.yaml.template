@@ -79,7 +79,6 @@ definitions:
         enum:
           - valid
     required:
-      - id
       - qr_code
       - status
   RevokedCertificate:
@@ -104,7 +103,6 @@ definitions:
         description: The date the Certificate has been revoked on
         $ref: "#/definitions/Timestamp"
     required:
-      - id
       - status
       - revoke_reason
       - revoked_on
