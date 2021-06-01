@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  version: 1.0.0
+  version: 1.1.1
   title: EU Covid Certificate service for IO App
 host: example.com
 schemes:
@@ -57,6 +57,8 @@ definitions:
       auth_code:
         type: string
         description: OTP previously sent to the Citizen
+      preferred_languages:
+        $ref: '#/definitions/PreferredLanguages'
     required:
       - fiscal_code
       - auth_code
@@ -73,8 +75,13 @@ definitions:
         type: string
       info:
         description: >-
-          A markdown-formatted text in which show Certificate information for
-          the Citizen to read.
+          A markdown-formatted text in which show basic Certificate information
+          for the Citizen to read.
+        type: string
+      detail:
+        description: >-
+          A markdown-formatted text in which show complete Certificate
+          information for the Citizen to read.
         type: string
       qr_code:
         description: >-
@@ -87,7 +94,6 @@ definitions:
         enum:
           - valid
     required:
-      - id
       - qr_code
       - status
   RevokedCertificate:
@@ -95,11 +101,6 @@ definitions:
     properties:
       id:
         description: Unique identifier of the Certificate
-        type: string
-      info:
-        description: >-
-          A markdown-formatted text in which show Certificate information for
-          the Citizen to read.
         type: string
       status:
         description: must be 'revoked'
@@ -116,10 +117,7 @@ definitions:
         description: The date the Certificate has been revoked on
         $ref: '#/definitions/Timestamp'
     required:
-      - id
       - status
-      - revoke_reason
-      - revoked_on
   FiscalCode:
     type: string
     description: User's fiscal code.
@@ -132,6 +130,30 @@ definitions:
     description: A date-time field in ISO-8601 format and UTC timezone.
     x-import: '@pagopa/ts-commons/lib/dates'
     example: '2018-10-13T00:00:00.000Z'
+  PreferredLanguages:
+    type: array
+    items:
+      type: string
+      x-extensible-enum:
+        - it_IT
+        - en_GB
+        - es_ES
+        - de_DE
+        - fr_FR
+      example: it_IT
+    description: >-
+      Indicates the User's preferred written or spoken languages in order
+
+      of preference. Generally used for selecting a localized User interface.
+      Valid
+
+      values are concatenation of the ISO 639-1 two letter language code, an
+      underscore,
+
+      and the ISO 3166-1 2 letter country code; e.g., 'en_US' specifies the
+      language
+
+      English and country US.
   QRCode:
     description: A qr code imamge encoded into a base64 string
     type: object

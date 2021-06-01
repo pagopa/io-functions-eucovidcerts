@@ -3,10 +3,10 @@
   "description": "",
   "author": "IO team",
   "repository": "https://github.com/pagopa/io-functions-eucovidcerts",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "license": "MIT",
   "scripts": {
-    "prebuild": "shx rm -rf dist && yarn generate",
+    "prebuild": "rimraf dist && yarn generate",
     "postbuild": "dependency-check package.json --no-dev --missing ./dist/**/*.js",
     "build": "tsc",
     "watch": "tsc -w",
@@ -28,7 +28,9 @@
     "pregenerate": "npm run openapi:bundle && rimraf ./generated",
     "generate": "npm-run-all generate:*",
     "preversion": "auto-changelog  --config .auto-changelog.json --unreleased --commit-limit false --stdout --template preview.hbs",
-    "version": "auto-changelog -p --config .auto-changelog.json --unreleased && git add CHANGELOG.md"
+    "version": "npm-run-all bump:*",
+    "bump:openapi": "bundle-api-spec -i openapi/index.yaml -o openapi/index.yaml -V $npm_package_version && git add openapi/index.yaml",
+    "bump:changelog": "auto-changelog -p --config .auto-changelog.json --unreleased && git add CHANGELOG.md"
   },
   "devDependencies": {
     "@azure/functions": "^1.2.3",
