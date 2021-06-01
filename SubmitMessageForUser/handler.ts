@@ -49,11 +49,11 @@ export const getSubmitMessageForUserHandler = (
 ): express.RequestHandler => async (request, response): Promise<void> => {
   const aa = await submitMessageForUser(client, request).run();
   if (aa.isRight()) {
+    for (const pair of aa.value.headers.entries()) {
+      response.setHeader(pair[0], pair[1]);
+    }
+    response.json(await aa.value.json());
     response.sendStatus(aa.value.status);
-    response.set(aa.value.headers);
-    const bb = await aa.value.json();
-    response.send(bb);
-    console.log(bb);
   } else {
     aa.value.apply(response);
   }

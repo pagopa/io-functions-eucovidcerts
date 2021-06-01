@@ -5,7 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "api/v1/messages/{fiscalcode}",
+      "route": "api/v1/messages",
       "methods": [
         "post"
       ]
