@@ -92,12 +92,6 @@ definitions:
       id:
         description: Unique identifier of the Certificate
         type: string
-      info:
-        description: A markdown-formatted text in which show basic Certificate information for the Citizen to read.
-        type: string
-      detail:
-        description: A markdown-formatted text in which show complete Certificate information for the Citizen to read.
-        type: string
       status:
         description: must be 'revoked'
         type: string
