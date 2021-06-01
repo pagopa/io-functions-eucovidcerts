@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  version: 1.0.0
+  version: 1.1.0
   title: EU Covid Certificate service for IO App
 host: example.com
 schemes:
@@ -94,7 +94,6 @@ definitions:
         enum:
           - valid
     required:
-      - id
       - qr_code
       - status
   RevokedCertificate:
@@ -105,8 +104,13 @@ definitions:
         type: string
       info:
         description: >-
-          A markdown-formatted text in which show Certificate information for
-          the Citizen to read.
+          A markdown-formatted text in which show basic Certificate information
+          for the Citizen to read.
+        type: string
+      detail:
+        description: >-
+          A markdown-formatted text in which show complete Certificate
+          information for the Citizen to read.
         type: string
       status:
         description: must be 'revoked'
@@ -123,7 +127,6 @@ definitions:
         description: The date the Certificate has been revoked on
         $ref: '#/definitions/Timestamp'
     required:
-      - id
       - status
       - revoke_reason
       - revoked_on
