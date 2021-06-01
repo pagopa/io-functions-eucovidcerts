@@ -21,7 +21,6 @@ export const GetCertificateHandler = (): GetCertificateHandler => (): Promise<
     .fromEither(
       Certificate.decode({
         id: "000",
-        info: "Revoked Certificate",
         revoke_reason: "bla bla bla",
         revoked_on: "2018-10-13T00:00:00.000Z",
         status: "revoked"
