@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  version: 0.0.1
+  version: 0.0.0
   title: EU Covid Certificate service for IO App
 host: example.com
 schemes:
@@ -53,6 +53,8 @@ definitions:
       auth_code:
         type: string
         description: OTP previously sent to the Citizen
+      preferred_languages:
+        $ref: "#/definitions/PreferredLanguages"
     required:
       - fiscal_code
       - auth_code
@@ -68,7 +70,10 @@ definitions:
         description: Unique identifier of the Certificate
         type: string
       info:
-        description: A markdown-formatted text in which show Certificate information for the Citizen to read.
+        description: A markdown-formatted text in which show basic Certificate information for the Citizen to read.
+        type: string
+      detail:
+        description: A markdown-formatted text in which show complete Certificate information for the Citizen to read.
         type: string
       qr_code:
         description: The qr-code image to be shown to authorities for Certificate validation
@@ -79,7 +84,6 @@ definitions:
         enum:
           - valid
     required:
-      - id
       - qr_code
       - status
   RevokedCertificate:
@@ -87,9 +91,6 @@ definitions:
     properties:
       id:
         description: Unique identifier of the Certificate
-        type: string
-      info:
-        description: A markdown-formatted text in which show Certificate information for the Citizen to read.
         type: string
       status:
         description: must be 'revoked'
@@ -104,14 +105,13 @@ definitions:
         description: The date the Certificate has been revoked on
         $ref: "#/definitions/Timestamp"
     required:
-      - id
       - status
-      - revoke_reason
-      - revoked_on
   FiscalCode:
     $ref: "../node_modules/@pagopa/io-functions-commons/openapi/definitions.yaml#/FiscalCode"
   Timestamp:
     $ref: "../node_modules/@pagopa/io-functions-commons/openapi/definitions.yaml#/Timestamp"
+  PreferredLanguages:
+    $ref: "../node_modules/@pagopa/io-functions-commons/openapi/definitions.yaml#/PreferredLanguages"
   QRCode:
     description: A qr code imamge encoded into a base64 string
     type: object
