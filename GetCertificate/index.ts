@@ -10,7 +10,7 @@ const app = express();
 secureExpressApp(app);
 
 // Add express route
-app.get("/api/v1/getCertificate", getGetCertificateHandler());
+app.post("/api/v1/certificate", getGetCertificateHandler());
 
 const azureFunctionHandler = createAzureFunctionHandler(app);
 
