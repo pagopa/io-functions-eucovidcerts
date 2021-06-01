@@ -118,8 +118,6 @@ definitions:
         $ref: '#/definitions/Timestamp'
     required:
       - status
-      - revoke_reason
-      - revoked_on
   FiscalCode:
     type: string
     description: User's fiscal code.

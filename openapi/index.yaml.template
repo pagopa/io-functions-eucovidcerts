@@ -106,8 +106,6 @@ definitions:
         $ref: "#/definitions/Timestamp"
     required:
       - status
-      - revoke_reason
-      - revoked_on
   FiscalCode:
     $ref: "../node_modules/@pagopa/io-functions-commons/openapi/definitions.yaml#/FiscalCode"
   Timestamp:
