@@ -1,0 +1,19 @@
+{
+  "bindings": [
+    {
+      "queueName": "%EUCOVIDCERT_NOTIFY_QUEUE_NAME%",
+      "connection": "AppQueueStorageConnection",
+      "name": "inputFiscalCode",
+      "type": "queueTrigger",
+      "direction": "in"
+    },
+    {
+      "type": "queue",
+      "direction": "out",
+      "name": "outputFiscalCode",
+      "queueName": "notify-new-profile",
+      "connection": "QueueStorageConnection"
+    }
+  ],
+  "scriptFile": "../dist/NewProfile/index.js"
+}

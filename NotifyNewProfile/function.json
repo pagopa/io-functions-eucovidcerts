@@ -1,0 +1,12 @@
+{
+  "bindings": [
+    {
+      "queueName": "notify-new-profile",
+      "connection": "QueueStorageConnection",
+      "name": "fiscalCode",
+      "type": "queueTrigger",
+      "direction": "in"
+    }
+  ],
+  "scriptFile": "../dist/NotifyNewProfile/index.js"
+}
