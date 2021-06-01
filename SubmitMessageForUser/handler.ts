@@ -1,66 +1,60 @@
 import * as express from "express";
 import * as t from "io-ts";
-
-import {
-  IRequestMiddleware,
-  withRequestMiddlewares,
-  wrapRequestHandler
-} from "@pagopa/io-functions-commons/dist/src/utils/request_middleware";
-
-import { FiscalCodeMiddleware } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/fiscalcode";
+import * as te from "fp-ts/lib/TaskEither";
 
 import {
   IResponseErrorInternal,
   IResponseErrorValidation,
-  IResponseSuccessJson,
-  ResponseErrorFromValidationErrors,
-  ResponseSuccessJson
+  ResponseErrorGeneric,
+  IResponseErrorGeneric,
+  ResponseErrorFromValidationErrors
 } from "@pagopa/ts-commons/lib/responses";
 
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
+import { Response } from "node-fetch";
+import { IServiceClient } from "../utils/serviceClient";
 
-const NewMessage = t.any;
-type NewMessage = t.TypeOf<typeof NewMessage>;
-
-type ResponseStub = t.TypeOf<typeof ResponseStub>;
-const ResponseStub = t.interface({
-  id: t.string
+type FiscalCodeBearer = t.TypeOf<typeof FiscalCodeBearer>;
+const FiscalCodeBearer = t.interface({
+  fiscal_code: FiscalCode
 });
 
-type ISubmitMessageHandler = (
-  fiscalCode: FiscalCode,
-  newMessage: NewMessage
-) => Promise<
-  | IResponseSuccessJson<ResponseStub>
-  | IResponseErrorInternal
-  | IResponseErrorValidation
->;
-
-export const getSubmitMessageForUserHandler = (): ISubmitMessageHandler => async (
-  _fiscalCode: FiscalCode,
-  _newMessage: NewMessage
-): Promise<IResponseSuccessJson<ResponseStub>> =>
-  Promise.resolve(
-    ResponseSuccessJson<ResponseStub>({ id: "000001" })
-  );
-
-export const MessagePayloadMiddleware: IRequestMiddleware<
-  "IResponseErrorValidation",
-  NewMessage
-> = request =>
-  new Promise(resolve =>
-    resolve(
-      NewMessage.decode(request.body).mapLeft(
-        ResponseErrorFromValidationErrors(NewMessage)
+export const submitMessageForUser = (
+  client: IServiceClient,
+  request: express.Request
+): te.TaskEither<
+  IResponseErrorInternal | IResponseErrorValidation | IResponseErrorGeneric,
+  Response
+> =>
+  te
+    .fromEither<
+      IResponseErrorValidation | IResponseErrorInternal | IResponseErrorGeneric,
+      FiscalCodeBearer
+    >(
+      FiscalCodeBearer.decode(request.body).mapLeft(
+        ResponseErrorFromValidationErrors(FiscalCodeBearer)
       )
     )
-  );
+    .chain(fc =>
+      client.getLimitedProfileByPost(request.headers, fc.fiscal_code)
+    )
+    .filterOrElse(
+      profile => profile.sender_allowed,
+      ResponseErrorGeneric(403, "403 Forbidden", "")
+    )
+    .chain(_ => client.submitMessageForUser(request.headers, request.body));
 
-export const getSubmitMessageForUserAsExpressHandler = (): express.RequestHandler => {
-  const handler = getSubmitMessageForUserHandler();
-  const middlewaresWrap = withRequestMiddlewares(
-    FiscalCodeMiddleware,
-    MessagePayloadMiddleware
-  );
-  return wrapRequestHandler(middlewaresWrap(handler));
+export const getSubmitMessageForUserHandler = (
+  client: IServiceClient
+): express.RequestHandler => async (request, response): Promise<void> => {
+  const aa = await submitMessageForUser(client, request).run();
+  if (aa.isRight()) {
+    response.sendStatus(aa.value.status);
+    response.set(aa.value.headers);
+    const bb = await aa.value.json();
+    response.send(bb);
+    console.log(bb);
+  } else {
+    aa.value.apply(response);
+  }
 };
