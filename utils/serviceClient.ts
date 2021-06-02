@@ -5,11 +5,15 @@ import {
   ResponseErrorInternal
 } from "@pagopa/ts-commons/lib/responses";
 
+import { getFetch } from "@pagopa/ts-commons/lib/agent";
+
 import { LimitedProfile } from "@pagopa/io-functions-commons/dist/generated/definitions/LimitedProfile";
 
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
-import fetch, { Response } from "node-fetch";
+import { Response } from "node-fetch";
 import { toError } from "fp-ts/lib/Either";
+
+const fetch = getFetch(process.env);
 
 export interface IServiceClient {
   readonly getLimitedProfileByPost: (
