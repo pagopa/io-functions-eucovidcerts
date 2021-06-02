@@ -6,8 +6,10 @@ import {
   tryCatch
 } from "fp-ts/lib/TaskEither";
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
-import fetch from "node-fetch";
+import { getFetch } from "@pagopa/ts-commons/lib/agent";
 import { getConfig, IConfig } from "./config";
+
+const fetch = getFetch(process.env);
 
 type ProblemSource = "Config" | "Url";
 // eslint-disable-next-line functional/prefer-readonly-type, @typescript-eslint/naming-convention

@@ -13,8 +13,8 @@ secureExpressApp(app);
 
 const config = getConfigOrThrow();
 const serviceClient = createClient(
-  config.SERVICE_API_URL,
-  config.SERVICE_API_KEY
+  config.FNSERVICES_API_URL,
+  config.FNSERVICES_API_KEY
 );
 
 app.post("/api/v1/messages", getSubmitMessageForUserHandler(serviceClient));

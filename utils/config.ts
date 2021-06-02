@@ -14,8 +14,8 @@ import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 export type IConfig = t.TypeOf<typeof IConfig>;
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const IConfig = t.interface({
-  SERVICE_API_KEY: NonEmptyString,
-  SERVICE_API_URL: NonEmptyString,
+  FNSERVICES_API_KEY: NonEmptyString,
+  FNSERVICES_API_URL: NonEmptyString,
   isProduction: t.boolean
 });
 

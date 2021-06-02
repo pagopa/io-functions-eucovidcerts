@@ -13,7 +13,6 @@ import {
 } from "@pagopa/ts-commons/lib/responses";
 
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
-import { Response } from "node-fetch";
 import { toError } from "fp-ts/lib/Either";
 import { identity } from "fp-ts/lib/function";
 import { IServiceClient } from "../utils/serviceClient";
