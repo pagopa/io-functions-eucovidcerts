@@ -33,7 +33,7 @@ export const createClient = (
     te
       .tryCatch(
         () =>
-          fetch(`${apiUrl}/v1/profiles`, {
+          fetch(`${apiUrl}/api/v1/profiles`, {
             body: JSON.stringify({ fiscal_code: fiscalCode }),
             headers: {
               ...reqHeaders,
@@ -62,7 +62,7 @@ export const createClient = (
   ): ReturnType<IServiceClient["submitMessageForUser"]> =>
     te.tryCatch(
       () =>
-        fetch(`${apiUrl}/v1/messages`, {
+        fetch(`${apiUrl}/api/v1/messages`, {
           body: JSON.stringify(reqPayload), // HAZARD
           headers: {
             ...reqHeaders,

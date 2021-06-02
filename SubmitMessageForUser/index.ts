@@ -17,11 +17,7 @@ const serviceClient = createClient(
   config.SERVICE_API_KEY
 );
 
-// Add express route
-app.post(
-  "/api/v1/messages/:fiscalcode?",
-  getSubmitMessageForUserHandler(serviceClient)
-);
+app.post("/api/v1/messages", getSubmitMessageForUserHandler(serviceClient));
 
 const azureFunctionHandler = createAzureFunctionHandler(app);
 

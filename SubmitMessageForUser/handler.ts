@@ -5,56 +5,91 @@ import * as te from "fp-ts/lib/TaskEither";
 import {
   IResponseErrorInternal,
   IResponseErrorValidation,
-  ResponseErrorGeneric,
   IResponseErrorGeneric,
-  ResponseErrorFromValidationErrors
+  ResponseErrorFromValidationErrors,
+  ResponseErrorForbiddenNotAuthorizedForRecipient,
+  IResponseErrorForbiddenNotAuthorizedForRecipient,
+  ResponseErrorInternal
 } from "@pagopa/ts-commons/lib/responses";
 
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { Response } from "node-fetch";
+import { toError } from "fp-ts/lib/Either";
+import { identity } from "fp-ts/lib/function";
 import { IServiceClient } from "../utils/serviceClient";
 
-type FiscalCodeBearer = t.TypeOf<typeof FiscalCodeBearer>;
-const FiscalCodeBearer = t.interface({
+// a codec that identifies a payload containing a fiscal code
+type WithFiscalCode = t.TypeOf<typeof WithFiscalCode>;
+const WithFiscalCode = t.interface({
   fiscal_code: FiscalCode
 });
 
+/**
+ * Apply a fetch response on a given Express response
+ *
+ * @param expressResponse
+ * @param fetchResponse
+ * @returns either void or an internal error
+ */
+const applyToExpressResponse = (expressResponse: express.Response) => (
+  fetchResponse: Response
+): te.TaskEither<IResponseErrorInternal, void> =>
+  te.tryCatch(
+    async () => {
+      for (const pair of fetchResponse.headers.entries()) {
+        expressResponse.setHeader(pair[0], pair[1]);
+      }
+      expressResponse.json(await fetchResponse.json());
+      expressResponse.sendStatus(fetchResponse.status);
+    },
+    _ => ResponseErrorInternal(toError(_).message)
+  );
+
+// kind of failures specific of this proxy implementation
+type ProxyFailures =
+  | IResponseErrorInternal
+  | IResponseErrorValidation
+  | IResponseErrorGeneric
+  | IResponseErrorForbiddenNotAuthorizedForRecipient;
+
+/**
+ * Proxy logic over the downstream service
+ *
+ * @param client a http client for communicating with the downstream, proxied service
+ * @param request the request coming to the proxy
+ * @returns either a proxy failure or the http response coming from the proxied service
+ */
 export const submitMessageForUser = (
   client: IServiceClient,
   request: express.Request
-): te.TaskEither<
-  IResponseErrorInternal | IResponseErrorValidation | IResponseErrorGeneric,
-  Response
-> =>
-  te
-    .fromEither<
-      IResponseErrorValidation | IResponseErrorInternal | IResponseErrorGeneric,
-      FiscalCodeBearer
-    >(
-      FiscalCodeBearer.decode(request.body).mapLeft(
-        ResponseErrorFromValidationErrors(FiscalCodeBearer)
+): te.TaskEither<ProxyFailures, Response> =>
+  te.taskEither
+    .of<ProxyFailures, unknown>(request.body)
+    .chain(body =>
+      te.fromEither(
+        WithFiscalCode.decode(body).bimap(
+          ResponseErrorFromValidationErrors(WithFiscalCode),
+          fc => fc.fiscal_code
+        )
       )
     )
-    .chain(fc =>
-      client.getLimitedProfileByPost(request.headers, fc.fiscal_code)
+    .chain(fiscal_code =>
+      client.getLimitedProfileByPost(request.headers, fiscal_code)
     )
     .filterOrElse(
       profile => profile.sender_allowed,
-      ResponseErrorGeneric(403, "403 Forbidden", "")
+      ResponseErrorForbiddenNotAuthorizedForRecipient
     )
     .chain(_ => client.submitMessageForUser(request.headers, request.body));
 
 export const getSubmitMessageForUserHandler = (
   client: IServiceClient
-): express.RequestHandler => async (request, response): Promise<void> => {
-  const aa = await submitMessageForUser(client, request).run();
-  if (aa.isRight()) {
-    for (const pair of aa.value.headers.entries()) {
-      response.setHeader(pair[0], pair[1]);
-    }
-    response.json(await aa.value.json());
-    response.sendStatus(aa.value.status);
-  } else {
-    aa.value.apply(response);
-  }
-};
+): express.RequestHandler => async (request, response): Promise<void> =>
+  // call proxy logic
+  submitMessageForUser(client, request)
+    // map a response coming from the downstream service onto the current response
+    .chain(applyToExpressResponse(response))
+    // map an error occurred into this proxy onto the current response
+    .mapLeft(_ => _.apply(response))
+    .fold(identity, identity)
+    .run();
