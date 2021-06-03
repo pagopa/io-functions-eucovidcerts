@@ -2,8 +2,8 @@ import { StatusEnum as RevokedStatusEnum } from "../../generated/definitions/Rev
 
 describe("GetCertificate", () => {
   const aRevokedCertificate = {
-    id: "000",
-    revoke_reason: "bla bla bla",
+    uvci: "000",
+    revoke_info: "bla bla bla",
     revoked_on: new Date("2018-10-13T00:00:00.000Z"),
     status: RevokedStatusEnum.revoked
   };

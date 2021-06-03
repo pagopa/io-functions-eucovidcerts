@@ -66,7 +66,7 @@ definitions:
   ValidCertificate:
     type: object
     properties:
-      id:
+      uvci:
         description: Unique identifier of the Certificate
         type: string
       info:
@@ -89,7 +89,7 @@ definitions:
   RevokedCertificate:
     type: object
     properties:
-      id:
+      uvci:
         description: Unique identifier of the Certificate
         type: string
       status:
@@ -97,10 +97,12 @@ definitions:
         type: string
         enum:
           - revoked
-      revoke_reason:
-        description: A human-readable plain text which explains why the certificate has been revoked
+      revoke_info:
+        description: |-
+          A human-readable message, in plain text or Markdown format, 
+          which explains why the certificate has been revoked
         type: string
-        maxLength: 200
+        maxLength: 2500
       revoked_on:
         description: The date the Certificate has been revoked on
         $ref: "#/definitions/Timestamp"
