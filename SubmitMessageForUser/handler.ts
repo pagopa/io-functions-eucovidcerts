@@ -40,7 +40,7 @@ const applyToExpressResponse = (expressResponse: express.Response) => (
         expressResponse.setHeader(pair[0], pair[1]);
       }
       expressResponse
-        .status(fetchResponse.status)
+        .status(fetchResponse.status || 500)
         .json(await fetchResponse.json());
     },
     _ => ResponseErrorInternal(toError(_).message)

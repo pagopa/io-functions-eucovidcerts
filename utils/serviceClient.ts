@@ -96,7 +96,9 @@ export const createClient = (
             _ => responseRaw.ok,
             _ =>
               ResponseErrorInternal(
-                `Error calling client api: ${_.status} - ${_.title}, ${_.detail}`
+                `Error calling client api: ${_?.status} - ${_?.title}, ${
+                  _?.detail
+                }, o: ${String(_)}`
               )
           )
       )
