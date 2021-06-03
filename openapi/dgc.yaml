@@ -6,23 +6,20 @@ schemes:
   - https
 basePath: /
 paths:
-  '/v1/certificate/citizen/{cfSHA256}':
+  /v1/certificate/citizen/io:
     post:
+      consumes:
+        - application/json
       description: >-
         Servizio che restituisce un certificato a partire da AutCode e CF del
         cittadino.
       operationId: getCertificateByAutAndCF
       parameters:
-        - in: path
-          name: cfSHA256
-          required: true
-          type: string
-        - in: query
-          name: authCodeSHA256
-          required: true
-          type: string
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/CertificateByAutAndCFRB'
       produces:
-        - application/octet-stream
         - application/json
       responses:
         '200':
@@ -44,17 +41,18 @@ paths:
       summary: Restituisce certificato
       tags:
         - Servizio dei Cittadini
-  '/v1/certificate/citizen/{cfSHA256}/refresh':
+  /v1/certificate/citizen/io/refresh:
     post:
+      consumes:
+        - application/json
       description: Servizio per comunicare un nuovo codice fiscale.
       operationId: managePreviousCertificates
       parameters:
-        - in: path
-          name: cfSHA256
-          required: true
-          type: string
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/CertificateByCFRB'
       produces:
-        - application/octet-stream
         - application/json
       responses:
         '200':
@@ -77,6 +75,21 @@ paths:
       tags:
         - Servizio dei Cittadini
 definitions:
+  CertificateByAutAndCFRB:
+    properties:
+      authCodeSHA256:
+        description: Authorization token
+        type: string
+      cfSHA256:
+        description: Codice fiscale
+        type: string
+    type: object
+  CertificateByCFRB:
+    properties:
+      cfSHA256:
+        description: Codice fiscale errato
+        type: string
+    type: object
   ErrorResponseDTO:
     properties:
       code:
@@ -103,13 +116,9 @@ definitions:
     type: object
   QrCodeInfoDTO:
     properties:
-      qrcode:
-        description: Content del qrcode
-        items:
-          description: Content del qrcode
-          format: byte
-          type: string
-        type: array
+      qrcodeB64:
+        description: Content del qrcode espresso in Base64
+        type: string
       uvci:
         description: UVCI
         type: string
@@ -127,4 +136,3 @@ definitions:
       traceID:
         type: string
     type: object
-
