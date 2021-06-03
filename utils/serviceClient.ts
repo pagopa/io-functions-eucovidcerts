@@ -49,6 +49,10 @@ export const createClient = (
           () => responseRaw.json(),
           error => ResponseErrorInternal(String(error))
         )
+        .filterOrElseL(
+            _ => responseRaw.ok,
+            _ => ResponseErrorInternal(`Error calling client api: ${_.status} - ${_.title}, ${_.detail}`)
+          )
       )
       .chain(response =>
         te.fromEither(
