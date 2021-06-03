@@ -1,3 +1,4 @@
+import * as crypto from "crypto";
 import { AzureFunction, Context } from "@azure/functions";
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
@@ -36,7 +37,10 @@ const index: AzureFunction = async (
       },
       fiscalCode => {
         // eslint-disable-next-line functional/immutable-data
-        context.bindings.outputFiscalCode = fiscalCode; // TODO: Can we return an hash of fiscalCode
+        context.bindings.outputFiscalCode = crypto
+          .createHash("sha256")
+          .update(fiscalCode)
+          .digest("hex");
         return { kind: "SUCCESS" } as Success;
       }
     );
