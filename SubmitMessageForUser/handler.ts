@@ -1,66 +1,94 @@
 import * as express from "express";
 import * as t from "io-ts";
-
-import {
-  IRequestMiddleware,
-  withRequestMiddlewares,
-  wrapRequestHandler
-} from "@pagopa/io-functions-commons/dist/src/utils/request_middleware";
-
-import { FiscalCodeMiddleware } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/fiscalcode";
+import * as te from "fp-ts/lib/TaskEither";
 
 import {
   IResponseErrorInternal,
   IResponseErrorValidation,
-  IResponseSuccessJson,
+  IResponseErrorGeneric,
   ResponseErrorFromValidationErrors,
-  ResponseSuccessJson
+  ResponseErrorForbiddenNotAuthorizedForRecipient,
+  IResponseErrorForbiddenNotAuthorizedForRecipient,
+  ResponseErrorInternal
 } from "@pagopa/ts-commons/lib/responses";
 
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
+import { toError } from "fp-ts/lib/Either";
+import { identity } from "fp-ts/lib/function";
+import { IServiceClient } from "../utils/serviceClient";
 
-const NewMessage = t.any;
-type NewMessage = t.TypeOf<typeof NewMessage>;
-
-type ResponseStub = t.TypeOf<typeof ResponseStub>;
-const ResponseStub = t.interface({
-  id: t.string
+// a codec that identifies a payload containing a fiscal code
+type WithFiscalCode = t.TypeOf<typeof WithFiscalCode>;
+const WithFiscalCode = t.interface({
+  fiscal_code: FiscalCode
 });
 
-type ISubmitMessageHandler = (
-  fiscalCode: FiscalCode,
-  newMessage: NewMessage
-) => Promise<
-  | IResponseSuccessJson<ResponseStub>
+/**
+ * Apply a fetch response on a given Express response
+ *
+ * @param expressResponse
+ * @param fetchResponse
+ * @returns either void or an internal error
+ */
+const applyToExpressResponse = (expressResponse: express.Response) => (
+  fetchResponse: Response
+): te.TaskEither<IResponseErrorInternal, void> =>
+  te.tryCatch(
+    async () => {
+      for (const pair of fetchResponse.headers.entries()) {
+        expressResponse.setHeader(pair[0], pair[1]);
+      }
+      expressResponse.json(await fetchResponse.json());
+      expressResponse.sendStatus(fetchResponse.status);
+    },
+    _ => ResponseErrorInternal(toError(_).message)
+  );
+
+// kind of failures specific of this proxy implementation
+type ProxyFailures =
   | IResponseErrorInternal
   | IResponseErrorValidation
->;
+  | IResponseErrorGeneric
+  | IResponseErrorForbiddenNotAuthorizedForRecipient;
 
-export const getSubmitMessageForUserHandler = (): ISubmitMessageHandler => async (
-  _fiscalCode: FiscalCode,
-  _newMessage: NewMessage
-): Promise<IResponseSuccessJson<ResponseStub>> =>
-  Promise.resolve(
-    ResponseSuccessJson<ResponseStub>({ id: "000001" })
-  );
-
-export const MessagePayloadMiddleware: IRequestMiddleware<
-  "IResponseErrorValidation",
-  NewMessage
-> = request =>
-  new Promise(resolve =>
-    resolve(
-      NewMessage.decode(request.body).mapLeft(
-        ResponseErrorFromValidationErrors(NewMessage)
+/**
+ * Proxy logic over the downstream service
+ *
+ * @param client a http client for communicating with the downstream, proxied service
+ * @param request the request coming to the proxy
+ * @returns either a proxy failure or the http response coming from the proxied service
+ */
+export const submitMessageForUser = (
+  client: IServiceClient,
+  request: express.Request
+): te.TaskEither<ProxyFailures, Response> =>
+  te.taskEither
+    .of<ProxyFailures, unknown>(request.body)
+    .chain(body =>
+      te.fromEither(
+        WithFiscalCode.decode(body).bimap(
+          ResponseErrorFromValidationErrors(WithFiscalCode),
+          fc => fc.fiscal_code
+        )
       )
     )
-  );
+    .chain(fiscal_code =>
+      client.getLimitedProfileByPost(request.headers, fiscal_code)
+    )
+    .filterOrElse(
+      profile => profile.sender_allowed,
+      ResponseErrorForbiddenNotAuthorizedForRecipient
+    )
+    .chain(_ => client.submitMessageForUser(request.headers, request.body));
 
-export const getSubmitMessageForUserAsExpressHandler = (): express.RequestHandler => {
-  const handler = getSubmitMessageForUserHandler();
-  const middlewaresWrap = withRequestMiddlewares(
-    FiscalCodeMiddleware,
-    MessagePayloadMiddleware
-  );
-  return wrapRequestHandler(middlewaresWrap(handler));
-};
+export const getSubmitMessageForUserHandler = (
+  client: IServiceClient
+): express.RequestHandler => async (request, response): Promise<void> =>
+  // call proxy logic
+  submitMessageForUser(client, request)
+    // map a response coming from the downstream service onto the current response
+    .chain(applyToExpressResponse(response))
+    // map an error occurred into this proxy onto the current response
+    .mapLeft(_ => _.apply(response))
+    .fold(identity, identity)
+    .run();
