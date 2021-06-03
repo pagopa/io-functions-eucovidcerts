@@ -45,13 +45,17 @@ export const createClient = (
         error => ResponseErrorInternal(String(error))
       )
       .chain(responseRaw =>
-        te.tryCatch(
-          () => responseRaw.json(),
-          error => ResponseErrorInternal(String(error))
-        )
-        .filterOrElseL(
+        te
+          .tryCatch(
+            () => responseRaw.json(),
+            error => ResponseErrorInternal(String(error))
+          )
+          .filterOrElseL(
             _ => responseRaw.ok,
-            _ => ResponseErrorInternal(`Error calling client api: ${_.status} - ${_.title}, ${_.detail}`)
+            _ =>
+              ResponseErrorInternal(
+                `Error calling client api: ${_.status} - ${_.title}, ${_.detail}`
+              )
           )
       )
       .chain(response =>
