@@ -15,6 +15,7 @@ import {
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { toError } from "fp-ts/lib/Either";
 import { identity } from "fp-ts/lib/function";
+import { Context } from "@azure/functions";
 import { IServiceClient } from "../utils/serviceClient";
 
 // a codec that identifies a payload containing a fiscal code
@@ -74,13 +75,23 @@ export const submitMessageForUser = (
       )
     )
     .chain(fiscal_code =>
-      client.getLimitedProfileByPost(request.headers, fiscal_code)
+      client.getLimitedProfileByPost(
+        request.headers,
+        fiscal_code,
+        request.app.get("context") as Context
+      )
     )
     .filterOrElse(
       profile => profile.sender_allowed,
       ResponseErrorForbiddenNotAuthorizedForRecipient
     )
-    .chain(_ => client.submitMessageForUser(request.headers, request.body));
+    .chain(_ =>
+      client.submitMessageForUser(
+        request.headers,
+        request.body,
+        request.app.get("context") as Context
+      )
+    );
 
 export const getSubmitMessageForUserHandler = (
   client: IServiceClient

@@ -10,15 +10,20 @@ import { LimitedProfile } from "@pagopa/io-functions-commons/dist/generated/defi
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 
 import { toError } from "fp-ts/lib/Either";
+import { Context } from "@azure/functions";
+
+import nodeFetch from "node-fetch";
 
 export interface IServiceClient {
   readonly getLimitedProfileByPost: (
     reqHeaders: NodeJS.Dict<string | ReadonlyArray<string>>,
-    fiscalCode: FiscalCode
+    fiscalCode: FiscalCode,
+    context: Context
   ) => te.TaskEither<IResponseErrorInternal, LimitedProfile>;
   readonly submitMessageForUser: (
     reqHeaders: NodeJS.Dict<string | ReadonlyArray<string>>,
-    reqPayload: Response
+    reqPayload: Response,
+    context: Context
   ) => te.TaskEither<IResponseErrorInternal, Response>;
 }
 
@@ -29,25 +34,51 @@ export const createClient = (
 ): IServiceClient => ({
   getLimitedProfileByPost: (
     reqHeaders,
-    fiscalCode
+    fiscalCode,
+    context
   ): ReturnType<IServiceClient["getLimitedProfileByPost"]> =>
     te
       .tryCatch(
-        () =>
-          fetchApi(`${apiUrl}/profiles`, {
-            body: JSON.stringify({ fiscal_code: fiscalCode }),
-            headers: {
-              ...reqHeaders,
-              ["X-Functions-Key"]: apiKey
-            },
-            method: "POST"
-          }),
+        () => {
+          context.log.info(
+            "sto per chiamare questa roba qui:",
+            `${apiUrl}/profiles`,
+            {
+              body: JSON.stringify({ fiscal_code: fiscalCode }),
+              headers: {
+                ...reqHeaders,
+                ["X-Functions-Key"]: apiKey
+              },
+              method: "POST"
+            }
+          );
+          return nodeFetch(
+            `https://run.mocky.io/v3/6bdb278f-e998-4a48-84d4-bc280d298769`,
+            {
+              body: JSON.stringify({ fiscal_code: fiscalCode }),
+              headers: {
+                ...reqHeaders,
+                ["X-Functions-Key"]: apiKey
+              },
+              method: "POST"
+            }
+          );
+        },
         error => ResponseErrorInternal(String(error))
       )
       .chain(responseRaw =>
         te
           .tryCatch(
-            () => responseRaw.json(),
+            async () => {
+              try {
+                context.log.info("e fino a qua...", responseRaw.status);
+                const s = await responseRaw.json();
+                context.log.info("...tutto bene", s);
+                return s;
+              } catch (error) {
+                context.log.error("qua se spacca tutto fra", error);
+              }
+            },
             error => ResponseErrorInternal(String(error))
           )
           .filterOrElseL(
@@ -67,7 +98,8 @@ export const createClient = (
       ),
   submitMessageForUser: (
     reqHeaders,
-    reqPayload
+    reqPayload,
+    context
   ): ReturnType<IServiceClient["submitMessageForUser"]> =>
     te.tryCatch(
       () =>
