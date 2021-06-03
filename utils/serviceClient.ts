@@ -5,15 +5,11 @@ import {
   ResponseErrorInternal
 } from "@pagopa/ts-commons/lib/responses";
 
-import { getFetch } from "@pagopa/ts-commons/lib/agent";
-
 import { LimitedProfile } from "@pagopa/io-functions-commons/dist/generated/definitions/LimitedProfile";
 
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 
 import { toError } from "fp-ts/lib/Either";
-
-const fetch = getFetch(process.env);
 
 export interface IServiceClient {
   readonly getLimitedProfileByPost: (
@@ -27,6 +23,7 @@ export interface IServiceClient {
 }
 
 export const createClient = (
+  fetchApi: typeof fetch,
   apiUrl: string,
   apiKey: string
 ): IServiceClient => ({
@@ -37,7 +34,7 @@ export const createClient = (
     te
       .tryCatch(
         () =>
-          fetch(`${apiUrl}/api/v1/profiles`, {
+          fetchApi(`${apiUrl}/api/v1/profiles`, {
             body: JSON.stringify({ fiscal_code: fiscalCode }),
             headers: {
               ...reqHeaders,
@@ -66,7 +63,7 @@ export const createClient = (
   ): ReturnType<IServiceClient["submitMessageForUser"]> =>
     te.tryCatch(
       () =>
-        fetch(`${apiUrl}/api/v1/messages`, {
+        fetchApi(`${apiUrl}/api/v1/messages`, {
           body: JSON.stringify(reqPayload), // HAZARD
           headers: {
             ...reqHeaders,

@@ -3,6 +3,7 @@ import * as express from "express";
 import { secureExpressApp } from "@pagopa/io-functions-commons/dist/src/utils/express";
 import { setAppContext } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/context_middleware";
 import createAzureFunctionHandler from "@pagopa/express-azure-functions/dist/src/createAzureFunctionsHandler";
+import { getFetch } from "@pagopa/ts-commons/lib/agent";
 import { getConfigOrThrow } from "../utils/config";
 import { createClient } from "../utils/serviceClient";
 import { getSubmitMessageForUserHandler } from "./handler";
@@ -12,7 +13,10 @@ const app = express();
 secureExpressApp(app);
 
 const config = getConfigOrThrow();
+
+const fetchApi = getFetch(process.env);
 const serviceClient = createClient(
+  fetchApi,
   config.FNSERVICES_API_URL,
   config.FNSERVICES_API_KEY
 );
