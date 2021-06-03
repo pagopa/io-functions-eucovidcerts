@@ -14,6 +14,26 @@ import { Context } from "@azure/functions";
 
 import nodeFetch from "node-fetch";
 
+const proxyHeaders = ({
+  ["X-Functions-Key"]: xFunctionsKey,
+  ["x-user-groups"]: xUserGroup,
+  ["x-subscription-id"]: xSubId,
+  ["x-user-email"]: xUserEmail,
+  ["x-user-id"]: xUserId,
+  ["x-client-ip"]: xClientIp,
+  ["x-forwarded-for"]: xFF
+}: NodeJS.Dict<string | ReadonlyArray<string>>): NodeJS.Dict<
+  string | ReadonlyArray<string>
+> => ({
+  ["X-Functions-Key"]: xFunctionsKey,
+  ["x-client-ip"]: xClientIp,
+  ["x-forwarded-for"]: xFF,
+  ["x-subscription-id"]: xSubId,
+  ["x-user-email"]: xUserEmail,
+  ["x-user-groups"]: xUserGroup,
+  ["x-user-id"]: xUserId
+});
+
 export interface IServiceClient {
   readonly getLimitedProfileByPost: (
     reqHeaders: NodeJS.Dict<string | ReadonlyArray<string>>,
@@ -40,29 +60,22 @@ export const createClient = (
     te
       .tryCatch(
         () => {
-          context.log.info(
-            "sto per chiamare questa roba qui:",
-            `${apiUrl}/profiles`,
-            {
-              body: JSON.stringify({ fiscal_code: fiscalCode }),
-              headers: {
-                ...reqHeaders,
-                ["X-Functions-Key"]: apiKey
-              },
-              method: "POST"
-            }
-          );
-          return nodeFetch(
-            `https://run.mocky.io/v3/6bdb278f-e998-4a48-84d4-bc280d298769`,
-            {
-              body: JSON.stringify({ fiscal_code: fiscalCode }),
-              headers: {
-                ...reqHeaders,
-                ["X-Functions-Key"]: apiKey
-              },
-              method: "POST"
-            }
-          );
+          context.log.info("DEBUG_EU_1:", `${apiUrl}/profiles`, {
+            body: JSON.stringify({ fiscal_code: fiscalCode }),
+            headers: {
+              ...reqHeaders,
+              ["X-Functions-Key"]: apiKey
+            },
+            method: "POST"
+          });
+          return nodeFetch(`${apiUrl}/profiles`, {
+            body: JSON.stringify({ fiscal_code: fiscalCode }),
+            headers: {
+              ...reqHeaders,
+              ["X-Functions-Key"]: apiKey
+            },
+            method: "POST"
+          });
         },
         error => ResponseErrorInternal(String(error))
       )
@@ -71,12 +84,12 @@ export const createClient = (
           .tryCatch(
             async () => {
               try {
-                context.log.info("e fino a qua...", responseRaw.status);
+                context.log.info("DEBUG_EU_2:", responseRaw.status);
                 const s = await responseRaw.json();
-                context.log.info("...tutto bene", s);
+                context.log.info("DEBUG_EU_3:", s);
                 return s;
               } catch (error) {
-                context.log.error("qua se spacca tutto fra", error);
+                context.log.error("DEBUG_EU_4:", error);
               }
             },
             error => ResponseErrorInternal(String(error))
@@ -98,15 +111,14 @@ export const createClient = (
       ),
   submitMessageForUser: (
     reqHeaders,
-    reqPayload,
-    context
+    reqPayload
   ): ReturnType<IServiceClient["submitMessageForUser"]> =>
     te.tryCatch(
       () =>
         fetchApi(`${apiUrl}/messages`, {
           body: JSON.stringify(reqPayload), // HAZARD
           headers: {
-            ...reqHeaders,
+            ...proxyHeaders(reqHeaders),
             ["X-Functions-Key"]: apiKey
           },
 
