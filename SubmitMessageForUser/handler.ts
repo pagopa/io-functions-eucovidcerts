@@ -38,8 +38,9 @@ const applyToExpressResponse = (expressResponse: express.Response) => (
       for (const pair of fetchResponse.headers.entries()) {
         expressResponse.setHeader(pair[0], pair[1]);
       }
-      expressResponse.json(await fetchResponse.json());
-      expressResponse.sendStatus(fetchResponse.status);
+      expressResponse
+        .status(fetchResponse.status)
+        .json(await fetchResponse.json());
     },
     _ => ResponseErrorInternal(toError(_).message)
   );
