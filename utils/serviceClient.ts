@@ -61,7 +61,7 @@ export const createClient = (
           context.log.info("DEBUG_EU_1:", `${apiUrl}/profiles`, {
             body: JSON.stringify({ fiscal_code: fiscalCode }),
             headers: {
-              ...reqHeaders,
+              ...proxyHeaders(reqHeaders),
               ["X-Functions-Key"]: apiKey
             },
             method: "POST"
@@ -69,7 +69,7 @@ export const createClient = (
           return fetchApi(`${apiUrl}/profiles`, {
             body: JSON.stringify({ fiscal_code: fiscalCode }),
             headers: {
-              ...reqHeaders,
+              ...proxyHeaders(reqHeaders),
               ["X-Functions-Key"]: apiKey
             },
             method: "POST"
