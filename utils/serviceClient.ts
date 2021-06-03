@@ -12,8 +12,6 @@ import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { toError } from "fp-ts/lib/Either";
 import { Context } from "@azure/functions";
 
-import nodeFetch from "node-fetch";
-
 const proxyHeaders = ({
   ["X-Functions-Key"]: xFunctionsKey,
   ["x-user-groups"]: xUserGroup,
@@ -68,7 +66,7 @@ export const createClient = (
             },
             method: "POST"
           });
-          return nodeFetch(`${apiUrl}/profiles`, {
+          return fetchApi(`${apiUrl}/profiles`, {
             body: JSON.stringify({ fiscal_code: fiscalCode }),
             headers: {
               ...reqHeaders,
