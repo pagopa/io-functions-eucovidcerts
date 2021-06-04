@@ -13,7 +13,7 @@ import { toError } from "fp-ts/lib/Either";
 import { Context } from "@azure/functions";
 
 /**
- * Filter
+ * Filter incoming header to only consider headers we need
  *
  * @param param0
  * @returns
@@ -51,6 +51,14 @@ export interface IServiceClient {
   ) => te.TaskEither<IResponseErrorInternal, Response>;
 }
 
+/**
+ * This client is a proxy on fns-services
+ *
+ * @param fetchApi
+ * @param apiUrl
+ * @param apiKey
+ * @returns
+ */
 export const createClient = (
   fetchApi: typeof fetch,
   apiUrl: string,
