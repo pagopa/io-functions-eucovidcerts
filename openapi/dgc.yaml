@@ -34,10 +34,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/SearchSingleQrCodeResponseDTO'
-        default:
-          description: default response
-          schema:
-            $ref: '#/definitions/SearchSingleQrCodeResponseDTO'
       summary: Restituisce certificato
       tags:
         - Servizio dei Cittadini
@@ -65,10 +61,6 @@ paths:
             $ref: '#/definitions/PreviousCertificateResponseDTO'
         '500':
           description: Internal Server Error
-          schema:
-            $ref: '#/definitions/PreviousCertificateResponseDTO'
-        default:
-          description: default response
           schema:
             $ref: '#/definitions/PreviousCertificateResponseDTO'
       summary: Comunica un nuovo codice fiscale
