@@ -1,127 +1,130 @@
 swagger: '2.0'
 info:
-  version: 0.0.1
-  title: EU Covid Certificate service for IO App
-host: example.com
+  title: OpenAPI definition
+  version: v0
 schemes:
   - https
+basePath: /
 paths:
-  /certificate:
+  /v1/certificate/citizen/io:
     post:
-      operationId: getCertificate
-      summary: Retrieve a certificate for a given Citizen
-      description: |-
-        Given a Citizen's fiscal code and an OTP (the auth code previously sent via IO Message), a Certificate is returned with ID, encoded QR-code, expiration date and a markdown text with all meaningful information to be shown to Citizens.
+      consumes:
+        - application/json
+      description: >-
+        Servizio che restituisce un certificato a partire da AutCode e CF del
+        cittadino.
+      operationId: getCertificateByAutAndCF
       parameters:
-        - name: accessData
-          in: body
+        - in: body
+          name: body
           schema:
-            $ref: "#/definitions/GetCertificateParams"
+            $ref: '#/definitions/CertificateByAutAndCFRB'
+      produces:
+        - application/json
       responses:
         '200':
-          description: |-
-            A Certificate exists and it's found for the given access data. It is retrieved regardless of it's expired or its current status
+          description: Certificato trovato
           schema:
-            $ref: "#/definitions/Certificate"
+            $ref: '#/definitions/SearchSingleQrCodeResponseDTO'
         '400':
-          description: Payload has bad format
-        '403':
-          description: Access data provided are invalid or no Certificate has been emitted for the given Citizen
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/SearchSingleQrCodeResponseDTO'
         '500':
-          description: Generic server error
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/SearchSingleQrCodeResponseDTO'
+      summary: Restituisce certificato
+      tags:
+        - Servizio dei Cittadini
+  /v1/certificate/citizen/io/refresh:
+    post:
+      consumes:
+        - application/json
+      description: Servizio per comunicare un nuovo codice fiscale.
+      operationId: managePreviousCertificates
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/CertificateByCFRB'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Comunicazione avvenuta
+          schema:
+            $ref: '#/definitions/PreviousCertificateResponseDTO'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/PreviousCertificateResponseDTO'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/PreviousCertificateResponseDTO'
+      summary: Comunica un nuovo codice fiscale
+      tags:
+        - Servizio dei Cittadini
 definitions:
-  GetCertificateParams:
-    type: object
+  CertificateByAutAndCFRB:
     properties:
-      fiscal_code:
+      authCodeSHA256:
+        description: Authorization token
         type: string
-        description: fiscal code which identifies the Citizen requesting the Certificate
-      auth_code:
+      cfSHA256:
+        description: Codice fiscale
         type: string
-        description: OTP previously sent to the Citizen
-    required:
-      - fiscal_code
-      - auth_code
-  Certificate:
-    x-one-of: true
-    allOf:
-    - $ref: "#/definitions/ValidCertificate"
-    - $ref: "#/definitions/RevokedCertificate"
-  ValidCertificate:
     type: object
+  CertificateByCFRB:
     properties:
-      id:
-        description: Unique identifier of the Certificate
+      cfSHA256:
+        description: Codice fiscale errato
         type: string
-      info:
-        description: A markdown-formatted text in which show Certificate information for the Citizen to read.
-        type: string
-      qr_code:
-        description: The qr-code image to be shown to authorities for Certificate validation
-        $ref: "#/definitions/QRCode"
-      status:
-        description: must be 'valid'
-        type: string
-        enum:
-          - valid
-    required:
-      - id
-      - info
-      - qr_code
-      - status
-  RevokedCertificate:
     type: object
+  ErrorResponseDTO:
     properties:
-      id:
-        description: Unique identifier of the Certificate
+      code:
+        description: Codice di errore
+        format: int32
+        type: integer
+      message:
+        description: Messaggio di errore
         type: string
-      info:
-        description: A markdown-formatted text in which show Certificate information for the Citizen to read.
-        type: string
-      status:
-        description: must be 'revoked'
-        type: string
-        enum:
-          - revoked
-      revoke_reason:
-        description: A human-readable plain text which explains why the certificate has been revoked
-        type: string
-        maxLength: 200
-      revoked_on:
-        description: The date the Certificate has been revoked on
-        $ref: "#/definitions/Timestamp"
-    required:
-      - id
-      - info
-      - status
-      - revoke_reason
-      - revoked_on
-  Timestamp:
-    description: A date-time field in ISO-8601 format and UTC timezone.2
-    type: string
-    format: UTCISODateFromString
-    example: "2021-10-13T00:00:00.000Z"
-  QRCode:
-    description: A qr code imamge encoded into a base64 string
     type: object
+  PreviousCertificateResponseDTO:
     properties:
-      mime_type:
-        description: the formate the image has been encoded in
+      data:
+        format: int32
+        type: integer
+      error:
+        $ref: '#/definitions/ErrorResponseDTO'
+      keyDuplicate:
         type: string
-        enum:
-          - "image/png"
-          - "image/svg"
-      content:
-        description: a base64 string representing the image to be shown
+      spanID:
         type: string
-    required:
-      - mime_type
-      - content
-    example:
-      mime_type: "image/png"
-      content: "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMyAyMyI+PHBhdGggZmlsbD0iYmxhY2siIGQ9Ik0xIDFoN3Y3aC03ek05IDFoMXYxaC0xek0xMSAxaDJ2MWgtMXYxaC0ydi0xaDF6TTE1IDFoN3Y3aC03ek0yIDJ2NWg1di01ek0xNiAydjVoNXYtNXpNMyAzaDN2M2gtM3pNOSAzaDF2MWgtMXpNMTIgM2gxdjJoMXY0aC0xdi0yaC0xdjNoLTF2MWgxdi0xaDF2MWgxdjFoLTF2MWgydi0xaDF2MmgtNHYtMmgtMXYxaC0xdi0yaC0xdi0xaDF2LTFoMXYtMmgtMXYxaC0xdi0yaDF2LTJoMnpNMTcgM2gzdjNoLTN6TTEgOWgxdjFoLTF6TTMgOWgxdjFoLTF6TTcgOWgydjFoLTJ6TTE2IDloMXYxaC0xek0xOSA5aDF2MWgtMXpNMjEgOWgxdjJoLTJ2LTFoMXpNNCAxMGgydjFoLTF2MWgtMXpNMTQgMTBoMnYxaC0yek0xIDExaDJ2MWgtMXYxaDF2LTFoMXYxaDF2LTFoMXYtMWgzdjFoLTJ2MWgtMXYxaC01ek0xNyAxMWgxdjFoMXYxaDF2MmgtMXYtMWgtMXYtMWgtMXpNMTkgMTFoMXYxaC0xek0yMCAxMmgydjZoLTF2LTJoLTF2LTFoMXYtMmgtMXpNNyAxM2gxdjFoLTF6TTkgMTNoMXYzaC0xek0xNiAxNGgydjFoLTF2MWgtM3YtMWgyek0xIDE1aDd2N2gtN3pNMTEgMTVoMXYxaC0xek0xOCAxNWgxdjFoLTF6TTIgMTZ2NWg1di01ek0xMyAxNmgxdjFoLTF6TTE5IDE2aDF2MWgtMXpNMyAxN2gzdjNoLTN6TTExIDE3aDF2MWgtMXpNMTQgMTdoNXYxaC0xdjNoLTF2LTFoLTF2LTFoLTF2MWgxdjJoLTR2LTFoLTJ2LTFoMXYtMWgxdi0xaDF2MWgxek0xMCAxOGgxdjFoLTF6TTE5IDE4aDF2MWgtMXpNOSAxOWgxdjFoLTF6TTIwIDE5aDJ2M2gtM3YtMWgydi0xaC0xek0xMyAyMHYxaDF2LTF6TTkgMjFoMXYxaC0xeiIvPjwvc3ZnPg=="
-    
-consumes:
-  - application/json
-produces:
-  - application/json
+      traceID:
+        type: string
+    type: object
+  QrCodeInfoDTO:
+    properties:
+      qrcodeB64:
+        description: Content del qrcode espresso in Base64
+        type: string
+      uvci:
+        description: UVCI
+        type: string
+    type: object
+  SearchSingleQrCodeResponseDTO:
+    properties:
+      data:
+        $ref: '#/definitions/QrCodeInfoDTO'
+      error:
+        $ref: '#/definitions/ErrorResponseDTO'
+      keyDuplicate:
+        type: string
+      spanID:
+        type: string
+      traceID:
+        type: string
+    type: object
