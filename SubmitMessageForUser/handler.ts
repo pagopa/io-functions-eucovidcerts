@@ -36,8 +36,8 @@ const applyToExpressResponse = (expressResponse: express.Response) => (
 ): te.TaskEither<IResponseErrorInternal, void> =>
   te.tryCatch(
     async () => {
-      for (const pair of fetchResponse.headers.entries()) {
-        expressResponse.setHeader(pair[0], pair[1]);
+      for (const [key, value] of fetchResponse.headers.entries()) {
+        expressResponse.set(key, value);
       }
       expressResponse
         .status(fetchResponse.status || 500)

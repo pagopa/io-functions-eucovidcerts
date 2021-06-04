@@ -12,6 +12,12 @@ import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { toError } from "fp-ts/lib/Either";
 import { Context } from "@azure/functions";
 
+/**
+ * Filter
+ *
+ * @param param0
+ * @returns
+ */
 const proxyHeaders = ({
   ["X-Functions-Key"]: xFunctionsKey,
   ["x-user-groups"]: xUserGroup,
@@ -53,59 +59,36 @@ export const createClient = (
   getLimitedProfileByPost: (
     reqHeaders,
     fiscalCode,
-    context
+    _context
   ): ReturnType<IServiceClient["getLimitedProfileByPost"]> =>
     te
       .tryCatch(
-        () => {
-          context.log.info("DEBUG_EU_1:", `${apiUrl}/profiles`, {
+        () =>
+          fetchApi(`${apiUrl}/profiles`, {
             body: JSON.stringify({ fiscal_code: fiscalCode }),
             headers: {
               ...proxyHeaders(reqHeaders),
               ["X-Functions-Key"]: apiKey
             },
             method: "POST"
-          });
-          return fetchApi(`${apiUrl}/profiles`, {
-            body: JSON.stringify({ fiscal_code: fiscalCode }),
-            headers: {
-              ...proxyHeaders(reqHeaders),
-              ["X-Functions-Key"]: apiKey
-            },
-            method: "POST"
-          });
-        },
+          }),
         error => ResponseErrorInternal(String(error))
       )
       .chain(responseRaw =>
         te
           .tryCatch(
-            async () => {
-              try {
-                context.log.info("DEBUG_EU_2:", responseRaw.status);
-                const s = await responseRaw.json();
-                context.log.info("DEBUG_EU_3:", s);
-                return s;
-              } catch (error) {
-                context.log.error("DEBUG_EU_4:", error);
-              }
-            },
+            () => responseRaw.json(),
             error => ResponseErrorInternal(String(error))
           )
           .filterOrElseL(
             _ => responseRaw.ok,
-            _ =>
-              ResponseErrorInternal(
-                `Error calling client api: ${_?.status} - ${_?.title}, ${
-                  _?.detail
-                }, o: ${String(_)}`
-              )
+            _ => ResponseErrorInternal(`Error calling client api: ${String(_)}`)
           )
       )
       .chain(response =>
         te.fromEither(
-          LimitedProfile.decode(response).mapLeft(validationErrors =>
-            ResponseErrorInternal(validationErrors.toString())
+          LimitedProfile.decode(response).mapLeft(_ =>
+            ResponseErrorInternal(`Failed to decode profile`)
           )
         )
       ),
