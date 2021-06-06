@@ -10,18 +10,55 @@ import { LimitedProfile } from "@pagopa/io-functions-commons/dist/generated/defi
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 
 import { toError } from "fp-ts/lib/Either";
+import { Context } from "@azure/functions";
+
+/**
+ * Filter incoming header to only consider headers we need
+ *
+ * @param param0
+ * @returns
+ */
+const proxyHeaders = ({
+  ["X-Functions-Key"]: xFunctionsKey,
+  ["x-user-groups"]: xUserGroup,
+  ["x-subscription-id"]: xSubId,
+  ["x-user-email"]: xUserEmail,
+  ["x-user-id"]: xUserId,
+  ["x-client-ip"]: xClientIp,
+  ["x-forwarded-for"]: xFF
+}: NodeJS.Dict<string | ReadonlyArray<string>>): NodeJS.Dict<
+  string | ReadonlyArray<string>
+> => ({
+  ["X-Functions-Key"]: xFunctionsKey,
+  ["x-client-ip"]: xClientIp,
+  ["x-forwarded-for"]: xFF,
+  ["x-subscription-id"]: xSubId,
+  ["x-user-email"]: xUserEmail,
+  ["x-user-groups"]: xUserGroup,
+  ["x-user-id"]: xUserId
+});
 
 export interface IServiceClient {
   readonly getLimitedProfileByPost: (
     reqHeaders: NodeJS.Dict<string | ReadonlyArray<string>>,
-    fiscalCode: FiscalCode
+    fiscalCode: FiscalCode,
+    context: Context
   ) => te.TaskEither<IResponseErrorInternal, LimitedProfile>;
   readonly submitMessageForUser: (
     reqHeaders: NodeJS.Dict<string | ReadonlyArray<string>>,
-    reqPayload: Response
+    reqPayload: Response,
+    context: Context
   ) => te.TaskEither<IResponseErrorInternal, Response>;
 }
 
+/**
+ * This client is a proxy on fns-services
+ *
+ * @param fetchApi
+ * @param apiUrl
+ * @param apiKey
+ * @returns
+ */
 export const createClient = (
   fetchApi: typeof fetch,
   apiUrl: string,
@@ -29,7 +66,8 @@ export const createClient = (
 ): IServiceClient => ({
   getLimitedProfileByPost: (
     reqHeaders,
-    fiscalCode
+    fiscalCode,
+    _context
   ): ReturnType<IServiceClient["getLimitedProfileByPost"]> =>
     te
       .tryCatch(
@@ -37,7 +75,7 @@ export const createClient = (
           fetchApi(`${apiUrl}/profiles`, {
             body: JSON.stringify({ fiscal_code: fiscalCode }),
             headers: {
-              ...reqHeaders,
+              ...proxyHeaders(reqHeaders),
               ["X-Functions-Key"]: apiKey
             },
             method: "POST"
@@ -52,16 +90,13 @@ export const createClient = (
           )
           .filterOrElseL(
             _ => responseRaw.ok,
-            _ =>
-              ResponseErrorInternal(
-                `Error calling client api: ${_.status} - ${_.title}, ${_.detail}`
-              )
+            _ => ResponseErrorInternal(`Error calling client api: ${String(_)}`)
           )
       )
       .chain(response =>
         te.fromEither(
-          LimitedProfile.decode(response).mapLeft(validationErrors =>
-            ResponseErrorInternal(validationErrors.toString())
+          LimitedProfile.decode(response).mapLeft(_ =>
+            ResponseErrorInternal(`Failed to decode profile`)
           )
         )
       ),
@@ -72,9 +107,9 @@ export const createClient = (
     te.tryCatch(
       () =>
         fetchApi(`${apiUrl}/messages`, {
-          body: JSON.stringify(reqPayload), // HAZARD
+          body: JSON.stringify(reqPayload),
           headers: {
-            ...reqHeaders,
+            ...proxyHeaders(reqHeaders),
             ["X-Functions-Key"]: apiKey
           },
 
