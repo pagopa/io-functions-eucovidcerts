@@ -2,14 +2,15 @@ import * as https from "https";
 import { getKeepAliveAgentOptions } from "@pagopa/ts-commons/lib/agent";
 import nodeFetch from "node-fetch";
 
-export const getFetchWithClientCertificate: (
+export const getFetchWithClientCertificate = (
   env: NodeJS.ProcessEnv,
-  clientCertPrefix: string
-) => typeof fetch = (env, clientCertPrefix) => {
+  cert: string,
+  key: string
+): typeof fetch => {
   const httpsAgent = new https.Agent({
     ...getKeepAliveAgentOptions(env),
-    cert: env[`${clientCertPrefix}_CLIENT_CERT`],
-    key: env[`${clientCertPrefix}_CLIENT_KEY`]
+    cert,
+    key
   });
 
   return (url, init): Promise<Response> => {

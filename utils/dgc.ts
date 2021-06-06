@@ -1,27 +1,9 @@
-import { agent } from "@pagopa/ts-commons/";
-import {
-  AbortableFetch,
-  setFetchTimeout,
-  toFetch
-} from "@pagopa/ts-commons/lib/fetch";
-import { Millisecond } from "@pagopa/ts-commons/lib/units";
-import nodeFetch from "node-fetch";
 import { createClient as createDGCClient } from "../generated/dgc/client";
 
 import { getConfigOrThrow } from "./config";
+import { getFetchWithClientCertificate } from "./httpsAgent";
 
 const config = getConfigOrThrow();
-
-// 5 seconds timeout by default
-const DEFAULT_REQUEST_TIMEOUT_MS = 10000;
-
-// Must be an https endpoint so we use an https agent
-const abortableFetch = AbortableFetch(agent.getHttpFetch(process.env));
-const fetchWithTimeout = toFetch(
-  setFetchTimeout(DEFAULT_REQUEST_TIMEOUT_MS as Millisecond, abortableFetch)
-);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const fetchApi: typeof fetchWithTimeout = (nodeFetch as any) as typeof fetchWithTimeout;
 
 /**
  * A set of clients to interact with different DGC environments
@@ -29,14 +11,26 @@ const fetchApi: typeof fetchWithTimeout = (nodeFetch as any) as typeof fetchWith
 export const clients = {
   LOAD: createDGCClient({
     baseUrl: config.DGC_LOAD_HOST.href,
-    fetchApi
+    fetchApi: getFetchWithClientCertificate(
+      process.env,
+      config.DGC_LOAD_CLIENT_CERT,
+      config.DGC_LOAD_CLIENT_KEY
+    )
   }),
   PROD: createDGCClient({
     baseUrl: config.DGC_PROD_HOST.href,
-    fetchApi
+    fetchApi: getFetchWithClientCertificate(
+      process.env,
+      config.DGC_PROD_CLIENT_CERT,
+      config.DGC_PROD_CLIENT_KEY
+    )
   }),
   UAT: createDGCClient({
     baseUrl: config.DGC_LOAD_HOST.href,
-    fetchApi
+    fetchApi: getFetchWithClientCertificate(
+      process.env,
+      config.DGC_UAT_CLIENT_CERT,
+      config.DGC_UAT_CLIENT_KEY
+    )
   })
 };
