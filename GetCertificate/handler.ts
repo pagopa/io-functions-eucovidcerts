@@ -9,7 +9,6 @@ import {
   IResponseErrorInternal,
   IResponseErrorValidation,
   IResponseSuccessJson,
-  ResponseErrorForbiddenNotAuthorized,
   ResponseErrorInternal,
   ResponseSuccessJson
 } from "@pagopa/ts-commons/lib/responses";
@@ -34,8 +33,8 @@ import { GetCertificateParams } from "../generated/definitions/GetCertificatePar
 import { Client as DGCClient } from "../generated/dgc/client";
 import { Certificate } from "../generated/definitions/Certificate";
 import { Mime_typeEnum } from "../generated/definitions/QRCode";
-import { GetCertificateT } from "../generated/dgc/requestTypes";
-import { RawCertificate } from "../generated/dgc/RawCertificate";
+import { GetCertificateByAutAndCFT } from "../generated/dgc/requestTypes";
+import { SearchSingleQrCodeResponseDTO } from "../generated/dgc/SearchSingleQrCodeResponseDTO";
 import { parseQRCode, printers } from "./certificate";
 
 const assertNever = (x: never): never => {
@@ -43,7 +42,7 @@ const assertNever = (x: never): never => {
 };
 
 type DGCGetCertificateResponses = ReturnType<
-  TypeofApiCall<GetCertificateT>
+  TypeofApiCall<GetCertificateByAutAndCFT>
 > extends Promise<Validation<infer Y>>
   ? Y
   : never;
@@ -60,7 +59,7 @@ export const GetCertificateHandler = (
   dgcClient: DGCClient
 ): GetCertificateHandler => async (
   _context,
-  { fiscal_code, auth_code }
+  { fiscal_code, auth_code: authCodeSHA256 }
 ): Promise<IResponseSuccessJson<Certificate> | Failures> => {
   // prints a certificate into huma nreadable text - italian only for now
   const printer = printers[PreferredLanguageEnum.it_IT];
@@ -72,10 +71,10 @@ export const GetCertificateHandler = (
   >(
     () =>
       dgcClient
-        .getCertificate({
-          accessData: {
-            auth_code,
-            fiscal_code
+        .getCertificateByAutAndCF({
+          body: {
+            authCodeSHA256,
+            cfSHA256: fiscal_code // FIXME: hash this cf
           }
         })
         // this happens when the response payload cannot be parsed
@@ -87,14 +86,12 @@ export const GetCertificateHandler = (
   return (
     certificateResponse
       // separates bad cases from success, and assign each failure its correct response
-      .chain<RawCertificate>(e => {
+      .chain<SearchSingleQrCodeResponseDTO>(e => {
         switch (e.status) {
           case 200:
             return taskEither.of(e.value);
           case 400:
             return fromLeft(ResponseErrorValidation("Bad Request", ""));
-          case 403:
-            return fromLeft(ResponseErrorForbiddenNotAuthorized);
           case 500:
             return fromLeft(ResponseErrorInternal(toString(e.value)));
           default:
@@ -102,24 +99,27 @@ export const GetCertificateHandler = (
         }
       })
       // try to enhance raw certificate with parsed data
-      .map(({ qr_code: rawQRCode }) => ({
-        printedCertificate: parseQRCode(rawQRCode).fold(
+      .map(({ data: { qrcodeB64 = "", uvci } = {} }) => ({
+        printedCertificate: parseQRCode(qrcodeB64).fold(
           _ => undefined,
           f => ({
             detail: printer.detail(f),
-            id: f.id,
-            info: printer.info(f)
+            info: printer.info(f),
+            uvci: f.id
           })
         ),
-        rawQRCode
+        qrcodeB64,
+        uvci
       }))
       // compose a response payload
       .map<Certificate>(e => ({
         detail: e.printedCertificate?.detail,
-        id: e.printedCertificate?.id,
+        // if we successful pardsed the qr code, we retrieve the identifier from the parsing
+        //   otherwise we retrieve the identifier eventually received from DGC
+        id: e.printedCertificate?.uvci || e.uvci,
         info: e.printedCertificate?.info,
         qr_code: {
-          content: e.rawQRCode,
+          content: e.qrcodeB64,
           mime_type: Mime_typeEnum["image/png"]
         },
         status: StatusEnum.valid

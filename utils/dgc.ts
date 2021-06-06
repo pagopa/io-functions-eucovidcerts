@@ -27,10 +27,16 @@ const fetchApi: typeof fetchWithTimeout = (nodeFetch as any) as typeof fetchWith
  * A set of clients to interact with different DGC environments
  */
 export const clients = {
-  LOAD: undefined, // TODO
-  PROD: createDGCClient({
-    baseUrl: config.DGC_HOST,
+  LOAD: createDGCClient({
+    baseUrl: config.DGC_LOAD_HOST.href,
     fetchApi
   }),
-  UAT: undefined // TODO
+  PROD: createDGCClient({
+    baseUrl: config.DGC_PROD_HOST.href,
+    fetchApi
+  }),
+  UAT: createDGCClient({
+    baseUrl: config.DGC_LOAD_HOST.href,
+    fetchApi
+  })
 };

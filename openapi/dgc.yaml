@@ -1,50 +1,130 @@
 swagger: '2.0'
 info:
-  version: 0.0.1
-  title: EU Covid Certificate service for IO App
-host: example.com
+  title: OpenAPI definition
+  version: v0
 schemes:
   - https
+basePath: /
 paths:
-  /certificate:
+  /v1/certificate/citizen/io:
     post:
-      operationId: getCertificate
-      summary: Retrieve a certificate for a given Citizen
-      description: |-
-        Given a Citizen's fiscal code and an OTP (the auth code previously sent via IO Message), a Certificate is returned with ID, encoded QR-code, expiration date and a markdown text with all meaningful information to be shown to Citizens.
+      consumes:
+        - application/json
+      description: >-
+        Servizio che restituisce un certificato a partire da AutCode e CF del
+        cittadino.
+      operationId: getCertificateByAutAndCF
       parameters:
-        - name: accessData
-          in: body
+        - in: body
+          name: body
           schema:
-            $ref: "#/definitions/GetCertificateParams"
+            $ref: '#/definitions/CertificateByAutAndCFRB'
+      produces:
+        - application/json
       responses:
         '200':
-          description: |-
-            A Certificate exists and it's found for the given access data. It is retrieved regardless of it's expired or its current status
+          description: Certificato trovato
           schema:
-            $ref: "#/definitions/RawCertificate"
+            $ref: '#/definitions/SearchSingleQrCodeResponseDTO'
         '400':
-          description: Payload has bad format
-        '403':
-          description: Access data provided are invalid or no Certificate has been emitted for the given Citizen
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/SearchSingleQrCodeResponseDTO'
         '500':
-          description: Generic server error
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/SearchSingleQrCodeResponseDTO'
+      summary: Restituisce certificato
+      tags:
+        - Servizio dei Cittadini
+  /v1/certificate/citizen/io/refresh:
+    post:
+      consumes:
+        - application/json
+      description: Servizio per comunicare un nuovo codice fiscale.
+      operationId: managePreviousCertificates
+      parameters:
+        - in: body
+          name: body
+          schema:
+            $ref: '#/definitions/CertificateByCFRB'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Comunicazione avvenuta
+          schema:
+            $ref: '#/definitions/PreviousCertificateResponseDTO'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/PreviousCertificateResponseDTO'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/PreviousCertificateResponseDTO'
+      summary: Comunica un nuovo codice fiscale
+      tags:
+        - Servizio dei Cittadini
 definitions:
-  GetCertificateParams:
-    type: object
+  CertificateByAutAndCFRB:
     properties:
-      fiscal_code:
+      authCodeSHA256:
+        description: Authorization token
         type: string
-        description: fiscal code which identifies the Citizen requesting the Certificate
-      auth_code:
+      cfSHA256:
+        description: Codice fiscale
         type: string
-        description: OTP previously sent to the Citizen
-    required:
-      - fiscal_code
-      - auth_code
-  RawCertificate:
-    type: string 
-consumes:
-  - application/json
-produces:
-  - application/json
+    type: object
+  CertificateByCFRB:
+    properties:
+      cfSHA256:
+        description: Codice fiscale errato
+        type: string
+    type: object
+  ErrorResponseDTO:
+    properties:
+      code:
+        description: Codice di errore
+        format: int32
+        type: integer
+      message:
+        description: Messaggio di errore
+        type: string
+    type: object
+  PreviousCertificateResponseDTO:
+    properties:
+      data:
+        format: int32
+        type: integer
+      error:
+        $ref: '#/definitions/ErrorResponseDTO'
+      keyDuplicate:
+        type: string
+      spanID:
+        type: string
+      traceID:
+        type: string
+    type: object
+  QrCodeInfoDTO:
+    properties:
+      qrcodeB64:
+        description: Content del qrcode espresso in Base64
+        type: string
+      uvci:
+        description: UVCI
+        type: string
+    type: object
+  SearchSingleQrCodeResponseDTO:
+    properties:
+      data:
+        $ref: '#/definitions/QrCodeInfoDTO'
+      error:
+        $ref: '#/definitions/ErrorResponseDTO'
+      keyDuplicate:
+        type: string
+      spanID:
+        type: string
+      traceID:
+        type: string
+    type: object

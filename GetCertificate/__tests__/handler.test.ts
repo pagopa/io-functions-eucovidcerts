@@ -1,7 +1,4 @@
-import {
-  RevokedCertificate,
-  StatusEnum as RevokedStatusEnum
-} from "../../generated/dgc/RevokedCertificate";
+import { StatusEnum as RevokedStatusEnum } from "../../generated/definitions/RevokedCertificate";
 
 import { GetCertificateHandler } from "../handler";
 
@@ -10,7 +7,6 @@ describe("GetCertificate", () => {
     id: "000",
     revoke_reason: "bla bla bla",
     revoked_on: new Date("2018-10-13T00:00:00.000Z"),
-    info: "Revoked Certificate",
     status: RevokedStatusEnum.revoked
   };
 
@@ -18,10 +14,11 @@ describe("GetCertificate", () => {
     expect.assertions(1);
     const val = await GetCertificateHandler()();
     console.log(val);
-    expect(val).toEqual({
-      apply: expect.any(Function),
-      kind: "IResponseSuccessJson",
-      value: aRevokedCertificate
-    });
+    expect(val).toEqual(
+      expect.objectContaining({
+        kind: "IResponseSuccessJson",
+        value: aRevokedCertificate
+      })
+    );
   });
 });

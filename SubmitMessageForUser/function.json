@@ -5,7 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "api/v1/certificate",
+      "route": "api/v1/messages",
       "methods": [
         "post"
       ]
@@ -16,5 +16,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/GetCertificate/index.js"
+  "scriptFile": "../dist/SubmitMessageForUser/index.js"
 }

@@ -11,7 +11,12 @@ const app = express();
 secureExpressApp(app);
 
 // Add express route
-app.get("/api/v1/getCertificate", getGetCertificateHandler(clients.PROD));
+app.get(
+  "/api/v1/certificate",
+  getGetCertificateHandler(
+    /* TODO: switch client based on provided fiscal code */ clients.PROD
+  )
+);
 
 const azureFunctionHandler = createAzureFunctionHandler(app);
 
