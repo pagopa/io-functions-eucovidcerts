@@ -107,7 +107,7 @@ export const createClient = (
     te.tryCatch(
       () =>
         fetchApi(`${apiUrl}/messages`, {
-          body: JSON.stringify(reqPayload), // HAZARD
+          body: JSON.stringify(reqPayload),
           headers: {
             ...proxyHeaders(reqHeaders),
             ["X-Functions-Key"]: apiKey
