@@ -14,6 +14,12 @@ import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 export type IConfig = t.TypeOf<typeof IConfig>;
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const IConfig = t.interface({
+  DGC_LOAD_TEST_CLIENT_CERT: NonEmptyString,
+  DGC_LOAD_TEST_CLIENT_KEY: NonEmptyString,
+  DGC_PROD_CLIENT_CERT: NonEmptyString,
+  DGC_PROD_CLIENT_KEY: NonEmptyString,
+  DGC_UAT_CLIENT_CERT: NonEmptyString,
+  DGC_UAT_CLIENT_KEY: NonEmptyString,
   FNSERVICES_API_KEY: NonEmptyString,
   FNSERVICES_API_URL: NonEmptyString,
   isProduction: t.boolean
