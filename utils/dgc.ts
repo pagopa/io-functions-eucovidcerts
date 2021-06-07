@@ -13,8 +13,8 @@ export const clients = {
     baseUrl: config.DGC_LOAD_TEST_URL.href,
     fetchApi: getFetchWithClientCertificate(
       process.env,
-      config.DGC_LOAD_CLIENT_CERT,
-      config.DGC_LOAD_CLIENT_KEY
+      config.DGC_LOAD_TEST_CLIENT_CERT,
+      config.DGC_LOAD_TEST_CLIENT_KEY
     )
   }),
   PROD: createDGCClient({
