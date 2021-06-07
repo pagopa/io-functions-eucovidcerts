@@ -2,7 +2,7 @@ import { AzureFunction, Context } from "@azure/functions";
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import * as t from "io-ts";
-import { sha256 } from "../utils/conversions";
+import { toSHA256 } from "../utils/conversions";
 
 const Failure = t.interface({
   kind: t.keyof({
@@ -37,7 +37,7 @@ const index: AzureFunction = async (
       },
       fiscalCode => {
         // eslint-disable-next-line functional/immutable-data
-        context.bindings.outputFiscalCode = sha256(fiscalCode);
+        context.bindings.outputFiscalCode = toSHA256(fiscalCode);
         return { kind: "SUCCESS" } as Success;
       }
     );
