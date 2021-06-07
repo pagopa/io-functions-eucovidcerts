@@ -67,6 +67,7 @@ definitions:
     allOf:
       - $ref: '#/definitions/ValidCertificate'
       - $ref: '#/definitions/RevokedCertificate'
+      - $ref: '#/definitions/ExpiredCertificate'
   ValidCertificate:
     type: object
     properties:
@@ -118,6 +119,26 @@ definitions:
         $ref: '#/definitions/Timestamp'
     required:
       - status
+  ExpiredCertificate:
+    type: object
+    properties:
+      uvci:
+        description: Unique identifier of the Certificate
+        type: string
+      status:
+        description: must be 'expired'
+        type: string
+        enum:
+          - expired
+      expired_info:
+        description: |-
+          A human-readable message, in plain text or Markdown format,
+          which explains that the Certificate is expired
+        type: string
+        maxLength: 2500
+    required:
+      - status
+      - expired_info
   FiscalCode:
     type: string
     description: User's fiscal code.
