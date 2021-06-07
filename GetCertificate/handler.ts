@@ -29,9 +29,9 @@ import { TypeofApiCall } from "@pagopa/ts-commons/lib/requests";
 import { Either, toError } from "fp-ts/lib/Either";
 import { Validation } from "io-ts";
 import { StatusEnum } from "../generated/definitions/ValidCertificate";
+import { Certificate } from "../generated/definitions/Certificate";
 import { GetCertificateParams } from "../generated/definitions/GetCertificateParams";
 import { Client as DGCClient } from "../generated/dgc/client";
-import { Certificate } from "../generated/definitions/Certificate";
 import { Mime_typeEnum } from "../generated/definitions/QRCode";
 import { GetCertificateByAutAndCFT } from "../generated/dgc/requestTypes";
 import { SearchSingleQrCodeResponseDTO } from "../generated/dgc/SearchSingleQrCodeResponseDTO";
@@ -116,13 +116,13 @@ export const GetCertificateHandler = (
         detail: e.printedCertificate?.detail,
         // if we successful pardsed the qr code, we retrieve the identifier from the parsing
         //   otherwise we retrieve the identifier eventually received from DGC
-        id: e.printedCertificate?.uvci || e.uvci,
         info: e.printedCertificate?.info,
         qr_code: {
           content: e.qrcodeB64,
           mime_type: Mime_typeEnum["image/png"]
         },
-        status: StatusEnum.valid
+        status: StatusEnum.valid,
+        uvci: e.printedCertificate?.uvci || e.uvci
       }))
       .map(ResponseSuccessJson)
       // fold failures and success cases into a single response pipeline
