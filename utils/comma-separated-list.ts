@@ -1,7 +1,7 @@
 import * as t from "io-ts";
 
 /**
- * Create a decoder that parses a list of comma-separated elements into an array of typed items, using the provided decoder
+ * Create a decoder that parses a string containing a list of comma-separated elements into an array of typed items, using the provided decoder
  *
  * @param decoder a io-ts decoder
  *
