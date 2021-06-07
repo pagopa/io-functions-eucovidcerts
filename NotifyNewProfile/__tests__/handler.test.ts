@@ -12,9 +12,10 @@ const mockManagePreviousCertificates = jest.fn().mockImplementation(() =>
     })
   )
 );
-const mockDgcClient = ({
+
+const mockGetDgcClient = jest.fn().mockImplementation(() => ({
   managePreviousCertificates: mockManagePreviousCertificates
-} as unknown) as IDGCClient;
+}));
 
 const anInput = "fiscalCode_sha256";
 
@@ -23,16 +24,17 @@ describe("NotifyNewProfile", () => {
     jest.clearAllMocks();
   });
   it("should succeded with a valid input", async () => {
-    const handler = NotifyNewProfile(mockDgcClient);
+    const handler = NotifyNewProfile(mockGetDgcClient);
     const result = await handler(context, anInput);
+    expect(mockGetDgcClient).toBeCalledWith(anInput);
     expect(mockManagePreviousCertificates).toBeCalledWith({
-      cfSHA256: anInput
+      body: { cfSHA256: anInput }
     });
     expect(result).toEqual("OK");
   });
 
   it("should fail with an invalid input", async () => {
-    const handler = NotifyNewProfile(mockDgcClient);
+    const handler = NotifyNewProfile(mockGetDgcClient);
     await expect(handler(context, "")).rejects.toEqual(expect.any(Error));
     expect(mockManagePreviousCertificates).not.toBeCalled();
     expect(context.log.error).toBeCalledTimes(1);
@@ -48,10 +50,11 @@ describe("NotifyNewProfile", () => {
         })
       )
     );
-    const handler = NotifyNewProfile(mockDgcClient);
+    const handler = NotifyNewProfile(mockGetDgcClient);
     await expect(handler(context, anInput)).rejects.toEqual(expect.any(Error));
+    expect(mockGetDgcClient).toBeCalledWith(anInput);
     expect(mockManagePreviousCertificates).toBeCalledWith({
-      cfSHA256: anInput
+      body: { cfSHA256: anInput }
     });
     expect(context.log.error).toBeCalledTimes(1);
   });
@@ -60,10 +63,11 @@ describe("NotifyNewProfile", () => {
     mockManagePreviousCertificates.mockImplementationOnce(() =>
       Promise.reject()
     );
-    const handler = NotifyNewProfile(mockDgcClient);
+    const handler = NotifyNewProfile(mockGetDgcClient);
     await expect(handler(context, anInput)).rejects.toEqual(expect.any(Error));
+    expect(mockGetDgcClient).toBeCalledWith(anInput);
     expect(mockManagePreviousCertificates).toBeCalledWith({
-      cfSHA256: anInput
+      body: { cfSHA256: anInput }
     });
     expect(context.log.error).toBeCalledTimes(1);
   });

@@ -1,12 +1,12 @@
 import { Context } from "@azure/functions";
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import { fromEither, left2v, taskEither, tryCatch } from "fp-ts/lib/TaskEither";
-import { Client as IDGCClient } from "../generated/dgc/client";
 import { errorsToError } from "../utils/conversions";
+import { IGetDGCClient } from "../utils/dgcClient";
 
 const logPrefix = "NotifyNewProfile";
 
-export const NotifyNewProfile = (dgcClient: IDGCClient) => async (
+export const NotifyNewProfile = (getDgcClient: IGetDGCClient) => async (
   context: Context,
   input: unknown
 ): Promise<string> =>
@@ -14,7 +14,7 @@ export const NotifyNewProfile = (dgcClient: IDGCClient) => async (
     .chain(cfSHA256 =>
       tryCatch(
         () =>
-          dgcClient.managePreviousCertificates({
+          getDgcClient(cfSHA256).managePreviousCertificates({
             body: { cfSHA256 }
           }),
         _ => new Error("Error calling managePreviousCertificates API")
