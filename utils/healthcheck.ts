@@ -124,7 +124,7 @@ export const checkApplicationHealth = (): HealthCheck<ProblemSource, true> =>
         Array<TaskEither<ReadonlyArray<HealthProblem<ProblemSource>>, true>>
       >(
         checkAzureStorageHealth(config.QueueStorageConnection),
-        checkAzureStorageHealth(config.AppQueueStorageConnection)
+        checkAzureStorageHealth(config.EventsQueueStorageConnection)
       )
     )
     .map(_ => true);

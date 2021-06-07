@@ -1,6 +1,4 @@
 import { right } from "fp-ts/lib/Either";
-import { Client as IDGCClient } from "../../generated/dgc/client";
-import { createDGCClientSelector } from "../../utils/dgcClientSelector";
 import { context } from "../../__mocks__/durable-functions";
 import { NotifyNewProfile } from "../handler";
 

@@ -43,8 +43,8 @@ export const IConfig = t.intersection([
   DCGConfigUAT,
   DCGConfigLOAD,
   t.interface({
-    AppQueueStorageConnection: NonEmptyString,
     EUCOVIDCERT_NOTIFY_QUEUE_NAME: NonEmptyString,
+    EventsQueueStorageConnection: NonEmptyString,
     QueueStorageConnection: NonEmptyString
   }),
   t.interface({

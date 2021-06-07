@@ -2,7 +2,7 @@
   "bindings": [
     {
       "queueName": "%EUCOVIDCERT_NOTIFY_QUEUE_NAME%",
-      "connection": "AppQueueStorageConnection",
+      "connection": "EventsQueueStorageConnection",
       "name": "inputFiscalCode",
       "type": "queueTrigger",
       "direction": "in"
