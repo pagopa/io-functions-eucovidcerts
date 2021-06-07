@@ -8,25 +8,28 @@
 import * as t from "io-ts";
 import { ValidationError } from "io-ts";
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
-import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
+import { FiscalCode, NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import { HttpsUrlFromString } from "@pagopa/ts-commons/lib/url";
+import { CommaSeparatedListOf } from "./comma-separated-list";
 
 const DCGConfigPROD = t.interface({
   DGC_PROD_CLIENT_CERT: NonEmptyString,
   DGC_PROD_CLIENT_KEY: NonEmptyString,
-  DGC_PROD_HOST: HttpsUrlFromString
+  DGC_PROD_URL: HttpsUrlFromString
 });
 
 const DCGConfigUAT = t.interface({
   DGC_UAT_CLIENT_CERT: NonEmptyString,
   DGC_UAT_CLIENT_KEY: NonEmptyString,
-  DGC_UAT_HOST: HttpsUrlFromString
+  DGC_UAT_FISCAL_CODES: CommaSeparatedListOf(FiscalCode),
+  DGC_UAT_URL: HttpsUrlFromString
 });
 
 const DCGConfigLOAD = t.interface({
   DGC_LOAD_CLIENT_CERT: NonEmptyString,
   DGC_LOAD_CLIENT_KEY: NonEmptyString,
-  DGC_LOAD_HOST: HttpsUrlFromString
+  DGC_LOAD_TEST_URL: HttpsUrlFromString,
+  LOAD_TEST_FISCAL_CODES: CommaSeparatedListOf(FiscalCode)
 });
 
 // global app configuration

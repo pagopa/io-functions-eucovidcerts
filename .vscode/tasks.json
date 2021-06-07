@@ -6,40 +6,36 @@
       "command": "host start",
       "problemMatcher": "$func-watch",
       "isBackground": true,
-      "dependsOn": "npm build"
+      "dependsOn": "yarn build"
     },
     {
       "type": "shell",
-      "label": "npm build",
-      "command": "npm run build",
-      "dependsOn": "npm install",
+      "label": "yarn build",
+      "command": "yarn run build",
+      "dependsOn": "yarn install",
       "problemMatcher": "$tsc"
     },
     {
       "type": "shell",
-      "label": "npm install",
-      "command": "npm install"
+      "label": "yarn install",
+      "command": "yarn install --frozen-lockfile"
     },
     {
       "type": "shell",
-      "label": "npm prune",
-      "command": "npm prune --production",
-      "dependsOn": "npm build",
+      "label": "yarn prune",
+      "command": "yarn prune --production",
+      "dependsOn": "yarn build",
       "problemMatcher": []
     },
     {
-      "type": "npm",
-      "script": "build",
-      "problemMatcher": [
-        "$tsc"
-      ]
+      "type": "shell",
+      "label": "yarn build",
+      "command": "yarn build"
     },
     {
-      "type": "npm",
-      "script": "lint",
-      "problemMatcher": [
-        "$tslint5"
-      ]
+      "type": "shell",
+      "label": "yarn lint",
+      "command": "yarn lint"
     }
   ]
 }
