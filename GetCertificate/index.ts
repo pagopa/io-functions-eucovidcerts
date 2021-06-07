@@ -3,20 +3,19 @@ import * as express from "express";
 import { secureExpressApp } from "@pagopa/io-functions-commons/dist/src/utils/express";
 import { setAppContext } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/context_middleware";
 import createAzureFunctionHandler from "@pagopa/express-azure-functions/dist/src/createAzureFunctionsHandler";
-import { clients } from "../utils/dgc";
+import { createDGCClientSelector } from "../utils/dgcClientSelector";
+import { getConfigOrThrow } from "../utils/config";
 import { getGetCertificateHandler } from "./handler";
 
 // Setup Express
 const app = express();
 secureExpressApp(app);
 
+const config = getConfigOrThrow();
+const dgcClientSelector = createDGCClientSelector(config, process.env);
+
 // Add express route
-app.get(
-  "/api/v1/certificate",
-  getGetCertificateHandler(
-    /* TODO: switch client based on provided fiscal code */ clients.PROD
-  )
-);
+app.post("/api/v1/certificate", getGetCertificateHandler(dgcClientSelector));
 
 const azureFunctionHandler = createAzureFunctionHandler(app);
 

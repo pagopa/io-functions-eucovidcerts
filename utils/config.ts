@@ -26,8 +26,8 @@ const DCGConfigUAT = t.interface({
 });
 
 const DCGConfigLOAD = t.interface({
-  DGC_LOAD_CLIENT_CERT: NonEmptyString,
-  DGC_LOAD_CLIENT_KEY: NonEmptyString,
+  DGC_LOAD_TEST_CLIENT_CERT: NonEmptyString,
+  DGC_LOAD_TEST_CLIENT_KEY: NonEmptyString,
   DGC_LOAD_TEST_URL: HttpsUrlFromString,
   LOAD_TEST_FISCAL_CODES: CommaSeparatedListOf(FiscalCode)
 });

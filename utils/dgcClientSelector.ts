@@ -24,8 +24,8 @@ export const createDGCClientSelector = (
     DGC_UAT_CLIENT_KEY,
     DGC_UAT_FISCAL_CODES,
     DGC_UAT_URL,
-    DGC_LOAD_CLIENT_CERT,
-    DGC_LOAD_CLIENT_KEY,
+    DGC_LOAD_TEST_CLIENT_CERT,
+    DGC_LOAD_TEST_CLIENT_KEY,
     LOAD_TEST_FISCAL_CODES,
     DGC_LOAD_TEST_URL,
     DGC_PROD_CLIENT_CERT,
@@ -58,8 +58,8 @@ export const createDGCClientSelector = (
     baseUrl: DGC_LOAD_TEST_URL.href,
     fetchApi: getFetchWithClientCertificate(
       env,
-      DGC_LOAD_CLIENT_CERT,
-      DGC_LOAD_CLIENT_KEY
+      DGC_LOAD_TEST_CLIENT_CERT,
+      DGC_LOAD_TEST_CLIENT_KEY
     )
   });
 

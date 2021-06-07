@@ -26,8 +26,8 @@ const aUATKey = "uat_key";
 const aConfig = ({
   DGC_UAT_CLIENT_CERT: aUATCert,
   DGC_UAT_CLIENT_KEY: aUATKey,
-  DGC_LOAD_CLIENT_CERT: aTestCert,
-  DGC_LOAD_CLIENT_KEY: aTestKey,
+  DGC_LOAD_TEST_CLIENT_CERT: aTestCert,
+  DGC_LOAD_TEST_CLIENT_KEY: aTestKey,
   DGC_PROD_CLIENT_CERT: aProdCert,
   DGC_PROD_CLIENT_KEY: aProdKey,
   LOAD_TEST_FISCAL_CODES: [aLoadTestFiscalCode],

@@ -31,10 +31,11 @@ import { Validation } from "io-ts";
 import { StatusEnum } from "../generated/definitions/ValidCertificate";
 import { Certificate } from "../generated/definitions/Certificate";
 import { GetCertificateParams } from "../generated/definitions/GetCertificateParams";
-import { Client as DGCClient } from "../generated/dgc/client";
 import { Mime_typeEnum } from "../generated/definitions/QRCode";
 import { GetCertificateByAutAndCFT } from "../generated/dgc/requestTypes";
 import { SearchSingleQrCodeResponseDTO } from "../generated/dgc/SearchSingleQrCodeResponseDTO";
+import { toSHA256 } from "../utils/conversions";
+import { createDGCClientSelector } from "../utils/dgcClientSelector";
 import { parseQRCode, printers } from "./certificate";
 
 const assertNever = (x: never): never => {
@@ -56,35 +57,41 @@ type GetCertificateHandler = (
   params: GetCertificateParams
 ) => Promise<IResponseSuccessJson<Certificate> | Failures>;
 export const GetCertificateHandler = (
-  dgcClient: DGCClient
+  dgcClientSelector: ReturnType<typeof createDGCClientSelector>
 ): GetCertificateHandler => async (
   _context,
   { fiscal_code, auth_code: authCodeSHA256 }
 ): Promise<IResponseSuccessJson<Certificate> | Failures> => {
   // prints a certificate into huma nreadable text - italian only for now
   const printer = printers[PreferredLanguageEnum.it_IT];
-
-  // wraps http request and handles generic exceptions
-  const certificateResponse = tryCatch<
-    Failures,
-    Either<IResponseErrorInternal, DGCGetCertificateResponses>
-  >(
-    () =>
-      dgcClient
-        .getCertificateByAutAndCF({
-          body: {
-            authCodeSHA256,
-            cfSHA256: fiscal_code // FIXME: hash this cf
-          }
-        })
-        // this happens when the response payload cannot be parsed
-        .then(_ => _.mapLeft(e => ResponseErrorInternal(readableReport(e)))),
-    // this is an unhandled error during connection - it might be timeout
-    _ => ResponseErrorInternal(toError(_).message)
-  ).chain(fromEither);
+  const hashedFiscalCode = toSHA256(fiscal_code);
 
   return (
-    certificateResponse
+    taskEither
+      .of<Failures, string>(hashedFiscalCode)
+      .map(hasedFc => dgcClientSelector.select(hasedFc))
+      // wraps http request and handles generic exceptions
+      .chain(dgcClient =>
+        tryCatch<
+          Failures,
+          Either<IResponseErrorInternal, DGCGetCertificateResponses>
+        >(
+          () =>
+            dgcClient
+              .getCertificateByAutAndCF({
+                body: {
+                  authCodeSHA256,
+                  cfSHA256: hashedFiscalCode
+                }
+              })
+              // this happens when the response payload cannot be parsed
+              .then(_ =>
+                _.mapLeft(e => ResponseErrorInternal(readableReport(e)))
+              ),
+          // this is an unhandled error during connection - it might be timeout
+          _ => ResponseErrorInternal(toError(_).message)
+        ).chain(fromEither)
+      )
       // separates bad cases from success, and assign each failure its correct response
       .chain<SearchSingleQrCodeResponseDTO>(e => {
         switch (e.status) {
@@ -132,9 +139,9 @@ export const GetCertificateHandler = (
 };
 
 export const getGetCertificateHandler = (
-  dgcClient: DGCClient
+  dgcClientSelector: ReturnType<typeof createDGCClientSelector>
 ): express.RequestHandler => {
-  const handler = GetCertificateHandler(dgcClient);
+  const handler = GetCertificateHandler(dgcClientSelector);
 
   return wrapRequestHandler(
     withRequestMiddlewares(
