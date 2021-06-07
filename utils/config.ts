@@ -9,21 +9,39 @@ import * as t from "io-ts";
 import { ValidationError } from "io-ts";
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
+import { HttpsUrlFromString } from "@pagopa/ts-commons/lib/url";
+
+const DCGConfigPROD = t.interface({
+  DGC_PROD_CLIENT_CERT: NonEmptyString,
+  DGC_PROD_CLIENT_KEY: NonEmptyString,
+  DGC_PROD_HOST: HttpsUrlFromString
+});
+
+const DCGConfigUAT = t.interface({
+  DGC_UAT_CLIENT_CERT: NonEmptyString,
+  DGC_UAT_CLIENT_KEY: NonEmptyString,
+  DGC_UAT_HOST: HttpsUrlFromString
+});
+
+const DCGConfigLOAD = t.interface({
+  DGC_LOAD_CLIENT_CERT: NonEmptyString,
+  DGC_LOAD_CLIENT_KEY: NonEmptyString,
+  DGC_LOAD_HOST: HttpsUrlFromString
+});
 
 // global app configuration
 export type IConfig = t.TypeOf<typeof IConfig>;
 // eslint-disable-next-line @typescript-eslint/ban-types
-export const IConfig = t.interface({
-  DGC_LOAD_TEST_CLIENT_CERT: NonEmptyString,
-  DGC_LOAD_TEST_CLIENT_KEY: NonEmptyString,
-  DGC_PROD_CLIENT_CERT: NonEmptyString,
-  DGC_PROD_CLIENT_KEY: NonEmptyString,
-  DGC_UAT_CLIENT_CERT: NonEmptyString,
-  DGC_UAT_CLIENT_KEY: NonEmptyString,
-  FNSERVICES_API_KEY: NonEmptyString,
-  FNSERVICES_API_URL: NonEmptyString,
-  isProduction: t.boolean
-});
+export const IConfig = t.intersection([
+  DCGConfigPROD,
+  DCGConfigUAT,
+  DCGConfigLOAD,
+  t.interface({
+    FNSERVICES_API_KEY: NonEmptyString,
+    FNSERVICES_API_URL: NonEmptyString,
+    isProduction: t.boolean
+  })
+]);
 
 // No need to re-evaluate this object for each call
 const errorOrConfig: t.Validation<IConfig> = IConfig.decode({
