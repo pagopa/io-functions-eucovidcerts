@@ -15,7 +15,7 @@ const config = getConfigOrThrow();
 const dgcClientSelector = createDGCClientSelector(config, process.env);
 
 // Add express route
-app.get("/api/v1/certificate", getGetCertificateHandler(dgcClientSelector));
+app.post("/api/v1/certificate", getGetCertificateHandler(dgcClientSelector));
 
 const azureFunctionHandler = createAzureFunctionHandler(app);
 
