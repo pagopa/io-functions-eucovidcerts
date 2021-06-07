@@ -11,23 +11,28 @@ import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { FiscalCode, NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import { HttpsUrlFromString } from "@pagopa/ts-commons/lib/url";
 import { CommaSeparatedListOf } from "./comma-separated-list";
+import { StringFromBase64 } from "./conversions";
 
 const DCGConfigPROD = t.interface({
-  DGC_PROD_CLIENT_CERT: NonEmptyString,
-  DGC_PROD_CLIENT_KEY: NonEmptyString,
+  DGC_PROD_CLIENT_CERT: t.string.pipe(StringFromBase64).pipe(NonEmptyString),
+  DGC_PROD_CLIENT_KEY: t.string.pipe(StringFromBase64).pipe(NonEmptyString),
   DGC_PROD_URL: HttpsUrlFromString
 });
 
 const DCGConfigUAT = t.interface({
-  DGC_UAT_CLIENT_CERT: NonEmptyString,
-  DGC_UAT_CLIENT_KEY: NonEmptyString,
+  DGC_UAT_CLIENT_CERT: t.string.pipe(StringFromBase64).pipe(NonEmptyString),
+  DGC_UAT_CLIENT_KEY: t.string.pipe(StringFromBase64).pipe(NonEmptyString),
   DGC_UAT_FISCAL_CODES: CommaSeparatedListOf(FiscalCode),
   DGC_UAT_URL: HttpsUrlFromString
 });
 
 const DCGConfigLOAD = t.interface({
-  DGC_LOAD_TEST_CLIENT_CERT: NonEmptyString,
-  DGC_LOAD_TEST_CLIENT_KEY: NonEmptyString,
+  DGC_LOAD_TEST_CLIENT_CERT: t.string
+    .pipe(StringFromBase64)
+    .pipe(NonEmptyString),
+  DGC_LOAD_TEST_CLIENT_KEY: t.string
+    .pipe(StringFromBase64)
+    .pipe(NonEmptyString),
   DGC_LOAD_TEST_URL: HttpsUrlFromString,
   LOAD_TEST_FISCAL_CODES: CommaSeparatedListOf(FiscalCode)
 });
