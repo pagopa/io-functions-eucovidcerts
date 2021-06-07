@@ -108,7 +108,7 @@ definitions:
         type: string
         enum:
           - revoked
-      revoke_info:
+      info:
         description: |-
           A human-readable message, in plain text or Markdown format, 
           which explains why the certificate has been revoked
@@ -130,7 +130,7 @@ definitions:
         type: string
         enum:
           - expired
-      expired_info:
+      info:
         description: |-
           A human-readable message, in plain text or Markdown format,
           which explains that the Certificate is expired
@@ -138,7 +138,7 @@ definitions:
         maxLength: 2500
     required:
       - status
-      - expired_info
+      - info
   FiscalCode:
     type: string
     description: User's fiscal code.
@@ -184,7 +184,6 @@ definitions:
         type: string
         enum:
           - image/png
-          - image/svg
       content:
         description: a base64 string representing the image to be shown
         type: string

@@ -10,13 +10,13 @@ describe("Certificate", () => {
     const aRevokedCertificate = {
       uvci: "000",
       status: "revoked",
-      revoke_info: "bla bla bla",
+      info: "bla bla bla",
       revoked_on: "2018-10-13T00:00:00.000Z"
     };
 
     const aRevokedCertificateDecoded: RevokedCertificate = {
       uvci: "000",
-      revoke_info: "bla bla bla",
+      info: "bla bla bla",
       revoked_on: new Date("2018-10-13T00:00:00.000Z"),
       status: RevokedStatusEnum.revoked
     };
