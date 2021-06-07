@@ -1,7 +1,7 @@
 {
   "bindings": [
     {
-      "queueName": "%EUCOVIDCERT_NOTIFY_QUEUE_NAME%",
+      "queueName": "%EUCOVIDCERT_PROFILE_CREATED_QUEUE_NAME%",
       "connection": "EventsQueueStorageConnection",
       "name": "inputFiscalCode",
       "type": "queueTrigger",
@@ -11,7 +11,7 @@
       "type": "queue",
       "direction": "out",
       "name": "outputFiscalCode",
-      "queueName": "notify-new-profile",
+      "queueName": "%EUCOVIDCERT_NOTIFY_NEW_PROFILE_QUEUE_NAME%",
       "connection": "QueueStorageConnection"
     }
   ],

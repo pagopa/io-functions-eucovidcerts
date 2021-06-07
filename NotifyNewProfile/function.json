@@ -1,7 +1,7 @@
 {
   "bindings": [
     {
-      "queueName": "notify-new-profile",
+      "queueName": "%EUCOVIDCERT_NOTIFY_NEW_PROFILE_QUEUE_NAME%",
       "connection": "QueueStorageConnection",
       "name": "fiscalCode",
       "type": "queueTrigger",
