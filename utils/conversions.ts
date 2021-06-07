@@ -7,7 +7,7 @@ import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
  * @param source
  * @returns
  */
-export const toHash = (source: FiscalCode): string =>
+export const toSHA256 = (source: FiscalCode): string =>
   crypto
     .createHash("sha256")
     .update(source)

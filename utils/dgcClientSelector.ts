@@ -1,6 +1,7 @@
-import { Client as DGCClient } from "../generated/dgc/client";
+import { Client as DGCClient, createClient } from "../generated/dgc/client";
 import { IConfig } from "./config";
-import { toHash } from "./hash";
+import { toSHA256 } from "./conversions";
+import { getFetchWithClientCertificate } from "./httpsAgent";
 
 /**
  * Defines a selector object of a type T.
@@ -11,30 +12,63 @@ interface ISelector<T> {
 }
 
 /**
- * Build a selector object for DGC http client
+ * Build a selector object for DGC https client
  *
- * @param param0
+ * @param config Function configuration
+ * @param env NodeJS process env variables
  * @returns
  */
-export const createDGCClientSelector = ({
-  TEST_FISCAL_CODES_UAT,
-  TEST_FISCAL_CODES_LOAD
-}: IConfig): ISelector<DGCClient> => {
+export const createDGCClientSelector = (
+  {
+    DGC_UAT_CLIENT_CERT,
+    DGC_UAT_CLIENT_KEY,
+    DGC_UAT_FISCAL_CODES,
+    DGC_UAT_URL,
+    DGC_LOAD_CLIENT_CERT,
+    DGC_LOAD_CLIENT_KEY,
+    LOAD_TEST_FISCAL_CODES,
+    DGC_LOAD_TEST_URL,
+    DGC_PROD_CLIENT_CERT,
+    DGC_PROD_CLIENT_KEY,
+    DGC_PROD_URL
+  }: IConfig,
+  env: NodeJS.ProcessEnv
+): ISelector<DGCClient> => {
   // calculate hashes in advance
-  const hashedTestDGC = TEST_FISCAL_CODES_UAT.map(toHash);
-  const hashedTestLoad = TEST_FISCAL_CODES_LOAD.map(toHash);
+  const hashedUATFiscalCodes = DGC_UAT_FISCAL_CODES.map(toSHA256);
+  const hashedLoadTestFiscalCodes = LOAD_TEST_FISCAL_CODES.map(toSHA256);
 
-  // TODO: use real client
-  const prodClient = {} as DGCClient;
-  const uatClient = {} as DGCClient;
-  const loadClient = {} as DGCClient;
+  const prodClient = createClient({
+    baseUrl: DGC_PROD_URL.href,
+    fetchApi: getFetchWithClientCertificate(
+      env,
+      DGC_PROD_CLIENT_CERT,
+      DGC_PROD_CLIENT_KEY
+    )
+  });
+  const uatClient = createClient({
+    baseUrl: DGC_UAT_URL.href,
+    fetchApi: getFetchWithClientCertificate(
+      env,
+      DGC_UAT_CLIENT_CERT,
+      DGC_UAT_CLIENT_KEY
+    )
+  });
+  const loadTestClient = createClient({
+    baseUrl: DGC_LOAD_TEST_URL.href,
+    fetchApi: getFetchWithClientCertificate(
+      env,
+      DGC_LOAD_CLIENT_CERT,
+      DGC_LOAD_CLIENT_KEY
+    )
+  });
 
   return {
     select: (hashedFiscalCode): DGCClient =>
-      hashedTestDGC.includes(hashedFiscalCode)
+      hashedUATFiscalCodes.includes(hashedFiscalCode)
         ? uatClient
-        : hashedTestLoad.includes(hashedFiscalCode)
-        ? loadClient
+        : hashedLoadTestFiscalCodes.includes(hashedFiscalCode)
+        ? loadTestClient
         : prodClient
   };
 };

@@ -10,7 +10,7 @@ const config = getConfigOrThrow();
  */
 export const clients = {
   LOAD: createDGCClient({
-    baseUrl: config.DGC_LOAD_HOST.href,
+    baseUrl: config.DGC_LOAD_TEST_URL.href,
     fetchApi: getFetchWithClientCertificate(
       process.env,
       config.DGC_LOAD_CLIENT_CERT,
@@ -18,7 +18,7 @@ export const clients = {
     )
   }),
   PROD: createDGCClient({
-    baseUrl: config.DGC_PROD_HOST.href,
+    baseUrl: config.DGC_PROD_URL.href,
     fetchApi: getFetchWithClientCertificate(
       process.env,
       config.DGC_PROD_CLIENT_CERT,
@@ -26,7 +26,7 @@ export const clients = {
     )
   }),
   UAT: createDGCClient({
-    baseUrl: config.DGC_LOAD_HOST.href,
+    baseUrl: config.DGC_UAT_URL.href,
     fetchApi: getFetchWithClientCertificate(
       process.env,
       config.DGC_UAT_CLIENT_CERT,
