@@ -1,4 +1,6 @@
+import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
+import { HttpsUrlFromString } from "@pagopa/ts-commons/lib/url";
 import { createPoolSelector } from "../serviceClient";
 
 const aFiscalCodeSet = [
@@ -13,18 +15,28 @@ const aFiscalCodeSet = [
   "GGGGGP25A01H501Z" //f079e7dce3e56e6a3d19fc3a2ef9c4473c2644d917ec45bc72cd0a75dfbbdbb0
 ] as FiscalCode[];
 
+const elem1 = HttpsUrlFromString.decode("https://elem1.com").getOrElseL(_ =>
+  fail(`Failed to decode elem1: ${readableReport(_)}`)
+);
+const elem2 = HttpsUrlFromString.decode("https://elem2.com").getOrElseL(_ =>
+  fail(`Failed to decode elem2: ${readableReport(_)}`)
+);
+const elem3 = HttpsUrlFromString.decode("https://elem3.com").getOrElseL(_ =>
+  fail(`Failed to decode elem3: ${readableReport(_)}`)
+);
+
 describe("createPoolSelector", () => {
-  it("should select the element in a pool on one", () => {
-    const pool = ["elem1"];
+  it("should select the element in a pool of one", () => {
+    const pool = [elem1];
     const selector = createPoolSelector(pool);
 
     const selected = aFiscalCodeSet.map(selector);
 
-    expect(selected.every(e => e === "elem1")).toBe(true);
+    expect(selected.every(e => e.href === elem1.href)).toBe(true);
   });
 
   it("should select the same element deterministically", () => {
-    const pool = ["elem1", "elem2", "elem3"];
+    const pool = [elem1, elem2, elem3];
 
     const selector = createPoolSelector(pool);
 
@@ -41,22 +53,22 @@ describe("createPoolSelector", () => {
   });
 
   it("should select different element for different cf", () => {
-    const pool = ["elem1", "elem2", "elem3"];
+    const pool = [elem1, elem2, elem3];
 
     const selector = createPoolSelector(pool);
 
     const selected = aFiscalCodeSet.map(selector);
 
-    expect(selected).toEqual([
-      "elem3",
-      "elem2",
-      "elem2",
-      "elem1",
-      "elem2",
-      "elem1",
-      "elem2",
-      "elem2",
-      "elem3"
+    expect(selected.map(e => e.href)).toEqual([
+      elem3.href,
+      elem2.href,
+      elem2.href,
+      elem1.href,
+      elem2.href,
+      elem1.href,
+      elem2.href,
+      elem2.href,
+      elem3.href
     ]);
   });
 });
