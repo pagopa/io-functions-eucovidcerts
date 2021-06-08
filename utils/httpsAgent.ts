@@ -5,10 +5,12 @@ import nodeFetch from "node-fetch";
 export const getFetchWithClientCertificate = (
   env: NodeJS.ProcessEnv,
   cert: string,
-  key: string
+  key: string,
+  ca: string
 ): typeof fetch => {
   const httpsAgent = new https.Agent({
     ...getKeepAliveAgentOptions(env),
+    ca,
     cert,
     key
   });
