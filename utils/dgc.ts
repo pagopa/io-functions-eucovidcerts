@@ -14,7 +14,8 @@ export const clients = {
     fetchApi: getFetchWithClientCertificate(
       process.env,
       config.DGC_LOAD_TEST_CLIENT_CERT,
-      config.DGC_LOAD_TEST_CLIENT_KEY
+      config.DGC_LOAD_TEST_CLIENT_KEY,
+      config.DGC_LOAD_TEST_SERVER_CA
     )
   }),
   PROD: createDGCClient({
@@ -22,7 +23,8 @@ export const clients = {
     fetchApi: getFetchWithClientCertificate(
       process.env,
       config.DGC_PROD_CLIENT_CERT,
-      config.DGC_PROD_CLIENT_KEY
+      config.DGC_PROD_CLIENT_KEY,
+      config.DGC_PROD_SERVER_CA
     )
   }),
   UAT: createDGCClient({
@@ -30,7 +32,8 @@ export const clients = {
     fetchApi: getFetchWithClientCertificate(
       process.env,
       config.DGC_UAT_CLIENT_CERT,
-      config.DGC_UAT_CLIENT_KEY
+      config.DGC_UAT_CLIENT_KEY,
+      config.DGC_UAT_SERVER_CA
     )
   })
 };
