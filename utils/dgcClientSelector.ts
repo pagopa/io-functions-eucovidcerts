@@ -20,17 +20,17 @@ interface ISelector<T> {
  */
 export const createDGCClientSelector = (
   {
-    DGC_UAT_CLIENT_CA,
+    DGC_UAT_SERVER_CA,
     DGC_UAT_CLIENT_CERT,
     DGC_UAT_CLIENT_KEY,
     DGC_UAT_FISCAL_CODES,
     DGC_UAT_URL,
-    DGC_LOAD_TEST_CLIENT_CA,
+    DGC_LOAD_TEST_SERVER_CA,
     DGC_LOAD_TEST_CLIENT_CERT,
     DGC_LOAD_TEST_CLIENT_KEY,
     LOAD_TEST_FISCAL_CODES,
     DGC_LOAD_TEST_URL,
-    DGC_PROD_CLIENT_CA,
+    DGC_PROD_SERVER_CA,
     DGC_PROD_CLIENT_CERT,
     DGC_PROD_CLIENT_KEY,
     DGC_PROD_URL
@@ -47,7 +47,7 @@ export const createDGCClientSelector = (
       env,
       DGC_PROD_CLIENT_CERT,
       DGC_PROD_CLIENT_KEY,
-      DGC_PROD_CLIENT_CA
+      DGC_PROD_SERVER_CA
     )
   });
   const uatClient = createClient({
@@ -56,7 +56,7 @@ export const createDGCClientSelector = (
       env,
       DGC_UAT_CLIENT_CERT,
       DGC_UAT_CLIENT_KEY,
-      DGC_PROD_CLIENT_CA
+      DGC_UAT_SERVER_CA
     )
   });
   const loadTestClient = createClient({
@@ -65,7 +65,7 @@ export const createDGCClientSelector = (
       env,
       DGC_LOAD_TEST_CLIENT_CERT,
       DGC_LOAD_TEST_CLIENT_KEY,
-      DGC_PROD_CLIENT_CA
+      DGC_LOAD_TEST_SERVER_CA
     )
   });
 

@@ -13,24 +13,24 @@ import { HttpsUrlFromString } from "@pagopa/ts-commons/lib/url";
 import { CommaSeparatedListOf } from "./comma-separated-list";
 
 const DCGConfigPROD = t.interface({
-  DGC_PROD_CLIENT_CA: NonEmptyString,
   DGC_PROD_CLIENT_CERT: NonEmptyString,
   DGC_PROD_CLIENT_KEY: NonEmptyString,
+  DGC_PROD_SERVER_CA: NonEmptyString,
   DGC_PROD_URL: HttpsUrlFromString
 });
 
 const DCGConfigUAT = t.interface({
-  DGC_UAT_CLIENT_CA: NonEmptyString,
   DGC_UAT_CLIENT_CERT: NonEmptyString,
   DGC_UAT_CLIENT_KEY: NonEmptyString,
   DGC_UAT_FISCAL_CODES: CommaSeparatedListOf(FiscalCode),
+  DGC_UAT_SERVER_CA: NonEmptyString,
   DGC_UAT_URL: HttpsUrlFromString
 });
 
 const DCGConfigLOAD = t.interface({
-  DGC_LOAD_TEST_CLIENT_CA: NonEmptyString,
   DGC_LOAD_TEST_CLIENT_CERT: NonEmptyString,
   DGC_LOAD_TEST_CLIENT_KEY: NonEmptyString,
+  DGC_LOAD_TEST_SERVER_CA: NonEmptyString,
   DGC_LOAD_TEST_URL: HttpsUrlFromString,
   LOAD_TEST_FISCAL_CODES: CommaSeparatedListOf(FiscalCode)
 });
