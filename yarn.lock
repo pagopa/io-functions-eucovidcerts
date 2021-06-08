@@ -1761,6 +1761,11 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.0.tgz#89b4d199ab2bee49de164ea02b89ce462d71b767"
   integrity sha1-ibTRmasr7kneFk6gK4nORi1xt2c=
 
+base45@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/base45/-/base45-3.0.0.tgz#6e6217797884e02c206529c088e7bff0bab1456b"
+  integrity sha512-SWayzDiUFaga+G3X/oL2XIDbjhdpmBGUqLU6T7zB89aNWYnEcfa36DIWW95rxn0sWAWbwrKcSyqcWw6AApYwsg==
+
 base@^0.11.1:
   version "0.11.2"
   resolved "https://registry.yarnpkg.com/base/-/base-0.11.2.tgz#7bde5ced145b6d551a90db87f83c558b4eb48a8f"
