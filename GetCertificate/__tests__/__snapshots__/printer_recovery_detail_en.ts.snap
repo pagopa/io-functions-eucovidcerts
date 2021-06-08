@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Printer - Recovery - Detail - en_GB should print its markdown 1`] = `
+"
+## Recovery Certificate
+
+Disease or agent the citizen has recovered from  
+**COVID-19**
+
+Date of first positive NAAT test result  
+**2021-04-10**  
+
+Member State of test  
+**IT** 
+
+Certificate issuer  
+**IT** 
+  
+Certificate valid From  
+**2021-04-20**  
+  
+Certificate valid Until  
+**2021-09-10**  
+
+***
+  
+*This certificate is not a travel document.  
+The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, including in consideration of the new variants of the virus.*  
+*Before traveling, please check the public health measures applied in the place of destination and the related restrictions also by consulting the website:*   
+[https://reopen.europa.eu](https://reopen.europa.eu)
+  
+***
+  
+For more information and to download the certificate in printable PDF format go to
+[www.dgc.gov.it](https://www.dgc.gov.it)
+"
+`;
