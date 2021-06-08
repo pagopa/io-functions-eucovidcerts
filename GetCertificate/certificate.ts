@@ -1,21 +1,87 @@
+/* eslint-disable sort-keys */
 /**
  * Certificate parsing utilities
  */
-import { PreferredLanguage } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
+import {
+  PreferredLanguage,
+  PreferredLanguageEnum
+} from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
+import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import { Either, left } from "fp-ts/lib/Either";
+import * as t from "io-ts";
+import { WithinRangeInteger } from "@pagopa/ts-commons/lib/numbers";
+import { DateFromString } from "@pagopa/ts-commons/lib/dates";
+import { toTWithMap } from "../utils/conversions";
+import { diseaseAgentTargeted } from "./valuesets/diseaseAgentTargeted";
+import { vaccineProphylaxis } from "./valuesets/vaccineProphylaxis";
+import { vaccineMedicinalProduct } from "./valuesets/vaccineMedicinalProduct";
+import { marketingAuthorizationHolder } from "./valuesets/marketingAuthorizationHolders";
+import {
+  CertificatePrinter,
+  createDetailsPrinter,
+  createInfoPrinter
+} from "./printer";
 
-/**
- * Schema of a Certificate
- */
-interface IParsedCertificate {
-  readonly id: string;
-  // TODO: add all meaningful fields
-}
+type PersonName = t.TypeOf<typeof PersonName>;
+const PersonName = t.interface({
+  fn: t.string, // Familiy Name
+  fnt: NonEmptyString, // Standardized Family Name
+  gn: t.string, // Given Name
+  gnt: t.string // Standardized Given Name
+});
 
-/**
- * Signature of a function that creates a text from a Certificate object
- */
-type CertificatePrinter = (e: IParsedCertificate) => string;
+export type VaccinationEntry = t.TypeOf<typeof VaccinationEntry>;
+export const VaccinationEntry = t.interface({
+  tg: t.string.pipe(toTWithMap(diseaseAgentTargeted)), // disease or agent targeted
+  vp: t.string.pipe(toTWithMap(vaccineProphylaxis)), // vaccine or prophylaxis
+  mp: t.string.pipe(toTWithMap(vaccineMedicinalProduct)), // vaccine medicinal product
+  ma: t.string.pipe(toTWithMap(marketingAuthorizationHolder)), // Marketing Authorization Holder
+  dn: WithinRangeInteger(1, 9), // Dose Number
+  sd: WithinRangeInteger(1, 9), // Total Series of Doses
+  dt: DateFromString, // Date of Vaccination
+  co: NonEmptyString, // Country of Vaccination
+  is: NonEmptyString, // Certificate Issuer
+  ci: NonEmptyString // Unique Certificate Identifier: UVCI
+});
+
+export type TestEntry = t.TypeOf<typeof TestEntry>;
+export const TestEntry = t.interface({
+  tg: t.string.pipe(toTWithMap(diseaseAgentTargeted)), // disease or agent targeted
+  vp: t.string.pipe(toTWithMap(vaccineProphylaxis)), // vaccine or prophylaxis
+  mp: t.string.pipe(toTWithMap(vaccineMedicinalProduct)), // vaccine medicinal product
+  ma: t.string.pipe(toTWithMap(marketingAuthorizationHolder)), // Marketing Authorization Holder
+  dn: WithinRangeInteger(1, 9), // Dose Number
+  sd: WithinRangeInteger(1, 9), // Total Series of Doses
+  dt: DateFromString, // Date of Vaccination
+  co: NonEmptyString, // Country of Vaccination
+  is: NonEmptyString, // Certificate Issuer
+  ci: NonEmptyString // Unique Certificate Identifier: UVCI
+});
+
+export type ParsedCertificate = t.TypeOf<typeof ParsedCertificate>;
+export const ParsedCertificate = t.interface({
+  ver: NonEmptyString,
+  nam: PersonName,
+  dob: DateFromString,
+  v: t.readonlyArray<typeof VaccinationEntry>(VaccinationEntry),
+  t: t.readonlyArray<typeof TestEntry>(TestEntry)
+});
+
+export const VacCertificate = t.interface({
+  ver: NonEmptyString,
+  nam: PersonName,
+  dob: DateFromString,
+  v: t.readonlyArray<typeof VaccinationEntry>(VaccinationEntry)
+});
+export const TestCertificate = t.interface({
+  ver: NonEmptyString,
+  nam: PersonName,
+  dob: DateFromString,
+  t: t.readonlyArray<typeof TestEntry>(TestEntry)
+});
+
+export type Certificates = t.TypeOf<typeof Certificates>;
+export const Certificates = t.union([VacCertificate, TestCertificate]);
 
 /**
  * The default info printer, used to render a markdown text from a certificate for languages we don't have a specific translation
@@ -23,7 +89,9 @@ type CertificatePrinter = (e: IParsedCertificate) => string;
  * @param certificate a Certificate object
  * @returns a markdown print of the Certificate
  */
-const defaultPrintInfo: CertificatePrinter = _certificate => ``;
+const defaultPrintInfo: CertificatePrinter = createInfoPrinter(
+  PreferredLanguageEnum.en_GB
+);
 
 /**
  * The default detail printer, used to render a markdown text from a certificate for languages we don't have a specific translation
@@ -31,7 +99,9 @@ const defaultPrintInfo: CertificatePrinter = _certificate => ``;
  * @param certificate a Certificate object
  * @returns a markdown print of the Certificate
  */
-const defaultPrintDetail: CertificatePrinter = _certificate => ``;
+const defaultPrintDetail: CertificatePrinter = createDetailsPrinter(
+  PreferredLanguageEnum.en_GB
+);
 
 /**
  * Collection of printers for every supported language.
@@ -45,13 +115,19 @@ export const printers: Record<
   // eslint-disable-next-line @typescript-eslint/naming-convention
   de_DE: { detail: defaultPrintDetail, info: defaultPrintInfo },
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  en_GB: { detail: defaultPrintDetail, info: defaultPrintInfo },
+  en_GB: {
+    detail: createDetailsPrinter(PreferredLanguageEnum.en_GB),
+    info: createInfoPrinter(PreferredLanguageEnum.en_GB)
+  },
   // eslint-disable-next-line @typescript-eslint/naming-convention
   es_ES: { detail: defaultPrintDetail, info: defaultPrintInfo },
   // eslint-disable-next-line @typescript-eslint/naming-convention
   fr_FR: { detail: defaultPrintDetail, info: defaultPrintInfo },
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  it_IT: { detail: defaultPrintDetail, info: defaultPrintInfo }
+  it_IT: {
+    detail: createDetailsPrinter(PreferredLanguageEnum.it_IT),
+    info: createInfoPrinter(PreferredLanguageEnum.it_IT)
+  }
 };
 
 /**
@@ -62,5 +138,5 @@ export const printers: Record<
  */
 export const parseQRCode = (
   _qrcode: string
-): Either<string, IParsedCertificate> =>
+): Either<string, ParsedCertificate> =>
   left(`QRCode parsing not yet implemented`);
