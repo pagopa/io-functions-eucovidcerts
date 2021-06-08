@@ -42,6 +42,7 @@ export const createDGCClientSelector = (
   const hashedLoadTestFiscalCodes = LOAD_TEST_FISCAL_CODES.map(toSHA256);
 
   const prodClient = createClient({
+    basePath: "",
     baseUrl: DGC_PROD_URL.href,
     fetchApi: getFetchWithClientCertificate(
       env,
@@ -51,6 +52,7 @@ export const createDGCClientSelector = (
     )
   });
   const uatClient = createClient({
+    basePath: "",
     baseUrl: DGC_UAT_URL.href,
     fetchApi: getFetchWithClientCertificate(
       env,
@@ -60,6 +62,7 @@ export const createDGCClientSelector = (
     )
   });
   const loadTestClient = createClient({
+    basePath: "",
     baseUrl: DGC_LOAD_TEST_URL.href,
     fetchApi: getFetchWithClientCertificate(
       env,
