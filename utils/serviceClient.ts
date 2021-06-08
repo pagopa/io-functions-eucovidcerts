@@ -11,8 +11,8 @@ import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 
 import { toError } from "fp-ts/lib/Either";
 import { Context } from "@azure/functions";
-import { toSHA256 } from "./conversions";
 import { ValidUrl } from "@pagopa/ts-commons/lib/url";
+import { toSHA256 } from "./conversions";
 
 /**
  * Filter incoming header to only consider headers we need
