@@ -9,7 +9,7 @@ import * as t from "io-ts";
 import { ValidationError } from "io-ts";
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { FiscalCode, NonEmptyString } from "@pagopa/ts-commons/lib/strings";
-import { HttpsUrlFromString } from "@pagopa/ts-commons/lib/url";
+import { HttpsUrlFromString } from "./url";
 import { CommaSeparatedListOf } from "./comma-separated-list";
 
 const DCGConfigPROD = t.interface({
