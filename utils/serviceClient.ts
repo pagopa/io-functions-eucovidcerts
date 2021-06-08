@@ -12,6 +12,7 @@ import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { toError } from "fp-ts/lib/Either";
 import { Context } from "@azure/functions";
 import { toSHA256 } from "./conversions";
+import { ValidUrl } from "@pagopa/ts-commons/lib/url";
 
 /**
  * Filter incoming header to only consider headers we need
@@ -53,9 +54,16 @@ export interface IServiceClient {
   ) => te.TaskEither<IResponseErrorInternal, Response>;
 }
 
+/**
+ * Given a pool of URLs, build a selector that retrieves one url after a provided fiscal code
+ * The purpose is to evenly distribute requests over the pool of different URLs
+ *
+ * @param pool the pool of urls
+ * @returns the selector function
+ */
 export const createPoolSelector = (
-  pool: ReadonlyArray<string>
-): ((fiscalCode: FiscalCode) => string) => {
+  pool: ReadonlyArray<ValidUrl>
+): ((fiscalCode: FiscalCode) => ValidUrl) => {
   const alphabet = Array.from({ length: 16 }).map((_, i) => i.toString(16));
   // eslint-disable-next-line sonarjs/no-unused-collection
   const chunks = Array<ReadonlyArray<string>>();
@@ -66,7 +74,7 @@ export const createPoolSelector = (
     // eslint-disable-next-line functional/immutable-data
     chunks.push(alphabet.slice(i * chunkSize, i * chunkSize + chunkSize));
   }
-  return (fiscalCode): string => {
+  return (fiscalCode): ValidUrl => {
     const [firstChar] = toSHA256(fiscalCode);
     const i = chunks.findIndex(e => e.includes(firstChar));
     return pool[i] || pool[0];
@@ -77,13 +85,13 @@ export const createPoolSelector = (
  * This client is a proxy on fns-services
  *
  * @param fetchApi
- * @param apiUrls
- * @param apiKey
+ * @param apiUrls a pool of base url for different instances of fn3-services
+ * @param apiKey apykey to autenticate requests towards fn3-services. Must be the same for all instances
  * @returns
  */
 export const createClient = (
   fetchApi: typeof fetch,
-  apiUrls: ReadonlyArray<string>,
+  apiUrls: ReadonlyArray<ValidUrl>,
   apiKey: string
 ): IServiceClient => {
   const selectApiUrl = createPoolSelector(apiUrls);
@@ -96,7 +104,7 @@ export const createClient = (
       te
         .tryCatch(
           () =>
-            fetchApi(`${selectApiUrl(fiscalCode)}/profiles`, {
+            fetchApi(`${selectApiUrl(fiscalCode).href}/profiles`, {
               body: JSON.stringify({ fiscal_code: fiscalCode }),
               headers: {
                 ...proxyHeaders(reqHeaders),
@@ -132,7 +140,7 @@ export const createClient = (
     ): ReturnType<IServiceClient["submitMessageForUser"]> =>
       te.tryCatch(
         () =>
-          fetchApi(`${selectApiUrl(fiscalCode)}/messages`, {
+          fetchApi(`${selectApiUrl(fiscalCode).href}/messages`, {
             body: JSON.stringify(reqPayload),
             headers: {
               ...proxyHeaders(reqHeaders),
