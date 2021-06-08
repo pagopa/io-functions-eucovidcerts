@@ -48,5 +48,4 @@ IdUnique certificate identifier
 ***
   
 For more information and to download the certificate in printable PDF format go to
-[www.dgc.gov.it](https://www.dgc.gov.it)
-`;
+[www.dgc.gov.it](https://www.dgc.gov.it)`;

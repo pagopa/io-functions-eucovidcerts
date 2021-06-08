@@ -6,7 +6,7 @@ import {
 } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { ITranslatable } from "../../utils/conversions";
 
-export const covid19LabTestTypes = new Map<string, ITranslatable>([
+export const labTestTypes = new Map<string, ITranslatable>([
   [
     "LP6464-4",
     {
