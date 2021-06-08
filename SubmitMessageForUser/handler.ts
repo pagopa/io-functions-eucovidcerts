@@ -75,11 +75,13 @@ export const submitMessageForUser = (
       )
     )
     .chain(fiscal_code =>
-      client.getLimitedProfileByPost(
-        request.headers,
-        fiscal_code,
-        request.app.get("context") as Context
-      )
+      client
+        .getLimitedProfileByPost(
+          request.headers,
+          fiscal_code,
+          request.app.get("context") as Context
+        )
+        .map(e => ({ ...e, fiscal_code }))
     )
     .filterOrElse(
       profile => profile.sender_allowed,
@@ -87,6 +89,7 @@ export const submitMessageForUser = (
     )
     .chain(_ =>
       client.submitMessageForUser(
+        _.fiscal_code,
         request.headers,
         request.body,
         request.app.get("context") as Context

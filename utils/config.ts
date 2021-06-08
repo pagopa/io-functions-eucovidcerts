@@ -44,7 +44,7 @@ export const IConfig = t.intersection([
   DCGConfigLOAD,
   t.interface({
     FNSERVICES_API_KEY: NonEmptyString,
-    FNSERVICES_API_URL: NonEmptyString,
+    FNSERVICES_API_URL: CommaSeparatedListOf(HttpsUrlFromString),
     isProduction: t.boolean
   })
 ]);

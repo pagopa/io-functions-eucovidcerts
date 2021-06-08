@@ -11,6 +11,7 @@ import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 
 import { toError } from "fp-ts/lib/Either";
 import { Context } from "@azure/functions";
+import { toSHA256 } from "./conversions";
 
 /**
  * Filter incoming header to only consider headers we need
@@ -45,76 +46,102 @@ export interface IServiceClient {
     context: Context
   ) => te.TaskEither<IResponseErrorInternal, LimitedProfile>;
   readonly submitMessageForUser: (
+    fiscalCode: FiscalCode,
     reqHeaders: NodeJS.Dict<string | ReadonlyArray<string>>,
     reqPayload: Response,
     context: Context
   ) => te.TaskEither<IResponseErrorInternal, Response>;
 }
 
+export const createPoolSelector = (
+  pool: ReadonlyArray<string>
+): ((fiscalCode: FiscalCode) => string) => {
+  const alphabet = Array.from({ length: 16 }).map((_, i) => i.toString(16));
+  // eslint-disable-next-line sonarjs/no-unused-collection
+  const chunks = Array<ReadonlyArray<string>>();
+  const chunkSize = Math.ceil(alphabet.length / pool.length);
+
+  // eslint-disable-next-line functional/no-let
+  for (let i = 0; i < pool.length; i++) {
+    // eslint-disable-next-line functional/immutable-data
+    chunks.push(alphabet.slice(i * chunkSize, i * chunkSize + chunkSize));
+  }
+  return (fiscalCode): string => {
+    const [firstChar] = toSHA256(fiscalCode);
+    const i = chunks.findIndex(e => e.includes(firstChar));
+    return pool[i] || pool[0];
+  };
+};
+
 /**
  * This client is a proxy on fns-services
  *
  * @param fetchApi
- * @param apiUrl
+ * @param apiUrls
  * @param apiKey
  * @returns
  */
 export const createClient = (
   fetchApi: typeof fetch,
-  apiUrl: string,
+  apiUrls: ReadonlyArray<string>,
   apiKey: string
-): IServiceClient => ({
-  getLimitedProfileByPost: (
-    reqHeaders,
-    fiscalCode,
-    _context
-  ): ReturnType<IServiceClient["getLimitedProfileByPost"]> =>
-    te
-      .tryCatch(
+): IServiceClient => {
+  const selectApiUrl = createPoolSelector(apiUrls);
+  return {
+    getLimitedProfileByPost: (
+      reqHeaders,
+      fiscalCode,
+      _context
+    ): ReturnType<IServiceClient["getLimitedProfileByPost"]> =>
+      te
+        .tryCatch(
+          () =>
+            fetchApi(`${selectApiUrl(fiscalCode)}/profiles`, {
+              body: JSON.stringify({ fiscal_code: fiscalCode }),
+              headers: {
+                ...proxyHeaders(reqHeaders),
+                ["X-Functions-Key"]: apiKey
+              },
+              method: "POST"
+            }),
+          error => ResponseErrorInternal(String(error))
+        )
+        .chain(responseRaw =>
+          te
+            .tryCatch(
+              () => responseRaw.json(),
+              error => ResponseErrorInternal(String(error))
+            )
+            .filterOrElseL(
+              _ => responseRaw.ok,
+              _ =>
+                ResponseErrorInternal(`Error calling client api: ${String(_)}`)
+            )
+        )
+        .chain(response =>
+          te.fromEither(
+            LimitedProfile.decode(response).mapLeft(_ =>
+              ResponseErrorInternal(`Failed to decode profile`)
+            )
+          )
+        ),
+    submitMessageForUser: (
+      fiscalCode,
+      reqHeaders,
+      reqPayload
+    ): ReturnType<IServiceClient["submitMessageForUser"]> =>
+      te.tryCatch(
         () =>
-          fetchApi(`${apiUrl}/profiles`, {
-            body: JSON.stringify({ fiscal_code: fiscalCode }),
+          fetchApi(`${selectApiUrl(fiscalCode)}/messages`, {
+            body: JSON.stringify(reqPayload),
             headers: {
               ...proxyHeaders(reqHeaders),
               ["X-Functions-Key"]: apiKey
             },
+
             method: "POST"
           }),
-        error => ResponseErrorInternal(String(error))
+        e => ResponseErrorInternal(toError(e).message)
       )
-      .chain(responseRaw =>
-        te
-          .tryCatch(
-            () => responseRaw.json(),
-            error => ResponseErrorInternal(String(error))
-          )
-          .filterOrElseL(
-            _ => responseRaw.ok,
-            _ => ResponseErrorInternal(`Error calling client api: ${String(_)}`)
-          )
-      )
-      .chain(response =>
-        te.fromEither(
-          LimitedProfile.decode(response).mapLeft(_ =>
-            ResponseErrorInternal(`Failed to decode profile`)
-          )
-        )
-      ),
-  submitMessageForUser: (
-    reqHeaders,
-    reqPayload
-  ): ReturnType<IServiceClient["submitMessageForUser"]> =>
-    te.tryCatch(
-      () =>
-        fetchApi(`${apiUrl}/messages`, {
-          body: JSON.stringify(reqPayload),
-          headers: {
-            ...proxyHeaders(reqHeaders),
-            ["X-Functions-Key"]: apiKey
-          },
-
-          method: "POST"
-        }),
-      e => ResponseErrorInternal(toError(e).message)
-    )
-});
+  };
+};
