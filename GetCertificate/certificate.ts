@@ -21,6 +21,9 @@ import {
   createDetailsPrinter,
   createInfoPrinter
 } from "./printer";
+import { labTestTypes } from "./valuesets/labTestTypes";
+import { labTestManufactorers } from "./valuesets/labTestManufactorers";
+import { testResults } from "./valuesets/testResults";
 
 type PersonName = t.TypeOf<typeof PersonName>;
 const PersonName = t.interface({
@@ -47,25 +50,26 @@ export const VaccinationEntry = t.interface({
 export type TestEntry = t.TypeOf<typeof TestEntry>;
 export const TestEntry = t.interface({
   tg: t.string.pipe(toTWithMap(diseaseAgentTargeted)), // disease or agent targeted
-  vp: t.string.pipe(toTWithMap(vaccineProphylaxis)), // vaccine or prophylaxis
-  mp: t.string.pipe(toTWithMap(vaccineMedicinalProduct)), // vaccine medicinal product
-  ma: t.string.pipe(toTWithMap(marketingAuthorizationHolder)), // Marketing Authorization Holder
-  dn: WithinRangeInteger(1, 9), // Dose Number
-  sd: WithinRangeInteger(1, 9), // Total Series of Doses
-  dt: DateFromString, // Date of Vaccination
-  co: NonEmptyString, // Country of Vaccination
-  is: NonEmptyString, // Certificate Issuer
-  ci: NonEmptyString // Unique Certificate Identifier: UVCI
+  tt: t.string.pipe(toTWithMap(labTestTypes)), // covid-19 Lab Test Types
+  nm: t.string, // test name
+  ma: t.string.pipe(toTWithMap(labTestManufactorers)), // covid-19 Lab Test Manufactorers
+  sc: DateFromString, // Date/Time of Sample Collection
+  dr: DateFromString, // Date/Time of Test Result
+  tr: t.string.pipe(toTWithMap(testResults)), // Test Result
+  tc: t.string, // Testing Centre
+  co: t.string, // Country of Test
+  is: t.string, // Issuer
+  ci: t.string // Issuer
 });
 
-export type ParsedCertificate = t.TypeOf<typeof ParsedCertificate>;
-export const ParsedCertificate = t.interface({
-  ver: NonEmptyString,
-  nam: PersonName,
-  dob: DateFromString,
-  v: t.readonlyArray<typeof VaccinationEntry>(VaccinationEntry),
-  t: t.readonlyArray<typeof TestEntry>(TestEntry)
-});
+// export type ParsedCertificate = t.TypeOf<typeof ParsedCertificate>;
+// export const ParsedCertificate = t.interface({
+//   ver: NonEmptyString,
+//   nam: PersonName,
+//   dob: DateFromString,
+//   v: t.readonlyArray<typeof VaccinationEntry>(VaccinationEntry),
+//   t: t.readonlyArray<typeof TestEntry>(TestEntry)
+// });
 
 export const VacCertificate = t.interface({
   ver: NonEmptyString,
@@ -136,7 +140,5 @@ export const printers: Record<
  * @param qrcode
  * @returns either the Certificate object or a parsing error message
  */
-export const parseQRCode = (
-  _qrcode: string
-): Either<string, ParsedCertificate> =>
+export const parseQRCode = (_qrcode: string): Either<string, Certificates> =>
   left(`QRCode parsing not yet implemented`);

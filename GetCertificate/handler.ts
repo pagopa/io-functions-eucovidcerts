@@ -60,7 +60,7 @@ export const GetCertificateHandler = (
   dgcClientSelector: ReturnType<typeof createDGCClientSelector>
 ): GetCertificateHandler => async (
   _context,
-  { fiscal_code, auth_code: authCodeSHA256 }
+  { fiscal_code, auth_code: authCodeSHA256 /*, preferred_languages*/ }
 ): Promise<IResponseSuccessJson<Certificate> | Failures> => {
   // prints a certificate into huma nreadable text - italian only for now
   const printer = printers[PreferredLanguageEnum.it_IT];
@@ -112,7 +112,7 @@ export const GetCertificateHandler = (
           f => ({
             detail: printer.detail(f),
             info: printer.info(f),
-            uvci: f.id
+            uvci: "" //TODO
           })
         ),
         qrcodeB64,
