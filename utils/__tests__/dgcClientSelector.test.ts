@@ -18,18 +18,24 @@ const aPRODUrl = "https://example.com/prod";
 
 const aProdCert = "prod_cert";
 const aProdKey = "prod_key";
+const aProdCA = "prod_ca";
 const aTestCert = "test_cert";
 const aTestKey = "test_key";
+const aTestCA = "test_ca";
 const aUATCert = "uat_cert";
 const aUATKey = "uat_key";
+const aUATCA = "uat_ca";
 
 const aConfig = ({
   DGC_UAT_CLIENT_CERT: aUATCert,
   DGC_UAT_CLIENT_KEY: aUATKey,
+  DGC_UAT_SERVER_CA: aUATCA,
   DGC_LOAD_TEST_CLIENT_CERT: aTestCert,
   DGC_LOAD_TEST_CLIENT_KEY: aTestKey,
+  DGC_LOAD_TEST_SERVER_CA: aTestCA,
   DGC_PROD_CLIENT_CERT: aProdCert,
   DGC_PROD_CLIENT_KEY: aProdKey,
+  DGC_PROD_SERVER_CA: aProdCA,
   LOAD_TEST_FISCAL_CODES: [aLoadTestFiscalCode],
   DGC_LOAD_TEST_URL: HttpsUrlFromString.decode(aLoadTestUrl).getOrElseL(fail),
   DGC_UAT_FISCAL_CODES: [aUATFiscalCode],
@@ -62,19 +68,22 @@ describe("createDGCClientSelector", () => {
       1,
       aProcessEnv,
       aProdCert,
-      aProdKey
+      aProdKey,
+      aProdCA
     );
     expect(mockGetFetchWithClientCertificate).nthCalledWith(
       2,
       aProcessEnv,
       aUATCert,
-      aUATKey
+      aUATKey,
+      aUATCA
     );
     expect(mockGetFetchWithClientCertificate).nthCalledWith(
       3,
       aProcessEnv,
       aTestCert,
-      aTestKey
+      aTestKey,
+      aTestCA
     );
     expect(mockCreateClient).toBeCalledTimes(3);
 
@@ -90,19 +99,22 @@ describe("createDGCClientSelector", () => {
       1,
       aProcessEnv,
       aProdCert,
-      aProdKey
+      aProdKey,
+      aProdCA
     );
     expect(mockGetFetchWithClientCertificate).nthCalledWith(
       2,
       aProcessEnv,
       aUATCert,
-      aUATKey
+      aUATKey,
+      aUATCA
     );
     expect(mockGetFetchWithClientCertificate).nthCalledWith(
       3,
       aProcessEnv,
       aTestCert,
-      aTestKey
+      aTestKey,
+      aTestCA
     );
     expect(mockCreateClient).toBeCalledTimes(3);
 
@@ -118,19 +130,22 @@ describe("createDGCClientSelector", () => {
       1,
       aProcessEnv,
       aProdCert,
-      aProdKey
+      aProdKey,
+      aProdCA
     );
     expect(mockGetFetchWithClientCertificate).nthCalledWith(
       2,
       aProcessEnv,
       aUATCert,
-      aUATKey
+      aUATKey,
+      aUATCA
     );
     expect(mockGetFetchWithClientCertificate).nthCalledWith(
       3,
       aProcessEnv,
       aTestCert,
-      aTestKey
+      aTestKey,
+      aTestCA
     );
     expect(mockCreateClient).toBeCalledTimes(3);
 
