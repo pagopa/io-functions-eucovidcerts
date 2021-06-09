@@ -1,5 +1,57 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Printers should print it markdown - test certificate 1`] = `
+"## Certificato di Test
+***
+**Certificazione valida 48 ore dall'ora del prelievo**
+***
+
+Malattia o agente bersaglio  
+**COVID-19**
+
+Tipo di test  
+**Nucleic acid amplification with probe detection**
+
+Nome del test molecolare
+**Roche LightCycler qPCR**
+
+
+
+
+Data e ora del prelievo del campione  
+**2021-4-1**
+
+
+
+
+Risultato del test  
+**Negativo**
+
+Centro o struttura in cui è stato eseguito il test  
+**Policlinico Umberto I**
+
+Stato Membro in cui è stato eseguito il test  
+**IT**
+
+Struttura che ha rilasciato la certificazione  
+**IT**
+
+Identificativo univoco del certificato  
+**01IT0BFC9866D3854EAC82C21654B6F6DE32#1**
+  
+***
+
+*Questo certificato non è un documento di viaggio. 
+Le evidenze scientifiche sulla vaccinazione, sui test e sulla guarigione da COVID-19 continuano ad evolversi, anche in considerazione delle nuove varianti del virus.*  
+*Prima di viaggiare, si prega di controllare le misure di salute pubblica applicate nel luogo di destinazione e le relative restrizioni anche consultando il sito:*   
+[https://reopen.europa.eu/it](https://reopen.europa.eu/it)
+  
+***
+  
+Per ulteriori informazioni e per scaricare il certificato in formato PDF stampabile vai su 
+[www.dgc.gov.it](https://www.dgc.gov.it)"
+`;
+
 exports[`Printers should print it markdown - vaccine certificate 1`] = `
 "## Certificato di Vaccinazione
 ***

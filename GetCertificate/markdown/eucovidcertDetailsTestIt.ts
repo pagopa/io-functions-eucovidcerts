@@ -1,4 +1,5 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
+import { isSome } from "fp-ts/lib/Option";
 import { TestEntry } from "../certificate";
 import { formatDate } from "../printer";
 
@@ -16,21 +17,21 @@ Malattia o agente bersaglio
 Tipo di test  
 **${te.tt.displays.get(fileLanguage)}**
 
-${te.nm ? `Nome del test molecolare\n**${te.nm}**` : ""}
+${te.nm ? `Nome del test molecolare` : ""}
+${te.nm ? `**${te.nm}**` : ""}
 
-${te.ma ? `Nome del test antigienico e nome del produttore\n**${te.ma}**` : ""}
+${
+  te.ma && isSome(te.ma)
+    ? `Nome del test antigienico e nome del produttore`
+    : ""
+}
+${te.ma && isSome(te.ma) ? `**${te.ma.value.displays.get(fileLanguage)}**` : ""}
 
 Data e ora del prelievo del campione  
 **${formatDate(te.sc, fileLanguage)}**
 
-${
-  te.dr
-    ? `Data e ora del risultato del test\n**${formatDate(
-        te.dr,
-        fileLanguage
-      )}**`
-    : ""
-}
+${te.dr ? `Data e ora del risultato del test` : ""}
+${te.dr ? `**${formatDate(te.dr, fileLanguage)}**` : ""}
 
 Risultato del test  
 **${te.tr.displays.get(fileLanguage)}**

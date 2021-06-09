@@ -7,7 +7,7 @@ import { Either, left } from "fp-ts/lib/Either";
 import * as t from "io-ts";
 import { WithinRangeInteger } from "@pagopa/ts-commons/lib/numbers";
 import { DateFromString } from "@pagopa/ts-commons/lib/dates";
-import { toTWithMap } from "../utils/conversions";
+import { toTWithMap, toTWithMapOptional } from "../utils/conversions";
 import { diseaseAgentTargeted } from "./valuesets/diseaseAgentTargeted";
 import { vaccineProphylaxis } from "./valuesets/vaccineProphylaxis";
 import { vaccineMedicinalProduct } from "./valuesets/vaccineMedicinalProduct";
@@ -39,19 +39,23 @@ export const VaccinationEntry = t.interface({
 });
 
 export type TestEntry = t.TypeOf<typeof TestEntry>;
-export const TestEntry = t.interface({
-  tg: t.string.pipe(toTWithMap(diseaseAgentTargeted)), // disease or agent targeted
-  tt: t.string.pipe(toTWithMap(labTestTypes)), // covid-19 Lab Test Types
-  nm: t.string, // test name
-  ma: t.string.pipe(toTWithMap(labTestManufactorers)), // covid-19 Lab Test Manufactorers
-  sc: DateFromString, // Date/Time of Sample Collection
-  dr: DateFromString, // Date/Time of Test Result
-  tr: t.string.pipe(toTWithMap(testResults)), // Test Result
-  tc: t.string, // Testing Centre
-  co: t.string, // Country of Test
-  is: t.string, // Issuer
-  ci: t.string // Issuer
-});
+export const TestEntry = t.intersection([
+  t.interface({
+    tg: t.string.pipe(toTWithMap(diseaseAgentTargeted)), // disease or agent targeted
+    tt: t.string.pipe(toTWithMap(labTestTypes)), // covid-19 Lab Test Types
+    sc: DateFromString, // Date/Time of Sample Collection
+    tr: t.string.pipe(toTWithMap(testResults)), // Test Result
+    tc: t.string, // Testing Centre
+    co: t.string, // Country of Test
+    is: t.string, // Issuer
+    ci: t.string // Issuer
+  }),
+  t.partial({
+    nm: t.string, // test name
+    dr: DateFromString, // Date/Time of Test Result
+    ma: t.string.pipe(toTWithMapOptional(labTestManufactorers)) // lab test manufactorers
+  })
+]);
 
 export const VacCertificate = t.interface({
   ver: NonEmptyString,
