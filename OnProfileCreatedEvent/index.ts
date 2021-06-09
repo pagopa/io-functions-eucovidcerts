@@ -1,3 +1,9 @@
+/**
+ * Listener to ProfileCreated domain event
+ *
+ * This handler copies the notified user identifier from the global event queue and place it in the related queue local to this function app for later consumption.
+ */
+
 import { AzureFunction, Context } from "@azure/functions";
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";

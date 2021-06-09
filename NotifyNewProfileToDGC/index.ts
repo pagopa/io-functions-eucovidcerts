@@ -1,3 +1,7 @@
+/**
+ *
+ */
+
 import { AzureFunction } from "@azure/functions";
 import { getConfigOrThrow } from "../utils/config";
 import { createDGCClientSelector } from "../utils/dgcClientSelector";

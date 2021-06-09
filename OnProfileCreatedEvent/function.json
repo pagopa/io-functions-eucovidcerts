@@ -15,5 +15,5 @@
       "connection": "QueueStorageConnection"
     }
   ],
-  "scriptFile": "../dist/NewProfile/index.js"
+  "scriptFile": "../dist/OnProfileCreatedEvent/index.js"
 }

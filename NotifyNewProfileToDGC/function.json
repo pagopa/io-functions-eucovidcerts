@@ -8,5 +8,5 @@
       "direction": "in"
     }
   ],
-  "scriptFile": "../dist/NotifyNewProfile/index.js"
+  "scriptFile": "../dist/NotifyNewProfileToDGC/index.js"
 }
