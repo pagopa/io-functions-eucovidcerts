@@ -24,20 +24,24 @@ const permanentDecodeFailure = (errs: t.Errors): Failure =>
     reason: `Cannot decode input: ${readableReport(errs)}`
   });
 
-const index: AzureFunction = async (
-  context: Context,
-  inputFiscalCode: unknown
-) =>
-  FiscalCode.decode(inputFiscalCode)
+const NewProfileInput = t.interface({
+  fiscal_code: FiscalCode
+});
+type NewProfileInput = t.TypeOf<typeof NewProfileInput>;
+
+const index: AzureFunction = async (context: Context, input: unknown) =>
+  NewProfileInput.decode(input)
     .mapLeft(permanentDecodeFailure)
     .bimap(
       _ => {
         context.log.error(`NewProfile|${_.reason}`);
         return _;
       },
-      fiscalCode => {
+      newProfileInput => {
         // eslint-disable-next-line functional/immutable-data
-        context.bindings.outputFiscalCode = toSHA256(fiscalCode);
+        context.bindings.outputFiscalCode = toSHA256(
+          newProfileInput.fiscal_code
+        );
         return { kind: "SUCCESS" } as Success;
       }
     );
