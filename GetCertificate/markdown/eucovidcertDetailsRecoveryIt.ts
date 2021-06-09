@@ -1,6 +1,6 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { RecoveryEntry } from "../certificate";
-import { formatDate } from "../printer";
+import { formatCertificateIssuer, formatDate } from "../printer";
 
 const fileLanguage = PreferredLanguageEnum.it_IT;
 
@@ -15,11 +15,11 @@ Data del primo test molecolare positivo
 **${formatDate(tr.fr, fileLanguage)}**  
 
 Stato Membro in cui è stato eseguito il primo test molecolare positivo  
-**${tr.co}** 
+**${tr.co}**  
 
 Struttura che ha rilasciato la certificazione  
-**${tr.is}** 
-  
+**${formatCertificateIssuer(tr.is, fileLanguage)}**  
+ 
 Certificazione valida dal  
 **${formatDate(tr.df, fileLanguage)}**  
   

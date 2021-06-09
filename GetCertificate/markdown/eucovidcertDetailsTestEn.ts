@@ -1,7 +1,7 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { isSome } from "fp-ts/lib/Option";
 import { TestEntry } from "../certificate";
-import { formatDate } from "../printer";
+import { formatCertificateIssuer, formatDate } from "../printer";
 
 const fileLanguage = PreferredLanguageEnum.en_GB;
 
@@ -40,7 +40,7 @@ Member State of test
 **${te.co}**
 
 Certificate issuer  
-**${te.is}**
+**${formatCertificateIssuer(te.is, fileLanguage)}**  
 
 Unique certificate identifier  
 **${te.ci}**

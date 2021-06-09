@@ -71,6 +71,13 @@ export const defaultPrinter: IPrintersForLanguage = {
   infoRecoveryPrinter: vacInfoEn.getInfoPrinter
 };
 
+/**
+ * Return the correct IPrintersForLanguage based on preferred language,
+ * or default IPrintersForLanguage if no language is selected
+ *
+ * @param lang the preferred language, if any
+ * @returns
+ */
 export const getPrinterForLanguage = (
   lang: o.Option<PreferredLanguage>
 ): IPrintersForLanguage =>
@@ -78,6 +85,14 @@ export const getPrinterForLanguage = (
     .chain(l => o.fromNullable(printersConfigurations.get(l)))
     .getOrElse(defaultPrinter);
 
+/**
+ * Returns the Detail markdown filled with data from the input Certificate
+ * based on preferred language and the Certificate type (vac, test, rec)
+ *
+ * @param lang the preferred language
+ * @param c the Certificate
+ * @returns a string containing the Info markdown
+ */
 export const printDetails = (
   lang: o.Option<PreferredLanguage>,
   c: Certificates
@@ -94,11 +109,26 @@ export const printDetails = (
     )
     .exhaustive();
 
+/**
+ * Returns the Info markdown filled with data from the input Certificate
+ * based on preferred language
+ *
+ * @param lang the preferred language
+ * @param c the Certificate
+ * @returns a string containing the Info markdown
+ */
 export const printInfo = (
   lang: o.Option<PreferredLanguage>,
   c: Certificates
 ): string => getPrinterForLanguage(lang).infoVaccinePrinter(c);
 
+/**
+ * Returns UVCI of the first certificate (either Vaccination, Test or Recovery)
+ *
+ * @param _lang the preferred language (unused)
+ * @param c the Certificate
+ * @returns the UVCI
+ */
 export const printUvci = (
   _lang: o.Option<PreferredLanguage>,
   c: Certificates
@@ -109,9 +139,22 @@ export const printUvci = (
     .when(RecoveryCertificate.is, cr => cr.r[0].ci)
     .exhaustive(); // TODO
 
+/**
+ * Check if Vaccination has ended
+ *
+ * @param v the VaccinationEntry to check
+ * @returns true if process ended, false otherwise
+ */
 export const isVaccinationProcessEnded = (v: VaccinationEntry): boolean =>
   v.dn === v.sd;
 
+/**
+ * Format date value based on language
+ *
+ * @param d the date
+ * @param _lang the preferred language
+ * @returns a formatted date
+ */
 export const formatDate = (d: Date, _lang: PreferredLanguage): string =>
   match(_lang)
     .when(
@@ -119,3 +162,23 @@ export const formatDate = (d: Date, _lang: PreferredLanguage): string =>
       _ => moment(d).format(DATE_FORMAT_EN)
     )
     .otherwise(() => moment(d).format(DATE_FORMAT_ITA));
+
+/**
+ * Format Certificate Issuer based on its value and preferred language
+ *
+ * @param c the issuer certificate value
+ * @param _lang the preferred language
+ * @returns a formatted Certificate Issuer string
+ */
+export const formatCertificateIssuer = (
+  c: string,
+  _lang: PreferredLanguage
+): string =>
+  c !== "IT"
+    ? c
+    : match(_lang)
+        .when(
+          l => l === PreferredLanguageEnum.it_IT,
+          _ => "Ministero della Salute"
+        )
+        .otherwise(() => "Ministry of Health");

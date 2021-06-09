@@ -1,6 +1,10 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { VaccinationEntry } from "../certificate";
-import { isVaccinationProcessEnded, formatDate } from "../printer";
+import {
+  isVaccinationProcessEnded,
+  formatDate,
+  formatCertificateIssuer
+} from "../printer";
 
 const fileLanguage = PreferredLanguageEnum.it_IT;
 
@@ -37,7 +41,7 @@ Stato Membro in cui è stata eseguita la vaccinazione
 **${v.co}**
 
 Struttura che ha rilasciato la certificazione  
-**${v.is}**
+**${formatCertificateIssuer(v.is, fileLanguage)}**  
 
 Identificativo univoco del certificato  
 **${v.ci}**
