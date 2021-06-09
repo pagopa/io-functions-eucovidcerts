@@ -2,10 +2,6 @@
 /**
  * Certificate parsing utilities
  */
-import {
-  PreferredLanguage,
-  PreferredLanguageEnum
-} from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import { Either, left } from "fp-ts/lib/Either";
 import * as t from "io-ts";
@@ -16,11 +12,6 @@ import { diseaseAgentTargeted } from "./valuesets/diseaseAgentTargeted";
 import { vaccineProphylaxis } from "./valuesets/vaccineProphylaxis";
 import { vaccineMedicinalProduct } from "./valuesets/vaccineMedicinalProduct";
 import { marketingAuthorizationHolder } from "./valuesets/marketingAuthorizationHolders";
-import {
-  CertificatePrinter,
-  createDetailsPrinter,
-  createInfoPrinter
-} from "./printer";
 import { labTestTypes } from "./valuesets/labTestTypes";
 import { labTestManufactorers } from "./valuesets/labTestManufactorers";
 import { testResults } from "./valuesets/testResults";
@@ -62,15 +53,6 @@ export const TestEntry = t.interface({
   ci: t.string // Issuer
 });
 
-// export type ParsedCertificate = t.TypeOf<typeof ParsedCertificate>;
-// export const ParsedCertificate = t.interface({
-//   ver: NonEmptyString,
-//   nam: PersonName,
-//   dob: DateFromString,
-//   v: t.readonlyArray<typeof VaccinationEntry>(VaccinationEntry),
-//   t: t.readonlyArray<typeof TestEntry>(TestEntry)
-// });
-
 export const VacCertificate = t.interface({
   ver: NonEmptyString,
   nam: PersonName,
@@ -83,56 +65,19 @@ export const TestCertificate = t.interface({
   dob: DateFromString,
   t: t.readonlyArray<typeof TestEntry>(TestEntry)
 });
+export const RecoveryCertificate = t.interface({
+  ver: NonEmptyString,
+  nam: PersonName,
+  dob: DateFromString,
+  r: t.readonlyArray<typeof TestEntry>(TestEntry) // TODO
+});
 
 export type Certificates = t.TypeOf<typeof Certificates>;
-export const Certificates = t.union([VacCertificate, TestCertificate]);
-
-/**
- * The default info printer, used to render a markdown text from a certificate for languages we don't have a specific translation
- *
- * @param certificate a Certificate object
- * @returns a markdown print of the Certificate
- */
-const defaultPrintInfo: CertificatePrinter = createInfoPrinter(
-  PreferredLanguageEnum.en_GB
-);
-
-/**
- * The default detail printer, used to render a markdown text from a certificate for languages we don't have a specific translation
- *
- * @param certificate a Certificate object
- * @returns a markdown print of the Certificate
- */
-const defaultPrintDetail: CertificatePrinter = createDetailsPrinter(
-  PreferredLanguageEnum.en_GB
-);
-
-/**
- * Collection of printers for every supported language.
- * info is a short text containing the bare set of informations for a Certificate
- * detail is a a text with all meaningful info for the certificate
- */
-export const printers: Record<
-  PreferredLanguage,
-  { readonly info: CertificatePrinter; readonly detail: CertificatePrinter }
-> = {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  de_DE: { detail: defaultPrintDetail, info: defaultPrintInfo },
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  en_GB: {
-    detail: createDetailsPrinter(PreferredLanguageEnum.en_GB),
-    info: createInfoPrinter(PreferredLanguageEnum.en_GB)
-  },
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  es_ES: { detail: defaultPrintDetail, info: defaultPrintInfo },
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  fr_FR: { detail: defaultPrintDetail, info: defaultPrintInfo },
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  it_IT: {
-    detail: createDetailsPrinter(PreferredLanguageEnum.it_IT),
-    info: createInfoPrinter(PreferredLanguageEnum.it_IT)
-  }
-};
+export const Certificates = t.union([
+  VacCertificate,
+  TestCertificate,
+  RecoveryCertificate
+]);
 
 /**
  * Parse a given base64 string representing a qrcode image to extract Certificate's informations

@@ -23,11 +23,12 @@ import {
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { ResponseErrorValidation } from "@pagopa/ts-commons/lib/responses";
 import { identity, toString } from "fp-ts/lib/function";
-import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
+import { PreferredLanguage } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { Context } from "@azure/functions";
 import { TypeofApiCall } from "@pagopa/ts-commons/lib/requests";
 import { Either, toError } from "fp-ts/lib/Either";
 import { Validation } from "io-ts";
+import * as o from "fp-ts/lib/Option";
 import { StatusEnum } from "../generated/definitions/ValidCertificate";
 import { Certificate } from "../generated/definitions/Certificate";
 import { GetCertificateParams } from "../generated/definitions/GetCertificateParams";
@@ -36,7 +37,8 @@ import { GetCertificateByAutAndCFT } from "../generated/dgc/requestTypes";
 import { SearchSingleQrCodeResponseDTO } from "../generated/dgc/SearchSingleQrCodeResponseDTO";
 import { toSHA256 } from "../utils/conversions";
 import { createDGCClientSelector } from "../utils/dgcClientSelector";
-import { parseQRCode, printers } from "./certificate";
+import { parseQRCode } from "./certificate";
+import { printDetails, printInfo, printUvci } from "./printer";
 
 const assertNever = (x: never): never => {
   throw new Error(`Unexpected object: ${toString(x)}`);
@@ -60,11 +62,15 @@ export const GetCertificateHandler = (
   dgcClientSelector: ReturnType<typeof createDGCClientSelector>
 ): GetCertificateHandler => async (
   _context,
-  { fiscal_code, auth_code: authCodeSHA256 /*, preferred_languages*/ }
+  { fiscal_code, auth_code: authCodeSHA256, preferred_languages }
 ): Promise<IResponseSuccessJson<Certificate> | Failures> => {
   // prints a certificate into huma nreadable text - italian only for now
-  const printer = printers[PreferredLanguageEnum.it_IT];
+  //  const printer = printers[PreferredLanguageEnum.it_IT];
   const hashedFiscalCode = toSHA256(fiscal_code);
+  const selectedLanguage = o
+    .fromNullable(preferred_languages)
+    .map(langs => langs.filter(PreferredLanguage.is))
+    .chain(e => (e.length > 0 ? o.some(e[0]) : o.none));
 
   return (
     taskEither
@@ -110,9 +116,9 @@ export const GetCertificateHandler = (
         printedCertificate: parseQRCode(qrcodeB64).fold(
           _ => undefined,
           f => ({
-            detail: printer.detail(f),
-            info: printer.info(f),
-            uvci: "" //TODO
+            detail: printDetails(selectedLanguage, f),
+            info: printInfo(selectedLanguage, f),
+            uvci: printUvci(selectedLanguage, f)
           })
         ),
         qrcodeB64,

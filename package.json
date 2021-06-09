@@ -65,6 +65,7 @@
     "fp-ts": "1.19.5",
     "io-ts": "1.8.5",
     "node-fetch": "^2.6.1",
+    "ts-pattern": "^3.1.7",
     "winston": "^3.2.1"
   },
   "resolutions": {
