@@ -3,6 +3,7 @@ import * as t from "io-ts";
 
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
+import { isNone, isSome, none, Option, Some, some } from "fp-ts/lib/Option";
 
 /**
  * Convert a string into SHA256
@@ -36,4 +37,26 @@ export const toTWithMap = <T extends ITranslatable>(
         ? t.success(map.get(v) as T)
         : t.failure(v, c, "Value not contained in map"),
     value => value.id
+  );
+
+/**
+ * A function that returns a Codec mapping an input key with a pre-created ITranslatable
+ * if string is empty, return undefined
+ */
+export const toTWithMapOptional = <T extends ITranslatable>(
+  map: ReadonlyMap<string, T>
+): t.Type<Option<T>, string, string> =>
+  new t.Type<Option<T>, string, string>(
+    "toTWithMapOptional",
+    (value: unknown): value is Option<T> =>
+      !!value &&
+      (isNone(value as Option<T>) ||
+        Array.from(map.values()).some(v => v === (value as Some<T>).value)), // FIXME replace with deep compare
+    (v, c) =>
+      v
+        ? map.get(v)
+          ? t.success(some(map.get(v) as T))
+          : t.failure(v, c, "Value not contained in map")
+        : t.success(none),
+    value => (isSome(value) ? value.value.id : "")
   );
