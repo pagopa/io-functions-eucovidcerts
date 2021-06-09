@@ -1,0 +1,12 @@
+{
+  "bindings": [
+    {
+      "queueName": "%EUCOVIDCERT_NOTIFY_NEW_PROFILE_QUEUE_NAME%",
+      "connection": "QueueStorageConnection",
+      "name": "fiscalCode",
+      "type": "queueTrigger",
+      "direction": "in"
+    }
+  ],
+  "scriptFile": "../dist/NotifyNewProfileToDGC/index.js"
+}

@@ -43,6 +43,12 @@ export const IConfig = t.intersection([
   DCGConfigUAT,
   DCGConfigLOAD,
   t.interface({
+    EUCOVIDCERT_NOTIFY_NEW_PROFILE_QUEUE_NAME: NonEmptyString,
+    EUCOVIDCERT_PROFILE_CREATED_QUEUE_NAME: NonEmptyString,
+    EventsQueueStorageConnection: NonEmptyString,
+    QueueStorageConnection: NonEmptyString
+  }),
+  t.interface({
     FNSERVICES_API_KEY: NonEmptyString,
     FNSERVICES_API_URL: CommaSeparatedListOf(HttpsUrlFromString),
     isProduction: t.boolean

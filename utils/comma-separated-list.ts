@@ -13,7 +13,7 @@ export const CommaSeparatedListOf = (decoder: t.Mixed) =>
     `CommaSeparatedListOf<${decoder.name}>`,
     (value: unknown): value is ReadonlyArray<t.TypeOf<typeof decoder>> =>
       Array.isArray(value) && value.every(e => decoder.is(e)),
-    (input /* , context */) =>
+    input =>
       t.readonlyArray(decoder).decode(
         typeof input === "string"
           ? input
