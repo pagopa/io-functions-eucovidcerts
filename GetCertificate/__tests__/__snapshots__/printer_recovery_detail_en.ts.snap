@@ -2,19 +2,19 @@
 
 exports[`Printer - Recovery - Detail - en_GB should print its markdown 1`] = `
 "
-## Recovery Certificate
+## Recovery Certificate  
 
 Disease or agent the citizen has recovered from  
-**COVID-19**
+**COVID-19**  
 
 Date of first positive NAAT test result  
 **2021-04-10**  
 
 Member State of test  
-**IT** 
+**IT**  
 
 Certificate issuer  
-**IT** 
+**IT**  
   
 Certificate valid From  
 **2021-04-20**  

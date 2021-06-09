@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Printer - Test - Info - it_IT should print its markdown 1`] = `
+"
+Surname(s) and forename(s)  
+*Cognome e Nome*  
+**Di Caprio Marilù Teresa**  
+
+Date of birth  
+*Data di nascita (aaaa-mm-gg)*  
+**1977-06-16**  
+
+Unique Certifcate Identifier  
+*Identificativo univoco del certificato*  
+**01IT0BFC9866D3854EAC82C21654B6F6DE32#1**  
+
+[copia l’identificativo](iohandledlink://copy:01IT0BFC9866D3854EAC82C21654B6F6DE32#1)
+"
+`;

@@ -6,19 +6,19 @@ const fileLanguage = PreferredLanguageEnum.en_GB;
 
 export const getDetailPrinter = (tr: RecoveryEntry): string =>
   `
-## Recovery Certificate
+## Recovery Certificate  
 
 Disease or agent the citizen has recovered from  
-**${tr.tg.displays.get(fileLanguage)}**
+**${tr.tg.displays.get(fileLanguage)}**  
 
 Date of first positive NAAT test result  
 **${formatDate(tr.fr, fileLanguage)}**  
 
 Member State of test  
-**${tr.co}** 
+**${tr.co}**  
 
 Certificate issuer  
-**${tr.is}** 
+**${tr.is}**  
   
 Certificate valid From  
 **${formatDate(tr.df, fileLanguage)}**  

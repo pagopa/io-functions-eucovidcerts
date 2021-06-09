@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Printer - Test - Detail - it_IT should print its markdown 1`] = `
+exports[`Printer - Test - Detail - en_GB should print its markdown 1`] = `
 "
 ## Vaccination Certificate  
 ***

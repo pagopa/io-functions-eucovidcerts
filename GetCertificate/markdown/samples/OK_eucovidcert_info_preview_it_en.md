@@ -1,12 +1,12 @@
 Surname(s) and forename(s)  
 *Cognome e Nome*  
-### <fn> <gn>
+**<fn> <gn>**
 
 Date of birth  
 *Data di nascita (aaaa-mm-gg)*  
-### <dob>
+**<dob>**
 
 Unique Certifcate Identifier  
 *Identificativo univoco del certificato*  
-### <ci>
+**<ci>**
 [copia l’identificativo](iohandledlink://copy:<ci>)

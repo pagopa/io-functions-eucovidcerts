@@ -2,6 +2,8 @@ import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generat
 import { VaccinationEntry } from "../certificate";
 import { formatDate, isVaccinationProcessEnded } from "../printer";
 
+const fileLanguage = PreferredLanguageEnum.en_GB;
+
 export const getDetailPrinter = (v: VaccinationEntry): string =>
   `
 ## Vaccination Certificate  
@@ -14,22 +16,22 @@ ${
 ***
 
 Disease or agent targeted  
-**${v.tg.displays.get(PreferredLanguageEnum.en_GB)}**
+**${v.tg.displays.get(fileLanguage)}**
 
 Vaccine/prophylaxis  
-**${v.vp.displays.get(PreferredLanguageEnum.en_GB)}**
+**${v.vp.displays.get(fileLanguage)}**
 
 Vaccine medicinal product  
-**${v.mp.displays.get(PreferredLanguageEnum.en_GB)}** 
+**${v.mp.displays.get(fileLanguage)}** 
 
 Vaccine marketing authorisation holder or manufacturer  
-**${v.ma.displays.get(PreferredLanguageEnum.en_GB)}**
+**${v.ma.displays.get(fileLanguage)}**
 
 Number in a series of vaccinations doses / overall number of vaccination in the series  
 **${v.dn} / ${v.sd}**
 
 Date of vaccination  
-**${formatDate(v.dt, PreferredLanguageEnum.en_GB)}**
+**${formatDate(v.dt, fileLanguage)}**
 
 Member State of vaccination  
 **${v.co}**

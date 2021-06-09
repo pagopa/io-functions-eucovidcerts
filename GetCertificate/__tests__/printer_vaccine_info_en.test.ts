@@ -5,9 +5,9 @@ import {
 import { some } from "fp-ts/lib/Option";
 
 import { Certificates } from "../certificate";
-import { printDetails } from "../printer";
+import { printDetails, printInfo } from "../printer";
 
-describe("Printer - Test - Detail - en_GB", () => {
+describe("Printer - Vaccine - Info - en_GB", () => {
   it("should print its markdown", () => {
     const certificate = Certificates.decode({
       ver: "1.0.0",
@@ -36,7 +36,7 @@ describe("Printer - Test - Detail - en_GB", () => {
       throw "Error decoding object";
     });
 
-    const result = printDetails(some(PreferredLanguageEnum.en_GB), certificate);
+    const result = printInfo(some(PreferredLanguageEnum.en_GB), certificate);
     expect(result).toMatchSnapshot();
   });
 });

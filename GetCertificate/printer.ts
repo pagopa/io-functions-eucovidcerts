@@ -22,7 +22,6 @@ import * as testDetailsEn from "./markdown/eucovidcertDetailsTestEn";
 import * as recoveryDetailsIt from "./markdown/eucovidcertDetailsRecoveryIt";
 import * as recoveryDetailsEn from "./markdown/eucovidcertDetailsRecoveryEn";
 import * as vacInfoEn from "./markdown/eucovidcertInfoVaccinationEn";
-import * as vacInfoIt from "./markdown/eucovidcertInfoVaccinationIt";
 
 const DATE_FORMAT_EN = "YYYY-MM-DD";
 const DATE_FORMAT_ITA = "DD-MM-YYYY";
@@ -31,9 +30,9 @@ interface IPrintersForLanguage {
   readonly detailVaccinePrinter: (v: VaccinationEntry) => string;
   readonly detailTestPrinter: (t: TestEntry) => string;
   readonly detailRecoveryPrinter: (r: RecoveryEntry) => string;
-  readonly infoVaccinePrinter: (v: VaccinationEntry) => string;
-  readonly infoTestPrinter: (t: TestEntry) => string;
-  readonly infoRecoveryPrinter: (r: RecoveryEntry) => string;
+  readonly infoVaccinePrinter: (c: Certificates) => string;
+  readonly infoTestPrinter: (c: Certificates) => string;
+  readonly infoRecoveryPrinter: (c: Certificates) => string;
 }
 
 const printersConfigurations = new Map<PreferredLanguage, IPrintersForLanguage>(
@@ -44,9 +43,9 @@ const printersConfigurations = new Map<PreferredLanguage, IPrintersForLanguage>(
         detailVaccinePrinter: vacDetailsIt.getDetailPrinter,
         detailTestPrinter: testDetailsIt.getDetailPrinter,
         detailRecoveryPrinter: recoveryDetailsIt.getDetailPrinter,
-        infoVaccinePrinter: vacInfoIt.getInfoPrinter,
-        infoTestPrinter: (): string => "", // TODO
-        infoRecoveryPrinter: (): string => "" // TODO
+        infoVaccinePrinter: vacInfoEn.getInfoPrinter,
+        infoTestPrinter: vacInfoEn.getInfoPrinter,
+        infoRecoveryPrinter: vacInfoEn.getInfoPrinter
       }
     ],
     [
@@ -56,8 +55,8 @@ const printersConfigurations = new Map<PreferredLanguage, IPrintersForLanguage>(
         detailTestPrinter: testDetailsEn.getDetailPrinter,
         detailRecoveryPrinter: recoveryDetailsEn.getDetailPrinter,
         infoVaccinePrinter: vacInfoEn.getInfoPrinter,
-        infoTestPrinter: (): string => "", // TODO
-        infoRecoveryPrinter: (): string => "" // TODO
+        infoTestPrinter: vacInfoEn.getInfoPrinter,
+        infoRecoveryPrinter: vacInfoEn.getInfoPrinter
       }
     ]
   ]
@@ -68,8 +67,8 @@ export const defaultPrinter: IPrintersForLanguage = {
   detailTestPrinter: testDetailsEn.getDetailPrinter,
   detailRecoveryPrinter: recoveryDetailsEn.getDetailPrinter,
   infoVaccinePrinter: vacInfoEn.getInfoPrinter,
-  infoTestPrinter: () => "", // TODO
-  infoRecoveryPrinter: () => "" // TODO
+  infoTestPrinter: vacInfoEn.getInfoPrinter,
+  infoRecoveryPrinter: vacInfoEn.getInfoPrinter
 };
 
 export const getPrinterForLanguage = (
@@ -98,18 +97,7 @@ export const printDetails = (
 export const printInfo = (
   lang: o.Option<PreferredLanguage>,
   c: Certificates
-): string =>
-  match(c)
-    .when(VacCertificate.is, vc =>
-      getPrinterForLanguage(lang).infoVaccinePrinter(vc.v[0])
-    )
-    .when(TestCertificate.is, tc =>
-      getPrinterForLanguage(lang).infoTestPrinter(tc.t[0])
-    )
-    .when(RecoveryCertificate.is, rc =>
-      getPrinterForLanguage(lang).infoRecoveryPrinter(rc.r[0])
-    )
-    .exhaustive();
+): string => getPrinterForLanguage(lang).infoVaccinePrinter(c);
 
 export const printUvci = (
   _lang: o.Option<PreferredLanguage>,
