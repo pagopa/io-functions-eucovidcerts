@@ -37,7 +37,7 @@ import { GetCertificateByAutAndCFT } from "../generated/dgc/requestTypes";
 import { SearchSingleQrCodeResponseDTO } from "../generated/dgc/SearchSingleQrCodeResponseDTO";
 import { toSHA256 } from "../utils/conversions";
 import { createDGCClientSelector } from "../utils/dgcClientSelector";
-import { parseQRCode } from "./certificate";
+import { parseQRCode } from "./parser";
 import { printDetails, printInfo, printUvci } from "./printer";
 
 const assertNever = (x: never): never => {

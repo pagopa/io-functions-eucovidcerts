@@ -3,7 +3,6 @@
  * Certificate parsing utilities
  */
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
-import { Either, left } from "fp-ts/lib/Either";
 import * as t from "io-ts";
 import { WithinRangeInteger } from "@pagopa/ts-commons/lib/numbers";
 import { DateFromString } from "@pagopa/ts-commons/lib/dates";
@@ -96,12 +95,3 @@ export const Certificates = t.union([
   TestCertificate,
   RecoveryCertificate
 ]);
-
-/**
- * Parse a given base64 string representing a qrcode image to extract Certificate's informations
- *
- * @param qrcode
- * @returns either the Certificate object or a parsing error message
- */
-export const parseQRCode = (_qrcode: string): Either<string, Certificates> =>
-  left(`QRCode parsing not yet implemented`);

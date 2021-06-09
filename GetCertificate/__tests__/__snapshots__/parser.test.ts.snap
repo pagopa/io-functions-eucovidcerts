@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`qr parsers tests should return a valid Certificate 1`] = `
+Right {
+  "_tag": "Right",
+  "value": Object {
+    "dob": 1998-02-26T00:00:00.000Z,
+    "nam": Object {
+      "fn": "Musterfrau-Gößinger",
+      "fnt": "MUSTERFRAU<GOESSINGER",
+      "gn": "Gabriele",
+      "gnt": "GABRIELE",
+    },
+    "t": Array [
+      Object {
+        "ci": "urn:uvci:01:AT:B5921A35D6A0D696421B3E24621782971",
+        "co": "AT",
+        "dr": 2021-02-20T14:56:01.000Z,
+        "is": "BMSGPK Austria",
+        "nm": "Roche LightCycler qPCR",
+        "sc": 2021-02-20T12:34:56.000Z,
+        "tc": "Testing center Vienna 1",
+        "tg": Object {
+          "displays": Map {
+            "it_IT" => "COVID-19",
+            "en_GB" => "COVID-19",
+          },
+          "id": "840539006",
+        },
+        "tr": Object {
+          "displays": Map {
+            "it_IT" => "Negativo",
+            "en_GB" => "Not detected",
+          },
+          "id": "260415000",
+        },
+        "tt": Object {
+          "displays": Map {
+            "it_IT" => "Nucleic acid amplification with probe detection",
+            "en_GB" => "Nucleic acid amplification with probe detection",
+          },
+          "id": "LP6464-4",
+        },
+      },
+    ],
+    "ver": "1.0.0",
+  },
+}
+`;
