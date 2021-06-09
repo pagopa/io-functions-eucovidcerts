@@ -2,6 +2,8 @@ import * as te from "fp-ts/lib/TaskEither";
 
 import {
   IResponseErrorInternal,
+  IResponseErrorForbiddenNotAuthorizedForRecipient,
+  ResponseErrorForbiddenNotAuthorizedForRecipient,
   ResponseErrorInternal
 } from "@pagopa/ts-commons/lib/responses";
 
@@ -45,7 +47,10 @@ export interface IServiceClient {
     reqHeaders: NodeJS.Dict<string | ReadonlyArray<string>>,
     fiscalCode: FiscalCode,
     context: Context
-  ) => te.TaskEither<IResponseErrorInternal, LimitedProfile>;
+  ) => te.TaskEither<
+    IResponseErrorInternal | IResponseErrorForbiddenNotAuthorizedForRecipient,
+    LimitedProfile
+  >;
   readonly submitMessageForUser: (
     fiscalCode: FiscalCode,
     reqHeaders: NodeJS.Dict<string | ReadonlyArray<string>>,
@@ -102,7 +107,11 @@ export const createClient = (
       _context
     ): ReturnType<IServiceClient["getLimitedProfileByPost"]> =>
       te
-        .tryCatch(
+        .tryCatch<
+          | IResponseErrorInternal
+          | IResponseErrorForbiddenNotAuthorizedForRecipient,
+          Response
+        >(
           () =>
             fetchApi(`${selectApiUrl(fiscalCode).href}/profiles`, {
               body: JSON.stringify({ fiscal_code: fiscalCode }),
@@ -116,10 +125,20 @@ export const createClient = (
         )
         .chain(responseRaw =>
           te
-            .tryCatch(
+            .tryCatch<
+              | IResponseErrorInternal
+              | IResponseErrorForbiddenNotAuthorizedForRecipient,
+              unknown
+            >(
               () => responseRaw.json(),
               error => ResponseErrorInternal(String(error))
             )
+            // If the profile was not found returns status code 403
+            .filterOrElseL(
+              _ => responseRaw.status !== 404,
+              _ => ResponseErrorForbiddenNotAuthorizedForRecipient
+            )
+            // If the response is not 200 returns status code 500
             .filterOrElseL(
               _ => responseRaw.ok,
               _ =>
