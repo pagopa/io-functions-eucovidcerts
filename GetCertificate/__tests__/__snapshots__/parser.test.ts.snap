@@ -86,7 +86,7 @@ Right {
         },
         "tt": Object {
           "displays": Map {
-            "it_IT" => "Nucleic acid amplification with probe detection",
+            "it_IT" => "Test molecolare",
             "en_GB" => "Nucleic acid amplification with probe detection",
           },
           "id": "LP6464-4",

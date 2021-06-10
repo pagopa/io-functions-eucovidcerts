@@ -1,6 +1,6 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { RecoveryEntry } from "../certificate";
-import { formatDate } from "../printer";
+import { formatCertificateIssuer, formatDate } from "../printer";
 
 const fileLanguage = PreferredLanguageEnum.en_GB;
 
@@ -18,7 +18,7 @@ Member State of test
 **${tr.co}**  
 
 Certificate issuer  
-**${tr.is}**  
+  **${formatCertificateIssuer(tr.is, fileLanguage)}**  
   
 Certificate valid From  
 **${formatDate(tr.df, fileLanguage)}**  

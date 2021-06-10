@@ -8,41 +8,42 @@ exports[`Printer - Test - Detail - en_EN should print its markdown 1`] = `
 ***
 
 Disease or agent targeted  
-**COVID-19**
+**COVID-19**  
 
 Type of Test  
-**Nucleic acid amplification with probe detection**
+**Nucleic acid amplification with probe detection**  
 
 Result of the test  
-**Not detected**
+**Not detected**  
 
 NAA test name  
-**Roche LightCycler qPCR**
+**Roche LightCycler qPCR**  
 
 
 
 
 Date and time of the test sample collection  
-**2021-05-10**
+**2021-05-10**  
 
 Date and time of the test result production  
-**2021-05-11**
+**2021-05-11**  
 
 Testing centre or facility  
-**Policlinico Umberto I**
+**Policlinico Umberto I**  
 
 Member State of test  
-**IT**
+**IT**  
 
 Certificate issuer  
-**IT**
+**Ministry of Health**  
 
 Unique certificate identifier  
 **01IT0BFC9866D3854EAC82C21654B6F6DE32#1**
   
 ***
 
-*This certificate is not a travel document. The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, including in consideration of the new variants of the virus.*  
+*This certificate is not a travel document.   
+The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, including in consideration of the new variants of the virus.*  
 *Before traveling, please check the public health measures applied in the place of destination and the related restrictions also by consulting the website:*   
 [https://reopen.europa.eu](https://reopen.europa.eu)
   

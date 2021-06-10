@@ -8,35 +8,35 @@ exports[`Printer - Test - Detail - it_IT should print its markdown 1`] = `
 ***
 
 Malattia o agente bersaglio  
-**COVID-19**
+**COVID-19**  
 
 Tipo di vaccino somministrato  
-**SARS-CoV-2 mRNA vaccine**
+**SARS-CoV-2 mRNA vaccine**  
 
 Denominazione del vaccino  
-**Comirnaty**
+**Comirnaty**  
 
 Produttore o titolare dell’AIC del vaccino  
-**Biontech Manufacturing GmbH**
+**Biontech Manufacturing GmbH**  
 
 Numero della dose effettuata / numero totale dosi previste  
-**2 / 2**
+**2 / 2**  
 
 Data dell’ultima somministrazione  
-**10-04-2021**
+**10-04-2021**  
 
 Stato Membro in cui è stata eseguita la vaccinazione  
-**IT**
+**IT**  
 
 Struttura che ha rilasciato la certificazione  
-**IT**
+**Ministero della Salute**  
 
 Identificativo univoco del certificato  
-**01ITE7300E1AB2A84C719004F103DCB1F70A#6**
+**01ITE7300E1AB2A84C719004F103DCB1F70A#6**  
   
 ***
 
-*Questo certificato non è un documento di viaggio. 
+*Questo certificato non è un documento di viaggio.  
 Le evidenze scientifiche sulla vaccinazione, sui test e sulla guarigione da COVID-19 continuano ad evolversi, anche in considerazione delle nuove varianti del virus.*  
 *Prima di viaggiare, si prega di controllare le misure di salute pubblica applicate nel luogo di destinazione e le relative restrizioni anche consultando il sito:*   
 [https://reopen.europa.eu/it](https://reopen.europa.eu/it)
