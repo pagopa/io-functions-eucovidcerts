@@ -167,6 +167,8 @@ export const formatDate = (d: Date, _lang: PreferredLanguage): string =>
  * The issuer (is) field value used by Italy Healthcare Department
  */
 export const ITALY_HEALTHCARE_ISSUER = "IT";
+export const HEALTHCARE_DEP_IT = "Ministero della Salute";
+export const HEALTHCARE_DEP_EN = "Ministry of Health";
 
 /**
  * Format Certificate Issuer based on its value and preferred language
@@ -184,6 +186,6 @@ export const formatCertificateIssuer = (
     : match(lang)
         .when(
           l => l === PreferredLanguageEnum.it_IT,
-          _ => "Ministero della Salute"
+          _ => HEALTHCARE_DEP_IT
         )
-        .otherwise(() => "Ministry of Health");
+        .otherwise(() => HEALTHCARE_DEP_EN);
