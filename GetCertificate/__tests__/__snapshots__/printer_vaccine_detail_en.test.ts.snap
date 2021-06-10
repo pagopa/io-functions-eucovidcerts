@@ -8,22 +8,22 @@ exports[`Printer - Test - Detail - en_GB should print its markdown 1`] = `
 ***
 
 Disease or agent targeted  
-**COVID-19**
+**COVID-19**  
 
 Vaccine/prophylaxis  
-**SARS-CoV-2 mRNA vaccine**
+**SARS-CoV-2 mRNA vaccine**  
 
 Vaccine medicinal product  
-**Comirnaty** 
+**Comirnaty**   
 
 Vaccine marketing authorisation holder or manufacturer  
-**Biontech Manufacturing GmbH**
+**Biontech Manufacturing GmbH**  
 
 Number in a series of vaccinations doses / overall number of vaccination in the series  
-**2 / 2**
+**2 / 2**  
 
 Date of vaccination  
-**2021-04-10**
+**2021-04-10**  
 
 Member State of vaccination  
 **IT**
@@ -32,11 +32,12 @@ Certificate issuer
 **Ministry of Health**  
 
 IdUnique certificate identifier  
-**01ITE7300E1AB2A84C719004F103DCB1F70A#6**
-  
+**01ITE7300E1AB2A84C719004F103DCB1F70A#6**  
+
 ***
 
-*This certificate is not a travel document. The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, including in consideration of the new variants of the virus.*  
+*This certificate is not a travel document.  
+The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, including in consideration of the new variants of the virus.*  
 *Before traveling, please check the public health measures applied in the place of destination and the related restrictions also by consulting the website:*   
 [https://reopen.europa.eu](https://reopen.europa.eu)
   

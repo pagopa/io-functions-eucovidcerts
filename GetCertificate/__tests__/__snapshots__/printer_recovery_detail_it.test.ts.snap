@@ -5,7 +5,7 @@ exports[`Printer - Recovery - Detail - it_IT should print its markdown 1`] = `
 ## Certificato di Guarigione
 
 Malattia o agente bersaglio da cui la persona è guarita  
-**COVID-19**
+**COVID-19**  
 
 Data del primo test molecolare positivo  
 **10-04-2021**  
@@ -18,7 +18,7 @@ Struttura che ha rilasciato la certificazione
  
 Certificazione valida dal  
 **20-04-2021**  
-  
+
 Certificazione valida fino al  
 **10-09-2021**  
 
