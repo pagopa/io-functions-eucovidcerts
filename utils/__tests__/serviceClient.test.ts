@@ -1,7 +1,6 @@
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { HttpsUrlFromString } from "@pagopa/ts-commons/lib/url";
-import { unknown } from "io-ts";
 import { context } from "../../__mocks__/durable-functions";
 import { createClient, createPoolSelector } from "../serviceClient";
 
