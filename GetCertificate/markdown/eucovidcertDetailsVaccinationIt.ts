@@ -20,16 +20,16 @@ ${
 ***
 
 Malattia o agente bersaglio  
-**${v.tg.displays.get(fileLanguage)}**  
+**${v.tg}**  
 
 Tipo di vaccino somministrato  
-**${v.vp.displays.get(fileLanguage)}**  
+**${v.vp}**  
 
 Denominazione del vaccino  
-**${v.mp.displays.get(fileLanguage)}**  
+**${v.mp}**  
 
 Produttore o titolare dell’AIC del vaccino  
-**${v.ma.displays.get(fileLanguage)}**  
+**${v.ma}**  
 
 Numero della dose effettuata / numero totale dosi previste  
 **${v.dn} / ${v.sd}**  

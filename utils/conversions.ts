@@ -5,7 +5,7 @@ import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { errorsToReadableMessages } from "@pagopa/ts-commons/lib/reporters";
 import { Errors } from "io-ts";
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
-import { isNone, isSome, none, Option, Some, some } from "fp-ts/lib/Option";
+import * as o from "fp-ts/lib/Option";
 
 /**
  * Convert a string into SHA256
@@ -21,46 +21,63 @@ export const toSHA256 = (source: FiscalCode): string =>
 
 export const errorsToError = (errors: Errors): Error =>
   new Error(errorsToReadableMessages(errors).join("|"));
+
+/**
+ * An object representing a value translated in every supported languages
+ */
+
+export type SuportedLanguage =
+  | PreferredLanguageEnum.en_GB
+  | PreferredLanguageEnum.it_IT;
+
 export interface ITranslatable {
-  readonly id: string;
-  readonly displays: ReadonlyMap<PreferredLanguageEnum, string>;
+  readonly displays: { [key in SuportedLanguage]: string };
+}
+
+export interface IReadonlyTranslatableMap {
+  readonly [key: string]: ITranslatable;
+}
+export interface IReadonlyMap {
+  readonly [key: string]: string;
 }
 
 /**
  * A function that returns a Codec mapping an input key with a pre-created ITranslatable
  */
-export const toTWithMap = <T extends ITranslatable>(
-  map: ReadonlyMap<string, T>
-): t.Type<T, string, string> =>
+export const toTWithMap = <T>(map: {
+  readonly [key: string]: T;
+}): t.Type<T, string, string> =>
   new t.Type<T, string, string>(
     "toTWithMap",
-    (value: unknown): value is T =>
-      Array.from(map.values()).some(v => v === value), // FIXME replace with deep compare
+    (value: unknown): value is T => Object.values(map).some(v => v === value),
     (v, c) =>
-      map.get(v)
-        ? t.success(map.get(v) as T)
+      map[v]
+        ? t.success(map[v])
         : t.failure(v, c, "Value not contained in map"),
-    value => value.id
+    value => Object.keys(map).find(key => map[key] === value) ?? ""
   );
 
 /**
  * A function that returns a Codec mapping an input key with a pre-created ITranslatable
  * if string is empty, return undefined
  */
-export const toTWithMapOptional = <T extends ITranslatable>(
-  map: ReadonlyMap<string, T>
-): t.Type<Option<T>, string, string> =>
-  new t.Type<Option<T>, string, string>(
+export const toTWithMapOptional = <T>(map: {
+  readonly [key: string]: T;
+}): t.Type<o.Option<T>, string, string> =>
+  new t.Type<o.Option<T>, string, string>(
     "toTWithMapOptional",
-    (value: unknown): value is Option<T> =>
+    (value: unknown): value is o.Option<T> =>
       !!value &&
-      (isNone(value as Option<T>) ||
-        Array.from(map.values()).some(v => v === (value as Some<T>).value)), // FIXME replace with deep compare
+      (o.isNone(value as o.Option<T>) ||
+        Object.values(map).some(v => v === (value as o.Some<T>).value)),
     (v, c) =>
       v
-        ? map.get(v)
-          ? t.success(some(map.get(v) as T))
+        ? map[v]
+          ? t.success(o.some(map[v]))
           : t.failure(v, c, "Value not contained in map")
-        : t.success(none),
-    value => (isSome(value) ? value.value.id : "")
+        : t.success(o.none),
+    value =>
+      o.isSome(value)
+        ? Object.keys(map).find(key => map[key] === value.value) ?? ""
+        : ""
   );

@@ -9,7 +9,7 @@ export const getDetailPrinter = (tr: RecoveryEntry): string =>
 ## Recovery Certificate  
 
 Disease or agent the citizen has recovered from  
-**${tr.tg.displays.get(fileLanguage)}**  
+**${tr.tg}**  
 
 Date of first positive NAAT test result  
 **${formatDate(tr.fr, fileLanguage)}**  
