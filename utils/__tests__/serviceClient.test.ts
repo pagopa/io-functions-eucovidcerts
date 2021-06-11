@@ -1,7 +1,8 @@
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { HttpsUrlFromString } from "@pagopa/ts-commons/lib/url";
-import { createPoolSelector } from "../serviceClient";
+import { context } from "../../__mocks__/durable-functions";
+import { createClient, createPoolSelector } from "../serviceClient";
 
 const aFiscalCodeSet = [
   "PRVPRV25A01H501B", // c58c7c882b44499b1c55a5772eb89aff92e9777583dc28544c9cbaf3aba434f9
@@ -24,6 +25,15 @@ const elem2 = HttpsUrlFromString.decode("https://elem2.com").getOrElseL(_ =>
 const elem3 = HttpsUrlFromString.decode("https://elem3.com").getOrElseL(_ =>
   fail(`Failed to decode elem3: ${readableReport(_)}`)
 );
+
+const mockFetch = <T>(status: number, json: T): typeof fetch => {
+  return (jest.fn((_1, _2) =>
+    Promise.resolve({
+      json: () => Promise.resolve(json),
+      status
+    })
+  ) as unknown) as typeof fetch;
+};
 
 describe("createPoolSelector", () => {
   it("should select the element in a pool of one", () => {
@@ -70,5 +80,41 @@ describe("createPoolSelector", () => {
       elem2.href,
       elem3.href
     ]);
+  });
+});
+
+describe("createClient#getLimitedProfileByPost", () => {
+  it("should return 403 if the service is not authorized to get the profile", async () => {
+    const fetchApi = mockFetch(403, {});
+    const client = createClient(
+      fetchApi,
+      [{ href: "https://localhost" } as any],
+      "secret"
+    );
+    const response = await client
+      .getLimitedProfileByPost({} as any, aFiscalCodeSet[0], context)
+      .run();
+    expect(response.isLeft()).toBeTruthy();
+    expect(response.value).toHaveProperty(
+      "kind",
+      "IResponseErrorForbiddenNotAuthorizedForRecipient"
+    );
+  });
+
+  it("should return 403 if the profile was not found", async () => {
+    const fetchApi = mockFetch(404, {});
+    const client = createClient(
+      fetchApi,
+      [{ href: "https://localhost" } as any],
+      "secret"
+    );
+    const response = await client
+      .getLimitedProfileByPost({} as any, aFiscalCodeSet[0], context)
+      .run();
+    expect(response.isLeft()).toBeTruthy();
+    expect(response.value).toHaveProperty(
+      "kind",
+      "IResponseErrorForbiddenNotAuthorizedForRecipient"
+    );
   });
 });

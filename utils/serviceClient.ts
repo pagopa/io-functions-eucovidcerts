@@ -133,9 +133,9 @@ export const createClient = (
               () => responseRaw.json(),
               error => ResponseErrorInternal(String(error))
             )
-            // If the profile was not found returns status code 403
+            // If the profile was not found or service is not authorized returns status code 403
             .filterOrElseL(
-              _ => responseRaw.status !== 404,
+              _ => responseRaw.status !== 404 && responseRaw.status !== 403,
               _ => ResponseErrorForbiddenNotAuthorizedForRecipient
             )
             // If the response is not 200 returns status code 500
