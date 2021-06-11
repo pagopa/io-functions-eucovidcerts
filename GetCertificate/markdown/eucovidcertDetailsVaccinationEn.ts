@@ -3,8 +3,9 @@ import { VaccinationEntry } from "../certificate";
 import {
   formatCertificateIssuer,
   formatDate,
+  formatUvciTwoLines,
   isVaccinationProcessEnded
-} from "../printer";
+} from "../printer.helpers";
 
 const fileLanguage = PreferredLanguageEnum.en_GB;
 
@@ -44,7 +45,7 @@ Certificate issuer
 **${formatCertificateIssuer(v.is, fileLanguage)}**  
 
 IdUnique certificate identifier  
-**${v.ci}**  
+**${formatUvciTwoLines(v.ci)}**  
 
 ***
 

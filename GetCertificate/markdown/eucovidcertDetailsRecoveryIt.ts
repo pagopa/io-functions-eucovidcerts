@@ -1,6 +1,10 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { RecoveryEntry } from "../certificate";
-import { formatCertificateIssuer, formatDate } from "../printer";
+import {
+  formatCertificateIssuer,
+  formatDate,
+  formatUvciTwoLines
+} from "../printer.helpers";
 
 const fileLanguage = PreferredLanguageEnum.it_IT;
 
@@ -25,6 +29,9 @@ Certificazione valida dal
 
 Certificazione valida fino al  
 **${formatDate(tr.du, fileLanguage)}**  
+
+Identificativo univoco del certificato  
+**${formatUvciTwoLines(tr.ci)}**  
 
 ***
 

@@ -4,10 +4,11 @@ import {
   formatCertificateIssuer,
   ITALY_HEALTHCARE_ISSUER,
   HEALTHCARE_DEP_IT,
-  HEALTHCARE_DEP_EN
-} from "../printer";
+  HEALTHCARE_DEP_EN,
+  formatUvciTwoLines
+} from "../printer.helpers";
 
-describe("Printer", () => {
+describe("Printers - Certificate Issuer", () => {
   it("should format Certificate Issuer with Ministero della salute if value is IT and language it_IT", () => {
     const result = formatCertificateIssuer(
       ITALY_HEALTHCARE_ISSUER,
@@ -29,5 +30,24 @@ describe("Printer", () => {
       PreferredLanguageEnum.en_GB
     );
     expect(result).toEqual("a value");
+  });
+});
+
+describe("Printers - Two Lines UVCI", () => {
+  it("should format UVCI in two lines - even", () => {
+    const uvci = "01IT0BFC9866D3854EAC82C21654B6F6DE32#1";
+    const result = formatUvciTwoLines(uvci);
+    expect(result).toEqual("01IT0BFC9866D3854EA  \nC82C21654B6F6DE32#1");
+  });
+  it("should format UVCI in two lines - odd", () => {
+    const uvci = "A01IT0BFC9866D3854EAC82C21654B6F6DE32#1";
+    const result = formatUvciTwoLines(uvci);
+    expect(result).toEqual("A01IT0BFC9866D3854E  \nAC82C21654B6F6DE32#1");
+  });
+
+  it("should format UVCI in two lines - empty", () => {
+    const uvci = "";
+    const result = formatUvciTwoLines(uvci);
+    expect(result).toEqual("  \n");
   });
 });

@@ -38,7 +38,8 @@ import { SearchSingleQrCodeResponseDTO } from "../generated/dgc/SearchSingleQrCo
 import { toSHA256 } from "../utils/conversions";
 import { createDGCClientSelector } from "../utils/dgcClientSelector";
 import { parseQRCode } from "./parser";
-import { printDetails, printInfo, printUvci } from "./printer";
+import { printDetails, printInfo } from "./printer";
+import { printUvci } from "./printer.helpers";
 
 const assertNever = (x: never): never => {
   throw new Error(`Unexpected object: ${toString(x)}`);

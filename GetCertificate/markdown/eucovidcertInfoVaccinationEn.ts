@@ -1,10 +1,13 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { some } from "fp-ts/lib/Option";
+import { pipe } from "fp-ts/lib/pipeable";
 import { Certificates } from "../certificate";
-import { formatDate, printUvci } from "../printer";
+import { formatDate, printUvci, formatUvciTwoLines } from "../printer.helpers";
 
 const fileLanguage = PreferredLanguageEnum.en_GB;
 const uvci = (c: Certificates): string => printUvci(some(fileLanguage), c);
+const twoLinesUvci = (c: Certificates): string =>
+  pipe(c, uvci, formatUvciTwoLines);
 
 export const getInfoPrinter = (c: Certificates): string =>
   `
@@ -18,7 +21,7 @@ Date of birth
 
 Unique Certifcate Identifier  
 *Identificativo univoco del certificato*  
-**${uvci(c)}**  
+**${twoLinesUvci(c)}**  
 
 [copia l’identificativo](iohandledlink://copy:${uvci(c)})
 `;

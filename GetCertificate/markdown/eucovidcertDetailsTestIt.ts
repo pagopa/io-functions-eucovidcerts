@@ -1,7 +1,11 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { isSome } from "fp-ts/lib/Option";
 import { TestEntry } from "../certificate";
-import { formatCertificateIssuer, formatDate } from "../printer";
+import {
+  formatCertificateIssuer,
+  formatDate,
+  formatUvciTwoLines
+} from "../printer.helpers";
 
 const fileLanguage = PreferredLanguageEnum.it_IT;
 
@@ -51,7 +55,7 @@ Struttura che ha rilasciato la certificazione
 **${formatCertificateIssuer(te.is, fileLanguage)}**  
 
 Identificativo univoco del certificato  
-**${te.ci}**  
+**${formatUvciTwoLines(te.ci)}**  
   
 ***
 

@@ -1,6 +1,10 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { RecoveryEntry } from "../certificate";
-import { formatCertificateIssuer, formatDate } from "../printer";
+import {
+  formatCertificateIssuer,
+  formatDate,
+  formatUvciTwoLines
+} from "../printer.helpers";
 
 const fileLanguage = PreferredLanguageEnum.en_GB;
 
@@ -18,13 +22,17 @@ Member State of test
 **${tr.co}**  
 
 Certificate issuer  
-  **${formatCertificateIssuer(tr.is, fileLanguage)}**  
+**${formatCertificateIssuer(tr.is, fileLanguage)}**  
   
 Certificate valid From  
 **${formatDate(tr.df, fileLanguage)}**  
   
 Certificate valid Until  
-**${formatDate(tr.du, fileLanguage)}**  
+**${formatDate(tr.du, fileLanguage)}** 
+
+Unique certificate identifier  
+**${formatUvciTwoLines(tr.ci)}**  
+
 
 ***
   
