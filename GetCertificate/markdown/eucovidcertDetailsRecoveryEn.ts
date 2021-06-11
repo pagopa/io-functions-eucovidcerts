@@ -3,7 +3,7 @@ import { RecoveryEntry } from "../certificate";
 import {
   formatCertificateIssuer,
   formatDate,
-  formatUvciTwoLines
+  formatUvci
 } from "../printer.helpers";
 
 const fileLanguage = PreferredLanguageEnum.en_GB;
@@ -31,7 +31,7 @@ Certificate valid Until
 **${formatDate(tr.du, fileLanguage)}**  
 
 Unique certificate identifier  
-**${formatUvciTwoLines(tr.ci)}**  
+**${formatUvci(tr.ci)}**  
 
 
 ***

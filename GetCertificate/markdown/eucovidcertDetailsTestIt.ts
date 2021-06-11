@@ -4,7 +4,7 @@ import { TestEntry } from "../certificate";
 import {
   formatCertificateIssuer,
   formatDate,
-  formatUvciTwoLines
+  formatUvci
 } from "../printer.helpers";
 
 const fileLanguage = PreferredLanguageEnum.it_IT;
@@ -55,7 +55,7 @@ Struttura che ha rilasciato la certificazione
 **${formatCertificateIssuer(te.is, fileLanguage)}**  
 
 Identificativo univoco del certificato  
-**${formatUvciTwoLines(te.ci)}**  
+**${formatUvci(te.ci)}**  
   
 ***
 

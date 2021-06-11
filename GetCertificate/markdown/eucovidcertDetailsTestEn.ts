@@ -4,7 +4,7 @@ import { TestEntry } from "../certificate";
 import {
   formatCertificateIssuer,
   formatDate,
-  formatUvciTwoLines
+  formatUvci
 } from "../printer.helpers";
 
 const fileLanguage = PreferredLanguageEnum.en_GB;
@@ -51,7 +51,7 @@ Certificate issuer
 **${formatCertificateIssuer(te.is, fileLanguage)}**  
 
 Unique certificate identifier  
-**${formatUvciTwoLines(te.ci)}**  
+**${formatUvci(te.ci)}**  
   
 ***
 

@@ -3,7 +3,6 @@ import {
   PreferredLanguageEnum
 } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import * as o from "fp-ts/lib/Option";
-import { pipe } from "fp-ts/lib/pipeable";
 import * as moment from "moment";
 import { match } from "ts-pattern";
 import {
@@ -35,18 +34,19 @@ export const printUvci = (
     .exhaustive();
 /**
  * Returns UVCI of the first certificate (either Vaccination, Test or Recovery)
- * splitted in two lines
  *
  * @param _lang the preferred language (unused)
  * @param c the Certificate
  * @returns the UVCI
  */
-export const formatUvciTwoLines = (uvci: string): string =>
-  pipe(
-    uvci,
-    _ => [_.substring(0, _.length / 2), _.substring(_.length / 2, _.length)],
-    substrings => `${substrings[0]}  \n${substrings[1]}`
-  );
+export const formatUvci = (uvci: string): string => uvci;
+
+// NOTE: This will be used if we need to split in two lines
+// pipe(
+//   uvci,
+//   _ => [_.substring(0, _.length / 2), _.substring(_.length / 2, _.length)],
+//   substrings => `${substrings[0]}  \n${substrings[1]}`
+// );
 
 /**
  * Check if Vaccination has ended

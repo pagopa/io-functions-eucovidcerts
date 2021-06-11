@@ -4,7 +4,7 @@ import {
   isVaccinationProcessEnded,
   formatDate,
   formatCertificateIssuer,
-  formatUvciTwoLines
+  formatUvci
 } from "../printer.helpers";
 
 const fileLanguage = PreferredLanguageEnum.it_IT;
@@ -45,7 +45,7 @@ Struttura che ha rilasciato la certificazione
 **${formatCertificateIssuer(v.is, fileLanguage)}**  
 
 Identificativo univoco del certificato  
-**${formatUvciTwoLines(v.ci)}**  
+**${formatUvci(v.ci)}**  
   
 ***
 

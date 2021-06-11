@@ -2,12 +2,11 @@ import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generat
 import { some } from "fp-ts/lib/Option";
 import { pipe } from "fp-ts/lib/pipeable";
 import { Certificates } from "../certificate";
-import { formatDate, printUvci, formatUvciTwoLines } from "../printer.helpers";
+import { formatDate, printUvci, formatUvci } from "../printer.helpers";
 
 const fileLanguage = PreferredLanguageEnum.en_GB;
 const uvci = (c: Certificates): string => printUvci(some(fileLanguage), c);
-const twoLinesUvci = (c: Certificates): string =>
-  pipe(c, uvci, formatUvciTwoLines);
+const twoLinesUvci = (c: Certificates): string => pipe(c, uvci, formatUvci);
 
 export const getInfoPrinter = (c: Certificates): string =>
   `

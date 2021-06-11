@@ -5,7 +5,7 @@ import {
   ITALY_HEALTHCARE_ISSUER,
   HEALTHCARE_DEP_IT,
   HEALTHCARE_DEP_EN,
-  formatUvciTwoLines
+  formatUvci
 } from "../printer.helpers";
 
 describe("Printers - Certificate Issuer", () => {
@@ -36,18 +36,26 @@ describe("Printers - Certificate Issuer", () => {
 describe("Printers - Two Lines UVCI", () => {
   it("should format UVCI in two lines - even", () => {
     const uvci = "01IT0BFC9866D3854EAC82C21654B6F6DE32#1";
-    const result = formatUvciTwoLines(uvci);
-    expect(result).toEqual("01IT0BFC9866D3854EA  \nC82C21654B6F6DE32#1");
-  });
-  it("should format UVCI in two lines - odd", () => {
-    const uvci = "A01IT0BFC9866D3854EAC82C21654B6F6DE32#1";
-    const result = formatUvciTwoLines(uvci);
-    expect(result).toEqual("A01IT0BFC9866D3854E  \nAC82C21654B6F6DE32#1");
+    const result = formatUvci(uvci);
+    expect(result).toEqual("01IT0BFC9866D3854EAC82C21654B6F6DE32#1");
   });
 
-  it("should format UVCI in two lines - empty", () => {
-    const uvci = "";
-    const result = formatUvciTwoLines(uvci);
-    expect(result).toEqual("  \n");
-  });
+  // NOTE: This will be used if we need to split in two lines
+  // it("should format UVCI in two lines - even", () => {
+  //   const uvci = "01IT0BFC9866D3854EAC82C21654B6F6DE32#1";
+  //   const result = formatUvci(uvci);
+  //   expect(result).toEqual("01IT0BFC9866D3854EA  \nC82C21654B6F6DE32#1");
+  // });
+
+  // it("should format UVCI in two lines - odd", () => {
+  //   const uvci = "A01IT0BFC9866D3854EAC82C21654B6F6DE32#1";
+  //   const result = formatUvci(uvci);
+  //   expect(result).toEqual("A01IT0BFC9866D3854E  \nAC82C21654B6F6DE32#1");
+  // });
+
+  // it("should format UVCI in two lines - empty", () => {
+  //   const uvci = "";
+  //   const result = formatUvci(uvci);
+  //   expect(result).toEqual("  \n");
+  // });
 });

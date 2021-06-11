@@ -3,7 +3,7 @@ import { VaccinationEntry } from "../certificate";
 import {
   formatCertificateIssuer,
   formatDate,
-  formatUvciTwoLines,
+  formatUvci,
   isVaccinationProcessEnded
 } from "../printer.helpers";
 
@@ -45,7 +45,7 @@ Certificate issuer
 **${formatCertificateIssuer(v.is, fileLanguage)}**  
 
 IdUnique certificate identifier  
-**${formatUvciTwoLines(v.ci)}**  
+**${formatUvci(v.ci)}**  
 
 ***
 
