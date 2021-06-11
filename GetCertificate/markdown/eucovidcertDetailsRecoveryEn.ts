@@ -28,7 +28,7 @@ Certificate valid From
 **${formatDate(tr.df, fileLanguage)}**  
   
 Certificate valid Until  
-**${formatDate(tr.du, fileLanguage)}** 
+**${formatDate(tr.du, fileLanguage)}**  
 
 Unique certificate identifier  
 **${formatUvciTwoLines(tr.ci)}**  
