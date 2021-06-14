@@ -19,7 +19,7 @@ Type of Test
 **${te.tt.displays[fileLanguage]}**  
 
 Result of the test  
-**${te.tr.displays.get(fileLanguage)}**  
+**${te.tr.displays[fileLanguage]}**  
 
 ${te.nm ? `NAA test name  ` : ""}
 ${te.nm ? `**${te.nm}**  ` : ""}

@@ -60,9 +60,9 @@ Right {
         "tc": "Policlinico Umberto I",
         "tg": "COVID-19",
         "tr": Object {
-          "displays": Map {
-            "it_IT" => "Negativo",
-            "en_GB" => "Not detected",
+          "displays": Object {
+            "en_GB": "Not detected",
+            "it_IT": "Negativo",
           },
         },
         "tt": Object {

@@ -19,7 +19,7 @@ Tipo di test
 **${te.tt.displays[fileLanguage]}**  
 
 Risultato del test  
-**${te.tr.displays.get(fileLanguage)}**  
+**${te.tr.displays[fileLanguage]}**  
 
 ${te.nm ? `Nome del test molecolare  ` : ""}
 ${te.nm ? `**${te.nm}**  ` : ""}
