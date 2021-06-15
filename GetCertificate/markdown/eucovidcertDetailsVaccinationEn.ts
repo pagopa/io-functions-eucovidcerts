@@ -57,4 +57,5 @@ The scientific evidence on COVID-19 vaccination, testing and recovery continues 
   
 For more information and to download the certificate in printable PDF format go to
 [www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
 `;

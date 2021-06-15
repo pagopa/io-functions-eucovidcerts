@@ -37,4 +37,5 @@ Le evidenze scientifiche sulla vaccinazione, sui test e sulla guarigione da COVI
   
 Per ulteriori informazioni e per scaricare il certificato in formato PDF stampabile vai su 
 [www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
 `;
