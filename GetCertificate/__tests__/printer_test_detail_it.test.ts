@@ -23,7 +23,7 @@ describe("Printer - Test - Detail - it_IT", () => {
           tg: "840539006",
           tt: "LP6464-4",
           nm: "Roche LightCycler qPCR",
-          ma: "",
+          ma: "1232",
           sc: "2021-05-10T10:27:15Z",
           dr: "2021-05-11T12:27:15Z",
           tr: "260415000",

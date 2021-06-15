@@ -26,7 +26,7 @@ ${te.nm ? `**${te.nm}**  ` : ""}
 
 ${
   te.ma && isSome(te.ma)
-    ? `Nome del test antigienico e nome del produttore  `
+    ? `Nome del test antigenico e nome del produttore  `
     : ""
 }
 ${te.ma && isSome(te.ma) ? `**${te.ma.value}**  ` : ""}
@@ -60,4 +60,5 @@ Le evidenze scientifiche sulla vaccinazione, sui test e sulla guarigione da COVI
   
 Per ulteriori informazioni e per scaricare il certificato in formato PDF stampabile vai su 
 [www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
 `;
