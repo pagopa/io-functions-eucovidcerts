@@ -16,7 +16,7 @@ Date of birth
 *Data di nascita (aaaa-mm-gg)*  
 **${formatDate(c.dob, fileLanguage)}**  
 
-Unique Certifcate Identifier  
+Unique Certificate Identifier  
 *Identificativo univoco del certificato*  
 **${uvci(c)}**  
 

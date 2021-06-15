@@ -12,11 +12,10 @@ export const getDetailPrinter = (v: VaccinationEntry): string =>
   `
 ## Vaccination Certificate  
 ***
-${
-  isVaccinationProcessEnded(v)
+${isVaccinationProcessEnded(v)
     ? "**Certification valid for 270 days (9 months) from the date of the last administration**"
     : "**Certification valid until next dose**"
-}
+  }
 ***
 
 Disease or agent targeted  
@@ -43,7 +42,7 @@ Member State of vaccination
 Certificate issuer  
 **${formatCertificateIssuer(v.is, fileLanguage)}**  
 
-IdUnique certificate identifier  
+Unique certificate identifier  
 **${v.ci}**  
 
 ***

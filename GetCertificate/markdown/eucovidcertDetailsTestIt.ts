@@ -24,11 +24,10 @@ Risultato del test
 ${te.nm ? `Nome del test molecolare  ` : ""}
 ${te.nm ? `**${te.nm}**  ` : ""}
 
-${
-  te.ma && isSome(te.ma)
-    ? `Nome del test antigienico e nome del produttore  `
+${te.ma && isSome(te.ma)
+    ? `Nome del test antigenico e nome del produttore  `
     : ""
-}
+  }
 ${te.ma && isSome(te.ma) ? `**${te.ma.value}**  ` : ""}
 
 Data e ora del prelievo del campione  
