@@ -13,13 +13,13 @@ export const getDetailPrinter = (te: TestEntry): string =>
 ***
 
 Malattia o agente bersaglio  
-**${te.tg.displays.get(fileLanguage)}**  
+**${te.tg}**  
 
 Tipo di test  
-**${te.tt.displays.get(fileLanguage)}**  
+**${te.tt.displays[fileLanguage]}**  
 
 Risultato del test  
-**${te.tr.displays.get(fileLanguage)}**  
+**${te.tr.displays[fileLanguage]}**  
 
 ${te.nm ? `Nome del test molecolare  ` : ""}
 ${te.nm ? `**${te.nm}**  ` : ""}
@@ -29,11 +29,7 @@ ${
     ? `Nome del test antigienico e nome del produttore  `
     : ""
 }
-${
-  te.ma && isSome(te.ma)
-    ? `**${te.ma.value.displays.get(fileLanguage)}**  `
-    : ""
-}
+${te.ma && isSome(te.ma) ? `**${te.ma.value}**  ` : ""}
 
 Data e ora del prelievo del campione  
 **${formatDate(te.sc, fileLanguage)}**  

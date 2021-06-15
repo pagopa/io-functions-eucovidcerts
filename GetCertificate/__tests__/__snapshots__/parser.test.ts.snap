@@ -26,13 +26,7 @@ Right {
         "du": 2021-10-31T00:00:00.000Z,
         "fr": 2021-05-02T00:00:00.000Z,
         "is": "IT",
-        "tg": Object {
-          "displays": Map {
-            "it_IT" => "COVID-19",
-            "en_GB" => "COVID-19",
-          },
-          "id": "840539006",
-        },
+        "tg": "COVID-19",
       },
     ],
     "ver": "1.0.0",
@@ -59,37 +53,23 @@ Right {
         "is": "IT",
         "ma": Some {
           "_tag": "Some",
-          "value": Object {
-            "displays": Map {
-              "it_IT" => "Abbott Rapid Diagnostics, Panbio COVID-19 Ag Test",
-              "en_GB" => "Abbott Rapid Diagnostics, Panbio COVID-19 Ag Test",
-            },
-            "id": "1232",
-          },
+          "value": "Abbott Rapid Diagnostics, Panbio COVID-19 Ag Test",
         },
         "nm": "Roche LightCycler qPCR",
         "sc": 2021-05-03T10:27:15.000Z,
         "tc": "Policlinico Umberto I",
-        "tg": Object {
-          "displays": Map {
-            "it_IT" => "COVID-19",
-            "en_GB" => "COVID-19",
-          },
-          "id": "840539006",
-        },
+        "tg": "COVID-19",
         "tr": Object {
-          "displays": Map {
-            "it_IT" => "Negativo",
-            "en_GB" => "Not detected",
+          "displays": Object {
+            "en_GB": "Not detected",
+            "it_IT": "Negativo",
           },
-          "id": "260415000",
         },
         "tt": Object {
-          "displays": Map {
-            "it_IT" => "Test molecolare",
-            "en_GB" => "Nucleic acid amplification with probe detection",
+          "displays": Object {
+            "en_GB": "Nucleic acid amplification with probe detection",
+            "it_IT": "Test molecolare",
           },
-          "id": "LP6464-4",
         },
       },
     ],
@@ -116,35 +96,11 @@ Right {
         "dn": 2,
         "dt": 2021-04-10T00:00:00.000Z,
         "is": "IT",
-        "ma": Object {
-          "displays": Map {
-            "it_IT" => "Biontech Manufacturing GmbH",
-            "en_GB" => "Biontech Manufacturing GmbH",
-          },
-          "id": "ORG-100030215",
-        },
-        "mp": Object {
-          "displays": Map {
-            "it_IT" => "Comirnaty",
-            "en_GB" => "Comirnaty",
-          },
-          "id": "EU/1/20/1528",
-        },
+        "ma": "Biontech Manufacturing GmbH",
+        "mp": "Comirnaty",
         "sd": 2,
-        "tg": Object {
-          "displays": Map {
-            "it_IT" => "COVID-19",
-            "en_GB" => "COVID-19",
-          },
-          "id": "840539006",
-        },
-        "vp": Object {
-          "displays": Map {
-            "it_IT" => "SARS-CoV-2 mRNA vaccine",
-            "en_GB" => "SARS-CoV-2 mRNA vaccine",
-          },
-          "id": "1119349007",
-        },
+        "tg": "COVID-19",
+        "vp": "SARS-CoV-2 mRNA vaccine",
       },
     ],
     "ver": "1.0.0",

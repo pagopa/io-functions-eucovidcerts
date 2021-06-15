@@ -13,23 +13,19 @@ export const getDetailPrinter = (te: TestEntry): string =>
 ***
 
 Disease or agent targeted  
-**${te.tg.displays.get(fileLanguage)}**  
+**${te.tg}**  
 
 Type of Test  
-**${te.tt.displays.get(fileLanguage)}**  
+**${te.tt.displays[fileLanguage]}**  
 
 Result of the test  
-**${te.tr.displays.get(fileLanguage)}**  
+**${te.tr.displays[fileLanguage]}**  
 
 ${te.nm ? `NAA test name  ` : ""}
 ${te.nm ? `**${te.nm}**  ` : ""}
 
 ${te.ma && isSome(te.ma) ? `RAT test name and manufacturer  ` : ""}
-${
-  te.ma && isSome(te.ma)
-    ? `**${te.ma.value.displays.get(fileLanguage)}**  `
-    : ""
-}
+${te.ma && isSome(te.ma) ? `**${te.ma.value}**  ` : ""}
 
 Date and time of the test sample collection  
 **${formatDate(te.sc, fileLanguage)}**  

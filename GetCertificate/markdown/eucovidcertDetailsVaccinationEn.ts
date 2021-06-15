@@ -20,16 +20,16 @@ ${
 ***
 
 Disease or agent targeted  
-**${v.tg.displays.get(fileLanguage)}**  
+**${v.tg}**  
 
 Vaccine/prophylaxis  
-**${v.vp.displays.get(fileLanguage)}**  
+**${v.vp}**  
 
 Vaccine medicinal product  
-**${v.mp.displays.get(fileLanguage)}**   
+**${v.mp}**   
 
 Vaccine marketing authorisation holder or manufacturer  
-**${v.ma.displays.get(fileLanguage)}**  
+**${v.ma}**  
 
 Number in a series of vaccinations doses / overall number of vaccination in the series  
 **${v.dn} / ${v.sd}**  

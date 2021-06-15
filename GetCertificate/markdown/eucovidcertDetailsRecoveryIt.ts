@@ -9,7 +9,7 @@ export const getDetailPrinter = (tr: RecoveryEntry): string =>
 ## Certificato di Guarigione
 
 Malattia o agente bersaglio da cui la persona è guarita  
-**${tr.tg.displays.get(fileLanguage)}**  
+**${tr.tg}**  
 
 Data del primo test molecolare positivo  
 **${formatDate(tr.fr, fileLanguage)}**  
