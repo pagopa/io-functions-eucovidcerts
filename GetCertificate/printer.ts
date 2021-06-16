@@ -23,8 +23,7 @@ import * as recoveryDetailsIt from "./markdown/eucovidcertDetailsRecoveryIt";
 import * as recoveryDetailsEn from "./markdown/eucovidcertDetailsRecoveryEn";
 import * as vacInfoEn from "./markdown/eucovidcertInfoVaccinationEn";
 
-const TIME_ZONE = "Europe/Lisbone";
-// const TIME_ZONE = "Europe/Rome";
+const TIME_ZONE = "Europe/Rome";
 
 const DATE_FORMAT_EN = "YYYY-MM-DD";
 const DATE_FORMAT_ITA = "DD-MM-YYYY";
