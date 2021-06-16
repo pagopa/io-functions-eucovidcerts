@@ -1,7 +1,7 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { isSome } from "fp-ts/lib/Option";
 import { TestEntry } from "../certificate";
-import { formatCertificateIssuer, formatDate } from "../printer";
+import { formatCertificateIssuer, formatDateAndTime } from "../printer";
 
 const fileLanguage = PreferredLanguageEnum.it_IT;
 
@@ -32,10 +32,10 @@ ${
 ${te.ma && isSome(te.ma) ? `**${te.ma.value}**  ` : ""}
 
 Data e ora del prelievo del campione  
-**${formatDate(te.sc, fileLanguage)}**  
+**${formatDateAndTime(te.sc, fileLanguage)}**  
 
 ${te.dr ? `Data e ora del risultato del test  ` : ""}
-${te.dr ? `**${formatDate(te.dr, fileLanguage)}**  ` : ""}
+${te.dr ? `**${formatDateAndTime(te.dr, fileLanguage)}**  ` : ""}
 
 Centro o struttura in cui è stato eseguito il test  
 **${te.tc}**  
