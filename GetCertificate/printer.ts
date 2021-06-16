@@ -170,7 +170,11 @@ export const formatDate = (d: Date, _lang: PreferredLanguage): string =>
           .tz(TIME_ZONE)
           .format(DATE_FORMAT_EN)
     )
-    .otherwise(() => moment(d).format(DATE_FORMAT_ITA));
+    .otherwise(() =>
+      moment(d)
+        .tz(TIME_ZONE)
+        .format(DATE_FORMAT_ITA)
+    );
 
 /**
  * Format date and time value based on language
@@ -183,7 +187,10 @@ export const formatDateAndTime = (d: Date, _lang: PreferredLanguage): string =>
   match(_lang)
     .when(
       l => l === PreferredLanguageEnum.en_GB,
-      _ => moment(d).format(DATE_TIME_FORMAT_EN)
+      _ =>
+        moment(d)
+          .tz(TIME_ZONE)
+          .format(DATE_TIME_FORMAT_EN)
     )
     .otherwise(() =>
       moment(d)
