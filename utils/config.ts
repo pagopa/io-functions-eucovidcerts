@@ -1,3 +1,4 @@
+/* eslint-disable sort-keys */
 /**
  * Config module
  *
@@ -7,8 +8,12 @@
 
 import * as t from "io-ts";
 import { ValidationError } from "io-ts";
+
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
+import { withDefault } from "@pagopa/ts-commons/lib/types";
+import { IntegerFromString } from "@pagopa/ts-commons/lib/numbers";
 import { FiscalCode, NonEmptyString } from "@pagopa/ts-commons/lib/strings";
+
 import { HttpsUrlFromString } from "./url";
 import { CommaSeparatedListOf } from "./comma-separated-list";
 
@@ -43,15 +48,24 @@ export const IConfig = t.intersection([
   DCGConfigUAT,
   DCGConfigLOAD,
   t.interface({
+    isProduction: t.boolean,
+
     EUCOVIDCERT_NOTIFY_NEW_PROFILE_QUEUE_NAME: NonEmptyString,
     EUCOVIDCERT_PROFILE_CREATED_QUEUE_NAME: NonEmptyString,
     EventsQueueStorageConnection: NonEmptyString,
-    QueueStorageConnection: NonEmptyString
-  }),
-  t.interface({
+    QueueStorageConnection: NonEmptyString,
+
+    // fn-services variables
     FNSERVICES_API_KEY: NonEmptyString,
     FNSERVICES_API_URL: CommaSeparatedListOf(HttpsUrlFromString),
-    isProduction: t.boolean
+
+    // Appinsight variables
+    APPINSIGHTS_INSTRUMENTATIONKEY: NonEmptyString,
+    APPINSIGHTS_SAMPLING_PERCENTAGE: withDefault(IntegerFromString, 5)
+  }),
+  t.partial({
+    // Appinsight partial variables
+    APPINSIGHTS_DISABLE: t.string
   })
 ]);
 

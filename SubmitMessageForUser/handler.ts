@@ -1,3 +1,4 @@
+import { TelemetryClient } from "applicationinsights";
 import * as express from "express";
 import * as t from "io-ts";
 import * as te from "fp-ts/lib/TaskEither";
@@ -62,6 +63,7 @@ type ProxyFailures =
  */
 export const submitMessageForUser = (
   client: IServiceClient,
+  telemetryClient: TelemetryClient,
   request: express.Request
 ): te.TaskEither<ProxyFailures, Response> =>
   te.taskEither
@@ -97,10 +99,11 @@ export const submitMessageForUser = (
     );
 
 export const getSubmitMessageForUserHandler = (
-  client: IServiceClient
+  client: IServiceClient,
+  telemetryClient: TelemetryClient
 ): express.RequestHandler => async (request, response): Promise<void> =>
   // call proxy logic
-  submitMessageForUser(client, request)
+  submitMessageForUser(client, telemetryClient, request)
     // map a response coming from the downstream service onto the current response
     .chain(applyToExpressResponse(response))
     // map an error occurred into this proxy onto the current response
