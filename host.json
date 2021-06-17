@@ -3,7 +3,7 @@
   "logging": {
     "logLevel": {
       "default": "Information"
-    }
+    },
     "applicationInsights": {
       "samplingSettings": {
         "isEnabled": true,
