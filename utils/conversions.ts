@@ -1,7 +1,7 @@
 import * as crypto from "crypto";
 import * as t from "io-ts";
 
-import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
+// import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { errorsToReadableMessages } from "@pagopa/ts-commons/lib/reporters";
 import { Errors } from "io-ts";
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
@@ -13,7 +13,7 @@ import * as o from "fp-ts/lib/Option";
  * @param source
  * @returns
  */
-export const toSHA256 = (source: FiscalCode): string =>
+export const toSHA256 = (source: string): string =>
   crypto
     .createHash("sha256")
     .update(source)

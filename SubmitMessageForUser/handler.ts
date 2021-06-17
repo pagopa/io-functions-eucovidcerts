@@ -1,6 +1,6 @@
-import { TelemetryClient } from "applicationinsights";
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as express from "express";
-import * as t from "io-ts";
+import * as o from "fp-ts/lib/Option";
 import * as te from "fp-ts/lib/TaskEither";
 
 import {
@@ -10,20 +10,18 @@ import {
   ResponseErrorFromValidationErrors,
   ResponseErrorForbiddenNotAuthorizedForRecipient,
   IResponseErrorForbiddenNotAuthorizedForRecipient,
-  ResponseErrorInternal
+  ResponseErrorInternal,
+  ResponseErrorValidation
 } from "@pagopa/ts-commons/lib/responses";
 
-import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
+import { NewMessage } from "@pagopa/io-functions-commons/dist/generated/definitions/NewMessage";
 import { toError } from "fp-ts/lib/Either";
 import { identity } from "fp-ts/lib/function";
 import { Context } from "@azure/functions";
 import { IServiceClient } from "../utils/serviceClient";
-
-// a codec that identifies a payload containing a fiscal code
-type WithFiscalCode = t.TypeOf<typeof WithFiscalCode>;
-const WithFiscalCode = t.interface({
-  fiscal_code: FiscalCode
-});
+import { TelemetryClientWithContextFactory } from "../utils/appinsights";
+import { TelemetryClientWithContext } from "../utils/telemetryClientWithContext";
+import { toSHA256 } from "../utils/conversions";
 
 /**
  * Apply a fetch response on a given Express response
@@ -54,6 +52,37 @@ type ProxyFailures =
   | IResponseErrorGeneric
   | IResponseErrorForbiddenNotAuthorizedForRecipient;
 
+const getTrackingIdTemplate = (): string => "${fiscal_code}|${auth_code}";
+
+const log = (
+  telemetryClient: TelemetryClientWithContext
+): readonly [
+  (l: ProxyFailures) => ProxyFailures,
+  (r: Response) => Response
+] => [
+  l => {
+    telemetryClient.trackEventWithProperties(
+      {
+        errorDetail: l.detail || "",
+        isSuccess: "false",
+        trackingId: getTrackingIdTemplate()
+      },
+      "false"
+    );
+    return l;
+  },
+  r => {
+    telemetryClient.trackEventWithProperties(
+      {
+        isSuccess: "true",
+        trackingId: getTrackingIdTemplate()
+      },
+      "false"
+    );
+    return r;
+  }
+];
+
 /**
  * Proxy logic over the downstream service
  *
@@ -63,18 +92,32 @@ type ProxyFailures =
  */
 export const submitMessageForUser = (
   client: IServiceClient,
-  telemetryClient: TelemetryClient,
+  telemetryClient: TelemetryClientWithContext,
   request: express.Request
 ): te.TaskEither<ProxyFailures, Response> =>
   te.taskEither
     .of<ProxyFailures, unknown>(request.body)
     .chain(body =>
       te.fromEither(
-        WithFiscalCode.decode(body).bimap(
-          ResponseErrorFromValidationErrors(WithFiscalCode),
-          fc => fc.fiscal_code
+        NewMessage.decode(body).bimap(
+          ResponseErrorFromValidationErrors(NewMessage),
+          fc => {
+            telemetryClient.awareOfs({
+              auth_code: toSHA256(fc.content.eu_covid_cert?.auth_code || ""),
+              fiscal_code: toSHA256(fc.fiscal_code || "")
+            });
+            return fc.fiscal_code;
+          }
         )
       )
+    )
+    .chain(fc =>
+      te.fromOption<ProxyFailures>(() =>
+        ResponseErrorValidation(
+          "Missing Fiscal Code",
+          "fiscal_code is required"
+        )
+      )(o.fromNullable(fc))
     )
     .chain(fiscal_code =>
       client
@@ -96,14 +139,19 @@ export const submitMessageForUser = (
         request.body,
         request.app.get("context") as Context
       )
-    );
+    )
+    .bimap(...log(telemetryClient));
 
 export const getSubmitMessageForUserHandler = (
   client: IServiceClient,
-  telemetryClient: TelemetryClient
+  telemetryFactory: TelemetryClientWithContextFactory
 ): express.RequestHandler => async (request, response): Promise<void> =>
   // call proxy logic
-  submitMessageForUser(client, telemetryClient, request)
+  submitMessageForUser(
+    client,
+    telemetryFactory.getClientFor("api.eucovidcers.submitmessageforuser"),
+    request
+  )
     // map a response coming from the downstream service onto the current response
     .chain(applyToExpressResponse(response))
     // map an error occurred into this proxy onto the current response

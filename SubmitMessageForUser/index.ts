@@ -1,14 +1,12 @@
 import { AzureFunction, Context } from "@azure/functions";
 import * as express from "express";
-import { TelemetryClient } from "applicationinsights";
-
 import { secureExpressApp } from "@pagopa/io-functions-commons/dist/src/utils/express";
 import { setAppContext } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/context_middleware";
 import createAzureFunctionHandler from "@pagopa/express-azure-functions/dist/src/createAzureFunctionsHandler";
 import { getFetch } from "@pagopa/ts-commons/lib/agent";
 import { getConfigOrThrow } from "../utils/config";
 import { createClient } from "../utils/serviceClient";
-import { initTelemetryClient } from "../utils/appinsights";
+import { telemetryClientWithContextFactory } from "../utils/appinsights";
 import { getSubmitMessageForUserHandler } from "./handler";
 
 const config = getConfigOrThrow();
@@ -19,7 +17,8 @@ secureExpressApp(app);
 
 // Setup Appinsight
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-const telemetryClient = initTelemetryClient(config) as TelemetryClient;
+// const telemetryClient = initTelemetryClient(config) as TelemetryClient;
+const telemetryFactory = telemetryClientWithContextFactory(config);
 
 const fetchApi = getFetch(process.env);
 const serviceClient = createClient(
@@ -30,7 +29,7 @@ const serviceClient = createClient(
 
 app.post(
   "/api/v1/messages",
-  getSubmitMessageForUserHandler(serviceClient, telemetryClient)
+  getSubmitMessageForUserHandler(serviceClient, telemetryFactory)
 );
 
 const azureFunctionHandler = createAzureFunctionHandler(app);
