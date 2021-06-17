@@ -1,7 +1,7 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { isSome } from "fp-ts/lib/Option";
 import { TestEntry } from "../certificate";
-import { formatCertificateIssuer, formatDate } from "../printer";
+import { formatCertificateIssuer, formatDateAndTime } from "../printer";
 
 const fileLanguage = PreferredLanguageEnum.en_GB;
 
@@ -28,10 +28,10 @@ ${te.ma && isSome(te.ma) ? `RAT test name and manufacturer  ` : ""}
 ${te.ma && isSome(te.ma) ? `**${te.ma.value}**  ` : ""}
 
 Date and time of the test sample collection  
-**${formatDate(te.sc, fileLanguage)}**  
+**${formatDateAndTime(te.sc, fileLanguage)}**  
 
 ${te.dr ? `Date and time of the test result production  ` : ""}
-${te.dr ? `**${formatDate(te.dr, fileLanguage)}**  ` : ""}
+${te.dr ? `**${formatDateAndTime(te.dr, fileLanguage)}**  ` : ""}
 
 Testing centre or facility  
 **${te.tc}**  

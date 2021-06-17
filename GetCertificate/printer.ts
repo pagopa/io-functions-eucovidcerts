@@ -4,7 +4,7 @@ import {
   PreferredLanguageEnum
 } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import * as o from "fp-ts/lib/Option";
-import * as moment from "moment";
+import * as moment from "moment-timezone";
 import { match } from "ts-pattern";
 import {
   Certificates,
@@ -23,8 +23,13 @@ import * as recoveryDetailsIt from "./markdown/eucovidcertDetailsRecoveryIt";
 import * as recoveryDetailsEn from "./markdown/eucovidcertDetailsRecoveryEn";
 import * as vacInfoEn from "./markdown/eucovidcertInfoVaccinationEn";
 
+const TIME_ZONE = "Europe/Rome";
+
 const DATE_FORMAT_EN = "YYYY-MM-DD";
 const DATE_FORMAT_ITA = "DD-MM-YYYY";
+
+const DATE_TIME_FORMAT_EN = "YYYY-MM-DD HH:mm";
+const DATE_TIME_FORMAT_ITA = "DD-MM-YYYY HH:mm";
 
 interface IPrintersForLanguage {
   readonly detailVaccinePrinter: (v: VaccinationEntry) => string;
@@ -159,9 +164,38 @@ export const formatDate = (d: Date, _lang: PreferredLanguage): string =>
   match(_lang)
     .when(
       l => l === PreferredLanguageEnum.en_GB,
-      _ => moment(d).format(DATE_FORMAT_EN)
+      _ =>
+        moment(d)
+          .tz(TIME_ZONE)
+          .format(DATE_FORMAT_EN)
     )
-    .otherwise(() => moment(d).format(DATE_FORMAT_ITA));
+    .otherwise(() =>
+      moment(d)
+        .tz(TIME_ZONE)
+        .format(DATE_FORMAT_ITA)
+    );
+
+/**
+ * Format date and time value based on language
+ *
+ * @param d the date
+ * @param _lang the preferred language
+ * @returns a formatted date with time
+ */
+export const formatDateAndTime = (d: Date, _lang: PreferredLanguage): string =>
+  match(_lang)
+    .when(
+      l => l === PreferredLanguageEnum.en_GB,
+      _ =>
+        moment(d)
+          .tz(TIME_ZONE)
+          .format(DATE_TIME_FORMAT_EN)
+    )
+    .otherwise(() =>
+      moment(d)
+        .tz(TIME_ZONE)
+        .format(DATE_TIME_FORMAT_ITA)
+    );
 
 /**
  * The issuer (is) field value used by Italy Healthcare Department
