@@ -27,7 +27,7 @@ resources:
     - repository: pagopaCommons
       type: github
       name: pagopa/azure-pipeline-templates
-      ref: refs/heads/update-azure-cli-image
+      ref: refs/heads/v15
       endpoint: 'io-azure-devops-github-ro'
 
 stages:
