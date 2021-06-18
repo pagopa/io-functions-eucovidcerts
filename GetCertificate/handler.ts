@@ -20,15 +20,15 @@ import {
   taskEither,
   tryCatch
 } from "fp-ts/lib/TaskEither";
-import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { ResponseErrorValidation } from "@pagopa/ts-commons/lib/responses";
 import { identity, toString } from "fp-ts/lib/function";
 import { PreferredLanguage } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { Context } from "@azure/functions";
 import { TypeofApiCall } from "@pagopa/ts-commons/lib/requests";
 import { Either, toError, right } from "fp-ts/lib/Either";
-import { Validation } from "io-ts";
+import { Validation, ValidationError } from "io-ts";
 import * as o from "fp-ts/lib/Option";
+import { pipe } from "fp-ts/lib/pipeable";
 import { StatusEnum } from "../generated/definitions/ValidCertificate";
 import { Certificate } from "../generated/definitions/Certificate";
 import { GetCertificateParams } from "../generated/definitions/GetCertificateParams";
@@ -43,6 +43,30 @@ import { printDetails, printInfo, printUvci } from "./printer";
 const assertNever = (x: never): never => {
   throw new Error(`Unexpected object: ${toString(x)}`);
 };
+
+const replaceAll = (
+  str: string,
+  find: string | RegExp,
+  replace: string
+): string => str.replace(new RegExp(find, "g"), replace);
+
+export const toAnonymizedMessage = (
+  _errors: ReadonlyArray<ValidationError> | string,
+  fiscalCodeHash: string,
+  authCodeHash: string
+): string =>
+  typeof _errors === "string"
+    ? pipe(
+        _errors,
+        err => replaceAll(err, fiscalCodeHash, "<FiscalCode>"),
+        err => replaceAll(err, authCodeHash, "<AuthCode>")
+      )
+    : _errors
+        .map(err =>
+          replaceAll(err.message ?? "", fiscalCodeHash, "<FiscalCode>")
+        )
+        .map(err => replaceAll(err, authCodeHash, "<AuthCode>"))
+        .join("\n");
 
 type DGCGetCertificateResponses = ReturnType<
   TypeofApiCall<GetCertificateByAutAndCFT>
@@ -94,7 +118,11 @@ export const GetCertificateHandler = (
               })
               // this happens when the response payload cannot be parsed
               .then(_ =>
-                _.mapLeft(e => ResponseErrorInternal(readableReport(e)))
+                _.mapLeft(e =>
+                  ResponseErrorInternal(
+                    toAnonymizedMessage(e, hashedFiscalCode, authCodeSHA256)
+                  )
+                )
               ),
           // this is an unhandled error during connection - it might be timeout
           _ => ResponseErrorInternal(toError(_).message)
@@ -102,7 +130,13 @@ export const GetCertificateHandler = (
           .chain(fromEither)
           .mapLeft(failure => {
             context.log.error(
-              `${logPrefix}|dgcClient.getCertificateByAutAndCF|request failure|${failure.kind}`
+              `${logPrefix}|dgcClient.getCertificateByAutAndCF|Request Failure|${
+                failure.kind
+              }|${toAnonymizedMessage(
+                failure.detail ?? "",
+                hashedFiscalCode,
+                authCodeSHA256
+              )}`
             );
             return failure;
           })
@@ -115,7 +149,15 @@ export const GetCertificateHandler = (
           case 400:
             return fromLeft(ResponseErrorValidation("Bad Request", ""));
           case 500:
-            return fromLeft(ResponseErrorInternal(toString(e.value)));
+            return fromLeft(
+              ResponseErrorInternal(
+                toAnonymizedMessage(
+                  toString(e.value),
+                  fiscal_code,
+                  authCodeSHA256
+                )
+              )
+            );
           default: {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const unexpectedStatusCode = (e as any)?.status ?? "";
