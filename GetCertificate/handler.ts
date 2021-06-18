@@ -61,7 +61,7 @@ type GetCertificateHandler = (
 export const GetCertificateHandler = (
   dgcClientSelector: ReturnType<typeof createDGCClientSelector>
 ): GetCertificateHandler => async (
-  _context,
+  context,
   { fiscal_code, auth_code: authCodeSHA256, preferred_languages }
 ): Promise<IResponseSuccessJson<Certificate> | Failures> => {
   // prints a certificate into huma nreadable text - italian only for now
@@ -71,6 +71,8 @@ export const GetCertificateHandler = (
     .fromNullable(preferred_languages)
     .map(langs => langs.filter(PreferredLanguage.is))
     .chain(e => (e.length > 0 ? o.some(e[0]) : o.none));
+
+  const logPrefix = "GetCertificateParams";
 
   return (
     taskEither
@@ -96,7 +98,14 @@ export const GetCertificateHandler = (
               ),
           // this is an unhandled error during connection - it might be timeout
           _ => ResponseErrorInternal(toError(_).message)
-        ).chain(fromEither)
+        )
+          .chain(fromEither)
+          .mapLeft(failure => {
+            context.log.error(
+              `${logPrefix}|dgcClient.getCertificateByAutAndCF|request failure|${failure.kind}`
+            );
+            return failure;
+          })
       )
       // separates bad cases from success, and assign each failure its correct response
       .chain<SearchSingleQrCodeResponseDTO>(e => {
@@ -107,34 +116,46 @@ export const GetCertificateHandler = (
             return fromLeft(ResponseErrorValidation("Bad Request", ""));
           case 500:
             return fromLeft(ResponseErrorInternal(toString(e.value)));
-          default:
+          default: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const unexpectedStatusCode = (e as any)?.status ?? "";
+            context.log.error(
+              `${logPrefix}|dgcClient.getCertificateByAutAndCF|unexpected status code|${unexpectedStatusCode}`
+            );
             return assertNever(e);
+          }
         }
       })
       // try to enhance raw certificate with parsed data
       .map(({ data: { qrcodeB64 = "", uvci } = {} }) => ({
-        printedCertificate: parseQRCode(qrcodeB64).fold(
-          _ => undefined,
-          f => ({
-            detail: printDetails(selectedLanguage, f),
-            info: printInfo(selectedLanguage, f),
-            uvci: printUvci(selectedLanguage, f)
+        printedCertificate: parseQRCode(qrcodeB64)
+          .mapLeft(_ => {
+            context.log.error(
+              `${logPrefix}|parseQRCode|unable to parse QRCode`
+            );
           })
-        ),
+          .fold(
+            _ => undefined,
+            f => ({
+              detail: printDetails(selectedLanguage, f),
+              info: printInfo(selectedLanguage, f),
+              uvci: printUvci(selectedLanguage, f)
+            })
+          ),
         qrcodeB64,
         uvci
       }))
       // compose a response payload
       .map<Certificate>(e => ({
         detail: e.printedCertificate?.detail,
-        // if we successful pardsed the qr code, we retrieve the identifier from the parsing
-        //   otherwise we retrieve the identifier eventually received from DGC
         info: e.printedCertificate?.info,
         qr_code: {
           content: e.qrcodeB64,
           mime_type: Mime_typeEnum["image/png"]
         },
         status: StatusEnum.valid,
+        // if we successful pardsed the qr code, we retrieve the identifier from the parsing
+        //   otherwise we retrieve the identifier eventually received from DGC
         uvci: e.printedCertificate?.uvci || e.uvci
       }))
       .map(ResponseSuccessJson)
