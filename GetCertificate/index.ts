@@ -1,17 +1,23 @@
 import { AzureFunction, Context } from "@azure/functions";
+
 import * as express from "express";
 import { secureExpressApp } from "@pagopa/io-functions-commons/dist/src/utils/express";
 import { setAppContext } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/context_middleware";
 import createAzureFunctionHandler from "@pagopa/express-azure-functions/dist/src/createAzureFunctionsHandler";
-import { createDGCClientSelector } from "../utils/dgcClientSelector";
+import { initTelemetryClient } from "../utils/appinsights";
 import { getConfigOrThrow } from "../utils/config";
+import { createDGCClientSelector } from "../utils/dgcClientSelector";
 import { getGetCertificateHandler } from "./handler";
+
+const config = getConfigOrThrow();
 
 // Setup Express
 const app = express();
 secureExpressApp(app);
 
-const config = getConfigOrThrow();
+// Setup Appinsight
+initTelemetryClient(config);
+
 const dgcClientSelector = createDGCClientSelector(config, process.env);
 
 // Add express route
