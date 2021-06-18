@@ -16,7 +16,11 @@ export const NotifyNewProfile = (
           dgcClientSelector.select(cfSHA256).managePreviousCertificates({
             body: { cfSHA256 }
           }),
-        _ => new Error("Error calling managePreviousCertificates API")
+        error =>
+          new Error(
+            "Error calling managePreviousCertificates API: " +
+              JSON.stringify(error)
+          )
       )
     )
     .chain(_ => fromEither(_).mapLeft(errorsToError))
