@@ -1,5 +1,6 @@
 import { Context } from "@azure/functions";
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
+import { toError } from "fp-ts/lib/Either";
 import { fromEither, left2v, taskEither, tryCatch } from "fp-ts/lib/TaskEither";
 import { errorsToError } from "../utils/conversions";
 import { createDGCClientSelector } from "../utils/dgcClientSelector";
@@ -16,7 +17,12 @@ export const NotifyNewProfile = (
           dgcClientSelector.select(cfSHA256).managePreviousCertificates({
             body: { cfSHA256 }
           }),
-        _ => new Error("Error calling managePreviousCertificates API")
+        _ =>
+          new Error(
+            `Error calling managePreviousCertificates API, error: ${
+              toError(_).message
+            }`
+          )
       )
     )
     .chain(_ => fromEither(_).mapLeft(errorsToError))
