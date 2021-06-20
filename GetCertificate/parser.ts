@@ -98,5 +98,5 @@ export const parseQRCode = (
     )
     .chain<ReadonlyMap<number, unknown>>(withTrace(readHCert))
     .map(m => m.get(1))
-    .chain(withTrace(Certificates.decode))
+    .chain(withTrace(Certificates.decode, "Certificates.decode"))
     .mapLeft(_ => ({ qrcode, reason: _.message }));
