@@ -95,7 +95,9 @@ describe("GetCertificate", () => {
 
     expect(context.log.error).toHaveBeenCalledTimes(1);
     expect(context.log.error).toHaveBeenCalledWith(
-      "GetCertificateParams|parseQRCode|unable to parse QRCode"
+      expect.stringContaining(
+        "GetCertificateParams|parseQRCode|unable to parse QRCode"
+      )
     );
   });
 });
