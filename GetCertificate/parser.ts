@@ -5,6 +5,7 @@ import { Errors } from "io-ts";
 import { PNG, PNGWithMetadata } from "pngjs";
 import jsQR from "jsqr";
 import { QRCode } from "jsqr";
+import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { Certificates } from "./certificate";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
@@ -51,26 +52,51 @@ const bordDecode = (
 ): Either<Error, ReadonlyMap<number, ReadonlyMap<number, unknown>>> =>
   e.tryCatch2v(() => borc.decode(b), toError);
 
-export const parseQRCode = (qrcode: string): Either<string, Certificates> =>
+const readHCert = <T>(m: ReadonlyMap<number, T>): Either<Error, T> =>
+  e.fromNullable(new Error("borc decode failed: missing -260 map entry"))(
+    m.get(-260)
+  );
+
+interface IQRParsingFailure {
+  readonly qrcode: string;
+  readonly reason: string;
+}
+
+/**
+ * A wrapper for a parsing function which enhance its left results with a normalized logging message
+ *
+ * @param fn a parsing step function, which takes and input and returns either an error or the result of the specific step
+ * @param stepName the name of the step to be logged. If the function is not anonymous, its name is used. Otherwise it must be specified
+ * @returns either an error or the result of the specific step
+ */
+const withTrace = <T, I>(
+  fn: (i: I) => Either<Error | Errors, T>,
+  stepName = fn.name
+) => (i: I): Either<Error, T> =>
+  fn(i).mapLeft(error => {
+    const message =
+      error instanceof Error ? error.message : readableReport(error);
+    return new Error(`step: ${stepName}, error: ${message}`);
+  });
+
+export const parseQRCode = (
+  qrcode: string
+): Either<IQRParsingFailure, Certificates> =>
   e
-    .fromNullable<Error | Errors>(new Error("can not decode an empty string"))(
-      qrcode
-    )
-    .chain(base64ToBuffer)
-    .chain(bufferToPng)
-    .chain(pngToQrcode)
+    .fromNullable<Error>(new Error("can not decode an empty string"))(qrcode)
+    .chain(withTrace(base64ToBuffer))
+    .chain(withTrace(bufferToPng))
+    .chain(withTrace(pngToQrcode))
     .map(qr => qr.data)
     .map(removePrefix)
-    .chain(base45Decode)
-    .chain(inflate)
-    .chain(borcDecodeFirst)
+    .chain(withTrace(base45Decode))
+    .chain(withTrace(inflate))
+    .chain(withTrace(borcDecodeFirst))
     .map(cose => cose.value[2])
-    .chain<ReadonlyMap<number, ReadonlyMap<number, unknown>>>(bordDecode)
-    .chain<ReadonlyMap<number, unknown>>(m =>
-      e.fromNullable(new Error("borc decode failed: missing -270 map entry"))(
-        m.get(-260)
-      )
+    .chain<ReadonlyMap<number, ReadonlyMap<number, unknown>>>(
+      withTrace(bordDecode)
     )
+    .chain<ReadonlyMap<number, unknown>>(withTrace(readHCert))
     .map(m => m.get(1))
-    .chain(Certificates.decode)
-    .mapLeft(_ => qrcode);
+    .chain(withTrace(Certificates.decode, "Certificates.decode"))
+    .mapLeft(_ => ({ qrcode, reason: _.message }));

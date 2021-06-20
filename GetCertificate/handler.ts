@@ -131,7 +131,7 @@ export const GetCertificateHandler = (
         printedCertificate: parseQRCode(qrcodeB64)
           .mapLeft(_ => {
             context.log.error(
-              `${logPrefix}|parseQRCode|unable to parse QRCode`
+              `${logPrefix}|parseQRCode|unable to parse QRCode|${_.reason}`
             );
           })
           .fold(
