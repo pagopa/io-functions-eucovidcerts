@@ -1,0 +1,36 @@
+# Azure DevOps pipeline to do periodic checks
+#
+
+# A pipeline with no CI trigger, just schedules
+trigger: none
+pr: none
+
+variables:
+  system.debug: true
+
+schedules:
+  - cron: "0 0 * * *"
+    displayName: Daily midnight lists check
+    always: true # Run always irrespective of changes
+
+resources:
+  repositories:
+    - repository: pagopaCommons
+      type: github
+      name: pagopa/azure-pipeline-templates
+      ref: refs/tags/v14
+      endpoint: 'io-azure-devops-github-ro'
+
+
+# Execute agents (jobs) on latest Ubuntu version.
+# To change OS for a specific, ovverride "pool" attribute inside the job definition
+pool:
+  vmImage: 'ubuntu-latest'
+
+
+jobs:
+  - job: check_lists
+    steps:
+      - template: templates/node-job-setup/template.yaml@pagopaCommons
+      - bash:
+          yarn tsc scripts/check-valuesets.ts && node scripts/check-valuesets.js
