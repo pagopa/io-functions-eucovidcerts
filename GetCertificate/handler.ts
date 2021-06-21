@@ -132,7 +132,7 @@ export const GetCertificateHandler = (
           // We are experiencing unexpected failures while parsing on a small % of cases
           // We want to deploy an alternative version of the parsing algo
           //   as we cannot test on every possible data item that may occour in real life scenarios,
-          //   we keep the old implementation as fallback
+          //   we keep the old implementation and use the new as fallback
           parseQRCode(qrcodeB64)
             .mapLeft(_ => {
               context.log.error(
