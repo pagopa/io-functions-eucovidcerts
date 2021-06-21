@@ -36,23 +36,31 @@ export interface ITranslatable {
 
 export interface IReadonlyTranslatableMap {
   readonly [key: string]: ITranslatable;
+  readonly placeholder: ITranslatable;
 }
 export interface IReadonlyMap {
   readonly [key: string]: string;
+  readonly placeholder: string;
 }
 
 /**
  * A function that returns a Codec mapping an input key with a pre-created ITranslatable
  */
-export const toTWithMap = <T>(map: {
-  readonly [key: string]: T;
-}): t.Type<T, string, string> =>
+export const toTWithMap = <T>(
+  map: {
+    readonly [key: string]: T;
+  },
+  placeholder_key?: string
+): t.Type<T, string, string> =>
   new t.Type<T, string, string>(
     "toTWithMap",
-    (value: unknown): value is T => Object.values(map).some(v => v === value),
+    (value: unknown): value is T =>
+      Object.values(map).some(v => v === value) || !!placeholder_key,
     (v, c) =>
       map[v]
         ? t.success(map[v])
+        : placeholder_key
+        ? t.success(map[placeholder_key])
         : t.failure(v, c, "Value not contained in map"),
     value => Object.keys(map).find(key => map[key] === value) ?? ""
   );
@@ -61,19 +69,25 @@ export const toTWithMap = <T>(map: {
  * A function that returns a Codec mapping an input key with a pre-created ITranslatable
  * if string is empty, return undefined
  */
-export const toTWithMapOptional = <T>(map: {
-  readonly [key: string]: T;
-}): t.Type<o.Option<T>, string, string> =>
+export const toTWithMapOptional = <T>(
+  map: {
+    readonly [key: string]: T;
+  },
+  placeholder_key?: string
+): t.Type<o.Option<T>, string, string> =>
   new t.Type<o.Option<T>, string, string>(
     "toTWithMapOptional",
     (value: unknown): value is o.Option<T> =>
-      !!value &&
-      (o.isNone(value as o.Option<T>) ||
-        Object.values(map).some(v => v === (value as o.Some<T>).value)),
+      (!!value &&
+        (o.isNone(value as o.Option<T>) ||
+          Object.values(map).some(v => v === (value as o.Some<T>).value))) ||
+      !!placeholder_key,
     (v, c) =>
       v
         ? map[v]
           ? t.success(o.some(map[v]))
+          : placeholder_key
+          ? t.success(o.some(map[placeholder_key]))
           : t.failure(v, c, "Value not contained in map")
         : t.success(o.none),
     value =>

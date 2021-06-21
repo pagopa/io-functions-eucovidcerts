@@ -1,8 +1,10 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable sort-keys */
 import { IReadonlyMap } from "../../utils/conversions";
+import { VALUESET_PLACEHOLDER } from "./placeholder";
 
 export const vaccineMedicinalProduct: IReadonlyMap = {
+  placeholder: VALUESET_PLACEHOLDER,
   "EU/1/20/1528": "Comirnaty",
   "EU/1/20/1507": "COVID-19 Vaccine Moderna",
   "EU/1/21/1529": "Vaxzevria",

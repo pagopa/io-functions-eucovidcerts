@@ -1,8 +1,10 @@
 /* eslint-disable sort-keys */
 
 import { IReadonlyMap } from "../../utils/conversions";
+import { VALUESET_PLACEHOLDER } from "./placeholder";
 
 export const marketingAuthorizationHolder: IReadonlyMap = {
+  placeholder: VALUESET_PLACEHOLDER,
   "ORG-100001699": "AstraZeneca AB",
   "ORG-100030215": "Biontech Manufacturing GmbH",
   "ORG-100001417": "Janssen-Cilag International",

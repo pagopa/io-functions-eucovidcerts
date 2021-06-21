@@ -11,6 +11,12 @@ import * as o from "fp-ts/lib/Option";
 
 // A ReadonlyTranslatableMap map
 const translatableMap: IReadonlyTranslatableMap = {
+  placeholder: {
+    displays: {
+      [PreferredLanguageEnum.it_IT]: "---",
+      [PreferredLanguageEnum.en_GB]: "---"
+    }
+  },
   "0001": {
     displays: {
       [PreferredLanguageEnum.it_IT]: "test display in it",
@@ -21,10 +27,15 @@ const translatableMap: IReadonlyTranslatableMap = {
 
 // A ReadonlyMap map
 const readonlyMap: IReadonlyMap = {
+  placeholder: "---",
   "0001": "simple test display in it"
 };
 describe("toTWithMap", () => {
   const tranlatableMapCodec = toTWithMap(translatableMap);
+  const tranlatableMapCodec_placeholder = toTWithMap(
+    translatableMap,
+    "placeholder"
+  );
 
   // IReadonlyTranslatable
   it("should decode value if key exists in map", () => {
@@ -38,6 +49,13 @@ describe("toTWithMap", () => {
     const res = tranlatableMapCodec.decode("0002");
 
     expect(isRight(res)).toBe(false);
+  });
+
+  it("should return a placeholder if key does not exit in map and placehodler is defined", () => {
+    const res = tranlatableMapCodec_placeholder.decode("0002");
+
+    expect(isRight(res)).toBe(true);
+    expect(res.value).toEqual(translatableMap.placeholder);
   });
 
   it("should check is", () => {
@@ -78,6 +96,10 @@ describe("toTWithMap - Simple map", () => {
 
 describe("toTWithMapOptional", () => {
   const optionalMapCodec = toTWithMapOptional(translatableMap);
+  const optionalMapCodec_placeholder = toTWithMapOptional(
+    translatableMap,
+    "placeholder"
+  );
 
   it("should decode value if key exists in map", () => {
     const res = optionalMapCodec.decode("0001");
@@ -91,6 +113,13 @@ describe("toTWithMapOptional", () => {
 
     expect(isRight(res)).toBe(true);
     expect(res.value).toEqual(o.none);
+  });
+
+  it("should return a placeholder if key does not exit in map and placehodler is defined", () => {
+    const res = optionalMapCodec_placeholder.decode("0002");
+
+    expect(isRight(res)).toBe(true);
+    expect(res.value).toEqual(o.some(translatableMap.placeholder));
   });
 
   it("should decode empty string value", () => {
