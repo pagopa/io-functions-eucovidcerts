@@ -11,7 +11,7 @@ import { Certificates } from "./certificate";
 /* eslint-disable @typescript-eslint/no-var-requires */
 const borc = require("borc");
 /* eslint-disable @typescript-eslint/no-var-requires */
-const base45 = require("base45-js");
+const base45 = require("base45");
 
 const removePrefix = (s: string): string =>
   s.startsWith("HC1:") ? s.substring(4) : s;
