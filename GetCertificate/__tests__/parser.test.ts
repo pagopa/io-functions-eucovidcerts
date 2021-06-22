@@ -3,7 +3,15 @@ import {
   RecoveryCertificate,
   TestCertificate
 } from "../certificate";
-import { parseQRCode, parseQRCodeAlt } from "../parser";
+import {
+  decodeCertificateAndLogMissingValues,
+  withTrace,
+  parseQRCode,
+  parseQRCodeAlt
+} from "../parser";
+import { aValidAntigenTestCertificate } from "../../__mocks__/certificates";
+import { isRight } from "fp-ts/lib/Either";
+
 describe.each`
   title                     | parser
   ${"using parseQRCode"}    | ${parseQRCode}
@@ -41,5 +49,56 @@ describe.each`
       qrcode: rawb64png,
       reason: expect.any(String)
     });
+  });
+});
+
+describe("decodeCertificateAndLogMissingValues", () => {
+  const logWarningMock: (
+    warn: string
+  ) => void = jest.fn().mockImplementation(_ => {});
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should log no warning if certificate has all values", async () => {
+    const decodedValue = decodeCertificateAndLogMissingValues(logWarningMock)(
+      aValidAntigenTestCertificate
+    );
+
+    expect(isRight(decodedValue)).toBe(true);
+    expect(TestCertificate.is(decodedValue.value)).toBe(true);
+    expect(logWarningMock).not.toHaveBeenCalled();
+  });
+
+  it("should log a warning if certificate has at least one value not present in maps", async () => {
+    const decodedValue = decodeCertificateAndLogMissingValues(logWarningMock)({
+      ...aValidAntigenTestCertificate,
+      t: [
+        {
+          ...aValidAntigenTestCertificate.t[0],
+          tg: "INVALID"
+        }
+      ]
+    });
+
+    expect(isRight(decodedValue)).toBe(true);
+    expect(TestCertificate.is(decodedValue.value)).toBe(true);
+    expect(logWarningMock).toHaveBeenCalledWith(
+      'Missing map values|t[0].tg "INVALID" value not found'
+    );
+  });
+
+  it("should return an error if decode fails", async () => {
+    const errorOrDecodedValue = withTrace(
+      decodeCertificateAndLogMissingValues(logWarningMock),
+      "ErrorMsg"
+    )({
+      ...aValidAntigenTestCertificate,
+      dob: ""
+    });
+
+    expect(isRight(errorOrDecodedValue)).toBe(false);
+    expect(errorOrDecodedValue.value).toBeInstanceOf(Error);
   });
 });

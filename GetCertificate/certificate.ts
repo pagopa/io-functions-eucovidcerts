@@ -72,18 +72,23 @@ export const RecoveryEntry = t.intersection([
   t.partial({})
 ]);
 
+export type VacCertificate = t.TypeOf<typeof VacCertificate>;
 export const VacCertificate = t.interface({
   ver: NonEmptyString,
   nam: PersonName,
   dob: DateFromString,
   v: t.readonlyArray<typeof VaccinationEntry>(VaccinationEntry)
 });
+
+export type TestCertificate = t.TypeOf<typeof TestCertificate>;
 export const TestCertificate = t.interface({
   ver: NonEmptyString,
   nam: PersonName,
   dob: DateFromString,
   t: t.readonlyArray<typeof TestEntry>(TestEntry)
 });
+
+export type RecoveryCertificate = t.TypeOf<typeof RecoveryCertificate>;
 export const RecoveryCertificate = t.interface({
   ver: NonEmptyString,
   nam: PersonName,

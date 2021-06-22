@@ -70,7 +70,7 @@ export const GetCertificateHandler = (
   const selectedLanguage = o
     .fromNullable(preferred_languages)
     .map(langs => langs.filter(PreferredLanguage.is))
-    .chain(e => (e.length > 0 ? o.some(e[0]) : o.none));
+    .chain(langs => (langs.length > 0 ? o.some(langs[0]) : o.none));
 
   const logPrefix = "GetCertificateParams";
 
@@ -133,7 +133,9 @@ export const GetCertificateHandler = (
           // We want to deploy an alternative version of the parsing algo
           //   as we cannot test on every possible data item that may occour in real life scenarios,
           //   we keep the old implementation and use the new as fallback
-          parseQRCode(qrcodeB64)
+          parseQRCode(qrcodeB64, warning =>
+            context.log.warn(`${logPrefix}|parseQRCode|${warning}`)
+          )
             .mapLeft(_ => {
               context.log.error(
                 `${logPrefix}|parseQRCode|unable to parse QRCode|${_.reason}`
@@ -141,7 +143,10 @@ export const GetCertificateHandler = (
               return _;
             })
             .fold(
-              _ => parseQRCodeAlt(qrcodeB64),
+              _ =>
+                parseQRCodeAlt(qrcodeB64, warning =>
+                  context.log.warn(`${logPrefix}|parseQRCode|${warning}`)
+                ),
               _ => right(_)
             )
             .mapLeft(_ => {
@@ -161,17 +166,17 @@ export const GetCertificateHandler = (
         uvci
       }))
       // compose a response payload
-      .map<Certificate>(e => ({
-        detail: e.printedCertificate?.detail,
-        info: e.printedCertificate?.info,
+      .map<Certificate>(c => ({
+        detail: c.printedCertificate?.detail,
+        info: c.printedCertificate?.info,
         qr_code: {
-          content: e.qrcodeB64,
+          content: c.qrcodeB64,
           mime_type: Mime_typeEnum["image/png"]
         },
         status: StatusEnum.valid,
         // if we successful pardsed the qr code, we retrieve the identifier from the parsing
         //   otherwise we retrieve the identifier eventually received from DGC
-        uvci: e.printedCertificate?.uvci || e.uvci
+        uvci: c.printedCertificate?.uvci || c.uvci
       }))
       .map(ResponseSuccessJson)
       // fold failures and success cases into a single response pipeline
