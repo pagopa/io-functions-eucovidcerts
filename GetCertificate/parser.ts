@@ -108,14 +108,14 @@ export const decodeCertificateAndLogMissingValues = (
   const decodedValude = Certificates.decode(x);
 
   decodedValude.map(value => {
-    const p = match(value)
+    match(value)
       .when(TestCertificate.is, te => getTestCertificateValidationErrors(te, x))
       .when(VacCertificate.is, vc => getVacCertificateValidationErrors(vc, x))
       .when(RecoveryCertificate.is, rc =>
         getRecoveryCertificateValidationErrors(rc, x)
       )
-      .exhaustive();
-    p.mapLeft((err: string) => logWarning(`Missing map values|${err}`));
+      .exhaustive()
+      .mapLeft((err: string) => logWarning(`Missing map values|${err}`));
   });
   return decodedValude;
 };
