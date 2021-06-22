@@ -12,6 +12,8 @@ import { Certificates } from "./certificate";
 const borc = require("borc");
 /* eslint-disable @typescript-eslint/no-var-requires */
 const base45 = require("base45-js");
+/* eslint-disable @typescript-eslint/no-var-requires */
+const base45alt = require("base45");
 
 const removePrefix = (s: string): string =>
   s.startsWith("HC1:") ? s.substring(4) : s;
@@ -43,6 +45,9 @@ const pngToQrcode = (png: PNGWithMetadata): Either<Error, QRCode> =>
 
 const base45Decode = (s: string): Either<Error, Buffer> =>
   e.tryCatch2v(() => base45.decode(s), toError);
+
+const base45DecodeAlt = (s: string): Either<Error, Buffer> =>
+  e.tryCatch2v(() => base45alt.decode(s), toError);
 
 const borcDecodeFirst = (bytes: Uint8Array): Either<Error, IBorcDecoded> =>
   e.tryCatch2v(() => borc.decodeFirst(bytes), toError);
@@ -79,6 +84,12 @@ const withTrace = <T, I>(
     return new Error(`step: ${stepName}, error: ${message}`);
   });
 
+/**
+ * Parse a qr code image to get Certificate information payload
+ *
+ * @param qrcode
+ * @returns
+ */
 export const parseQRCode = (
   qrcode: string
 ): Either<IQRParsingFailure, Certificates> =>
@@ -90,6 +101,34 @@ export const parseQRCode = (
     .map(qr => qr.data)
     .map(removePrefix)
     .chain(withTrace(base45Decode))
+    .chain(withTrace(inflate))
+    .chain(withTrace(borcDecodeFirst))
+    .map(cose => cose.value[2])
+    .chain<ReadonlyMap<number, ReadonlyMap<number, unknown>>>(
+      withTrace(bordDecode)
+    )
+    .chain<ReadonlyMap<number, unknown>>(withTrace(readHCert))
+    .map(m => m.get(1))
+    .chain(withTrace(Certificates.decode, "Certificates.decode"))
+    .mapLeft(_ => ({ qrcode, reason: _.message }));
+
+/**
+ * Same as parseQRCode but with a different base45 decoding algo
+ *
+ * @param qrcode
+ * @returns
+ */
+export const parseQRCodeAlt = (
+  qrcode: string
+): Either<IQRParsingFailure, Certificates> =>
+  e
+    .fromNullable<Error>(new Error("can not decode an empty string"))(qrcode)
+    .chain(withTrace(base64ToBuffer))
+    .chain(withTrace(bufferToPng))
+    .chain(withTrace(pngToQrcode))
+    .map(qr => qr.data)
+    .map(removePrefix)
+    .chain(withTrace(base45DecodeAlt))
     .chain(withTrace(inflate))
     .chain(withTrace(borcDecodeFirst))
     .map(cose => cose.value[2])

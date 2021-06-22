@@ -93,7 +93,6 @@ describe("GetCertificate", () => {
       fail(error);
     }
 
-    expect(context.log.error).toHaveBeenCalledTimes(1);
     expect(context.log.error).toHaveBeenCalledWith(
       expect.stringContaining(
         "GetCertificateParams|parseQRCode|unable to parse QRCode"
