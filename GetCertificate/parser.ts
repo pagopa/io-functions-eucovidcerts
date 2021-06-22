@@ -6,6 +6,7 @@ import { PNG, PNGWithMetadata } from "pngjs";
 import jsQR from "jsqr";
 import { QRCode } from "jsqr";
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
+import { pipe } from "fp-ts/lib/pipeable";
 import { Certificates } from "./certificate";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
@@ -100,36 +101,25 @@ export const parseQRCode = (
     .chain(withTrace(pngToQrcode))
     .map(qr => qr.data)
     .map(removePrefix)
-    .chain(withTrace(base45Decode))
-    .chain(withTrace(inflate))
-    .chain(withTrace(borcDecodeFirst))
-    .map(cose => cose.value[2])
-    .chain<ReadonlyMap<number, ReadonlyMap<number, unknown>>>(
-      withTrace(bordDecode)
+    .chain(stringData =>
+      pipe(
+        stringData,
+        e.right,
+        e.chain(withTrace(base45Decode)),
+        e.chain(withTrace(inflate)),
+        e.fold(
+          _ =>
+            pipe(
+              stringData,
+              e.right,
+              e.chain(withTrace(base45DecodeAlt)),
+              e.chain(withTrace(inflate))
+            ),
+          e.right
+        ),
+        e.mapLeft(__ => Error("try/catch base45 decode"))
+      )
     )
-    .chain<ReadonlyMap<number, unknown>>(withTrace(readHCert))
-    .map(m => m.get(1))
-    .chain(withTrace(Certificates.decode, "Certificates.decode"))
-    .mapLeft(_ => ({ qrcode, reason: _.message }));
-
-/**
- * Same as parseQRCode but with a different base45 decoding algo
- *
- * @param qrcode
- * @returns
- */
-export const parseQRCodeAlt = (
-  qrcode: string
-): Either<IQRParsingFailure, Certificates> =>
-  e
-    .fromNullable<Error>(new Error("can not decode an empty string"))(qrcode)
-    .chain(withTrace(base64ToBuffer))
-    .chain(withTrace(bufferToPng))
-    .chain(withTrace(pngToQrcode))
-    .map(qr => qr.data)
-    .map(removePrefix)
-    .chain(withTrace(base45DecodeAlt))
-    .chain(withTrace(inflate))
     .chain(withTrace(borcDecodeFirst))
     .map(cose => cose.value[2])
     .chain<ReadonlyMap<number, ReadonlyMap<number, unknown>>>(

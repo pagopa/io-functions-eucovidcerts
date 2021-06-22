@@ -26,7 +26,7 @@ import { identity, toString } from "fp-ts/lib/function";
 import { PreferredLanguage } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { Context } from "@azure/functions";
 import { TypeofApiCall } from "@pagopa/ts-commons/lib/requests";
-import { Either, toError, right } from "fp-ts/lib/Either";
+import { Either, toError } from "fp-ts/lib/Either";
 import { Validation } from "io-ts";
 import * as o from "fp-ts/lib/Option";
 import { StatusEnum } from "../generated/definitions/ValidCertificate";
@@ -37,7 +37,7 @@ import { GetCertificateByAutAndCFT } from "../generated/dgc/requestTypes";
 import { SearchSingleQrCodeResponseDTO } from "../generated/dgc/SearchSingleQrCodeResponseDTO";
 import { toSHA256 } from "../utils/conversions";
 import { createDGCClientSelector } from "../utils/dgcClientSelector";
-import { parseQRCode, parseQRCodeAlt } from "./parser";
+import { parseQRCode } from "./parser";
 import { printDetails, printInfo, printUvci } from "./printer";
 
 const assertNever = (x: never): never => {
@@ -139,15 +139,6 @@ export const GetCertificateHandler = (
                 `${logPrefix}|parseQRCode|unable to parse QRCode|${_.reason}`
               );
               return _;
-            })
-            .fold(
-              _ => parseQRCodeAlt(qrcodeB64),
-              _ => right(_)
-            )
-            .mapLeft(_ => {
-              context.log.error(
-                `${logPrefix}|parseQRCode|unable to parse QRCode|Alt|${_.reason}`
-              );
             })
             .fold(
               _ => undefined,
