@@ -35,10 +35,9 @@ const errors = (_: any) =>
 describe("toAnonymizedMessage", () => {
   it("should anonymize error if is ValidationError", () => {
     const message = toAnonymizedMessage(
-      errors("a value"),
       toSHA256(aFiscalCode),
       anAuthCode
-    );
+    )(errors("a value"));
 
     expect(message).toEqual(
       "A test error occurred : <AuthCode> - <FiscalCode> - <AuthCode>\nAnother error: <AuthCode>"
@@ -47,11 +46,12 @@ describe("toAnonymizedMessage", () => {
 
   it("should anonymize error if is a message string", () => {
     const message = toAnonymizedMessage(
-      `Another test error occurred : ${anAuthCode} - ${toSHA256(
-        aFiscalCode
-      )} - ${anAuthCode}`,
       toSHA256(aFiscalCode),
       anAuthCode
+    )(
+      `Another test error occurred : ${anAuthCode} - ${toSHA256(
+        aFiscalCode
+      )} - ${anAuthCode}`
     );
 
     expect(message).toEqual(
@@ -75,7 +75,6 @@ describe("GetCertificate", () => {
       fiscal_code: aFiscalCode as FiscalCode,
       auth_code: anAuthCode
     });
-    console.log(val);
     expect(val).toMatchObject({
       kind: "IResponseErrorInternal"
     });

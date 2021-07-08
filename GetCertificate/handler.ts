@@ -51,22 +51,16 @@ const replaceAll = (
 ): string => str.replace(new RegExp(find, "g"), replace);
 
 export const toAnonymizedMessage = (
-  _errors: ReadonlyArray<ValidationError> | string,
   fiscalCodeHash: string,
   authCodeHash: string
-): string =>
-  typeof _errors === "string"
-    ? pipe(
-        _errors,
-        err => replaceAll(err, fiscalCodeHash, "<FiscalCode>"),
-        err => replaceAll(err, authCodeHash, "<AuthCode>")
-      )
-    : _errors
-        .map(err =>
-          replaceAll(err.message ?? "", fiscalCodeHash, "<FiscalCode>")
-        )
-        .map(err => replaceAll(err, authCodeHash, "<AuthCode>"))
-        .join("\n");
+) => (_errors: ReadonlyArray<ValidationError> | string): string =>
+  pipe(
+    typeof _errors === "string"
+      ? _errors
+      : _errors.map(e => e.message).join("\n"),
+    err => replaceAll(err, fiscalCodeHash, "<FiscalCode>"),
+    err => replaceAll(err, authCodeHash, "<AuthCode>")
+  );
 
 type DGCGetCertificateResponses = ReturnType<
   TypeofApiCall<GetCertificateByAutAndCFT>
@@ -98,6 +92,8 @@ export const GetCertificateHandler = (
 
   const logPrefix = "GetCertificateParams";
 
+  const anonymize = toAnonymizedMessage(hashedFiscalCode, authCodeSHA256);
+
   return (
     taskEither
       .of<Failures, string>(hashedFiscalCode)
@@ -117,13 +113,7 @@ export const GetCertificateHandler = (
                 }
               })
               // this happens when the response payload cannot be parsed
-              .then(_ =>
-                _.mapLeft(e =>
-                  ResponseErrorInternal(
-                    toAnonymizedMessage(e, hashedFiscalCode, authCodeSHA256)
-                  )
-                )
-              ),
+              .then(_ => _.mapLeft(e => ResponseErrorInternal(anonymize(e)))),
           // this is an unhandled error during connection - it might be timeout
           _ => ResponseErrorInternal(toError(_).message)
         )
@@ -132,11 +122,7 @@ export const GetCertificateHandler = (
             context.log.error(
               `${logPrefix}|dgcClient.getCertificateByAutAndCF|Request Failure|${
                 failure.kind
-              }|${toAnonymizedMessage(
-                failure.detail ?? "",
-                hashedFiscalCode,
-                authCodeSHA256
-              )}`
+              }|${anonymize(failure.detail ?? "")}`
             );
             return failure;
           })
@@ -150,13 +136,7 @@ export const GetCertificateHandler = (
             return fromLeft(ResponseErrorValidation("Bad Request", ""));
           case 500:
             return fromLeft(
-              ResponseErrorInternal(
-                toAnonymizedMessage(
-                  toString(e.value),
-                  fiscal_code,
-                  authCodeSHA256
-                )
-              )
+              ResponseErrorInternal(anonymize(toString(e.value)))
             );
           default: {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
