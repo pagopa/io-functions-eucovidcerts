@@ -15,6 +15,8 @@ import { labTestTypes } from "./valuesets/labTestTypes";
 import { labTestManufactorers } from "./valuesets/labTestManufactorers";
 import { testResults } from "./valuesets/testResults";
 
+const PLACEHOLDER_KEY = "placeholder";
+
 type PersonName = t.TypeOf<typeof PersonName>;
 const PersonName = t.interface({
   fn: t.string, // Familiy Name
@@ -25,10 +27,10 @@ const PersonName = t.interface({
 
 export type VaccinationEntry = t.TypeOf<typeof VaccinationEntry>;
 export const VaccinationEntry = t.interface({
-  tg: t.string.pipe(toTWithMap(diseaseAgentTargeted)), // disease or agent targeted
-  vp: t.string.pipe(toTWithMap(vaccineProphylaxis)), // vaccine or prophylaxis
-  mp: t.string.pipe(toTWithMap(vaccineMedicinalProduct)), // vaccine medicinal product
-  ma: t.string.pipe(toTWithMap(marketingAuthorizationHolder)), // Marketing Authorization Holder
+  tg: t.string.pipe(toTWithMap(diseaseAgentTargeted, PLACEHOLDER_KEY)), // disease or agent targeted
+  vp: t.string.pipe(toTWithMap(vaccineProphylaxis, PLACEHOLDER_KEY)), // vaccine or prophylaxis
+  mp: t.string.pipe(toTWithMap(vaccineMedicinalProduct, PLACEHOLDER_KEY)), // vaccine medicinal product
+  ma: t.string.pipe(toTWithMap(marketingAuthorizationHolder, PLACEHOLDER_KEY)), // Marketing Authorization Holder
   dn: WithinRangeInteger(1, 9), // Dose Number
   sd: WithinRangeInteger(1, 9), // Total Series of Doses
   dt: DateFromString, // Date of Vaccination
@@ -40,10 +42,10 @@ export const VaccinationEntry = t.interface({
 export type TestEntry = t.TypeOf<typeof TestEntry>;
 export const TestEntry = t.intersection([
   t.interface({
-    tg: t.string.pipe(toTWithMap(diseaseAgentTargeted)), // disease or agent targeted
-    tt: t.string.pipe(toTWithMap(labTestTypes)), // covid-19 Lab Test Types
+    tg: t.string.pipe(toTWithMap(diseaseAgentTargeted, PLACEHOLDER_KEY)), // disease or agent targeted
+    tt: t.string.pipe(toTWithMap(labTestTypes, PLACEHOLDER_KEY)), // covid-19 Lab Test Types
     sc: DateFromString, // Date/Time of Sample Collection
-    tr: t.string.pipe(toTWithMap(testResults)), // Test Result
+    tr: t.string.pipe(toTWithMap(testResults, PLACEHOLDER_KEY)), // Test Result
     tc: t.string, // Testing Centre
     co: t.string, // Country of Test
     is: t.string, // Issuer
@@ -52,14 +54,14 @@ export const TestEntry = t.intersection([
   t.partial({
     nm: t.string, // test name
     dr: DateFromString, // Date/Time of Test Result
-    ma: t.string.pipe(toTWithMapOptional(labTestManufactorers)) // lab test manufactorers
+    ma: t.string.pipe(toTWithMapOptional(labTestManufactorers, PLACEHOLDER_KEY)) // lab test manufactorers
   })
 ]);
 
 export type RecoveryEntry = t.TypeOf<typeof RecoveryEntry>;
 export const RecoveryEntry = t.intersection([
   t.interface({
-    tg: t.string.pipe(toTWithMap(diseaseAgentTargeted)), // disease or agent targeted
+    tg: t.string.pipe(toTWithMap(diseaseAgentTargeted, PLACEHOLDER_KEY)), // disease or agent targeted
     fr: DateFromString, // ISO 8601 Date of First Positive Test Result
     co: t.string, // Country of Test
     is: t.string, // Certificate Issuer
@@ -70,18 +72,23 @@ export const RecoveryEntry = t.intersection([
   t.partial({})
 ]);
 
+export type VacCertificate = t.TypeOf<typeof VacCertificate>;
 export const VacCertificate = t.interface({
   ver: NonEmptyString,
   nam: PersonName,
   dob: DateFromString,
   v: t.readonlyArray<typeof VaccinationEntry>(VaccinationEntry)
 });
+
+export type TestCertificate = t.TypeOf<typeof TestCertificate>;
 export const TestCertificate = t.interface({
   ver: NonEmptyString,
   nam: PersonName,
   dob: DateFromString,
   t: t.readonlyArray<typeof TestEntry>(TestEntry)
 });
+
+export type RecoveryCertificate = t.TypeOf<typeof RecoveryCertificate>;
 export const RecoveryCertificate = t.interface({
   ver: NonEmptyString,
   nam: PersonName,

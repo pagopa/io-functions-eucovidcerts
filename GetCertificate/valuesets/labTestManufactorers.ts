@@ -1,8 +1,10 @@
 /* eslint-disable sort-keys */
 
 import { IReadonlyMap } from "../../utils/conversions";
+import { VALUESET_PLACEHOLDER } from "./placeholder";
 
 export const labTestManufactorers: IReadonlyMap = {
+  placeholder: VALUESET_PLACEHOLDER,
   "1232": "Abbott Rapid Diagnostics, Panbio COVID-19 Ag Test",
   "1304": "AMEDA Labordiagnostik GmbH, AMP Rapid Test SARS-CoV-2 Ag",
   "1065": "Becton Dickinson, Veritor System Rapid Detection of SARS-CoV-2",

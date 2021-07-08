@@ -3,7 +3,19 @@ import {
   RecoveryCertificate,
   TestCertificate
 } from "../certificate";
-import { parseQRCode, parseQRCodeAlt } from "../parser";
+import {
+  decodeCertificateAndLogMissingValues,
+  withTrace,
+  parseQRCode,
+  parseQRCodeAlt
+} from "../parser";
+import {
+  aValidAntigenTestCertificate,
+  aValidRecoveryCertificate,
+  aValidVaccinationCertificate
+} from "../../__mocks__/certificates";
+import { isRight } from "fp-ts/lib/Either";
+
 describe.each`
   title                     | parser
   ${"using parseQRCode"}    | ${parseQRCode}
@@ -41,5 +53,98 @@ describe.each`
       qrcode: rawb64png,
       reason: expect.any(String)
     });
+  });
+});
+
+describe("decodeCertificateAndLogMissingValues", () => {
+  const logWarningMock: (
+    warn: string
+  ) => void = jest.fn().mockImplementation(_ => {});
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should log no warning if certificate has all values", async () => {
+    const decodedValue = decodeCertificateAndLogMissingValues(logWarningMock)(
+      aValidAntigenTestCertificate
+    );
+
+    expect(isRight(decodedValue)).toBe(true);
+    expect(TestCertificate.is(decodedValue.value)).toBe(true);
+    expect(logWarningMock).not.toHaveBeenCalled();
+  });
+
+  it("should log a warning if certificate has one value not present in maps", async () => {
+    const decodedValue = decodeCertificateAndLogMissingValues(logWarningMock)({
+      ...aValidRecoveryCertificate,
+      r: [
+        {
+          ...aValidRecoveryCertificate.r[0],
+          tg: "INVALID"
+        }
+      ]
+    });
+
+    expect(isRight(decodedValue)).toBe(true);
+    expect(RecoveryCertificate.is(decodedValue.value)).toBe(true);
+    expect(logWarningMock).toHaveBeenCalledWith(
+      'Missing map values|recovery details|tg "INVALID" value not found'
+    );
+  });
+
+  it("should log a list of warnings if certificate has more than one value not present in maps - test certificate", async () => {
+    const decodedValue = decodeCertificateAndLogMissingValues(logWarningMock)({
+      ...aValidAntigenTestCertificate,
+      t: [
+        {
+          ...aValidAntigenTestCertificate.t[0],
+          tt: "INVALID_TT",
+          tg: "INVALID_TG",
+          ma: "INVALID_MA",
+          tr: "IVALID_TR"
+        }
+      ]
+    });
+
+    expect(isRight(decodedValue)).toBe(true);
+    expect(TestCertificate.is(decodedValue.value)).toBe(true);
+    expect(logWarningMock).toHaveBeenCalledWith(
+      'Missing map values|test details|tg "INVALID_TG" value not found, tt "INVALID_TT" value not found, tr "IVALID_TR" value not found, ma "INVALID_MA" value not found'
+    );
+  });
+
+  it("should log a list of warnings if certificate has more than one value not present in maps - vaccine certificate", async () => {
+    const decodedValue = decodeCertificateAndLogMissingValues(logWarningMock)({
+      ...aValidVaccinationCertificate,
+      v: [
+        {
+          ...aValidVaccinationCertificate.v[0],
+          tg: "INVALID_TG",
+          vp: "INVALID_VP",
+          mp: "IVALID_MP",
+          ma: "INVALID_MA"
+        }
+      ]
+    });
+
+    expect(isRight(decodedValue)).toBe(true);
+    expect(VacCertificate.is(decodedValue.value)).toBe(true);
+    expect(logWarningMock).toHaveBeenCalledWith(
+      'Missing map values|vaccination details|tg "INVALID_TG" value not found, vp "INVALID_VP" value not found, mp "IVALID_MP" value not found, ma "INVALID_MA" value not found'
+    );
+  });
+
+  it("should return an error if decode fails", async () => {
+    const errorOrDecodedValue = withTrace(
+      decodeCertificateAndLogMissingValues(logWarningMock),
+      "ErrorMsg"
+    )({
+      ...aValidAntigenTestCertificate,
+      dob: ""
+    });
+
+    expect(isRight(errorOrDecodedValue)).toBe(false);
+    expect(errorOrDecodedValue.value).toBeInstanceOf(Error);
   });
 });

@@ -6,7 +6,18 @@ import { PNG, PNGWithMetadata } from "pngjs";
 import jsQR from "jsqr";
 import { QRCode } from "jsqr";
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
-import { Certificates } from "./certificate";
+import { match } from "ts-pattern";
+import {
+  Certificates,
+  RecoveryCertificate,
+  TestCertificate,
+  VacCertificate
+} from "./certificate";
+import {
+  getRecoveryCertificateValidationErrors,
+  getTestCertificateValidationErrors,
+  getVacCertificateValidationErrors
+} from "./certificate.warnings";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 const borc = require("borc");
@@ -74,7 +85,7 @@ interface IQRParsingFailure {
  * @param stepName the name of the step to be logged. If the function is not anonymous, its name is used. Otherwise it must be specified
  * @returns either an error or the result of the specific step
  */
-const withTrace = <T, I>(
+export const withTrace = <T, I>(
   fn: (i: I) => Either<Error | Errors, T>,
   stepName = fn.name
 ) => (i: I): Either<Error, T> =>
@@ -85,13 +96,39 @@ const withTrace = <T, I>(
   });
 
 /**
+ * A wrapper for Certificate.decode,
+ * that allows to log missing map values, if any
+ *
+ * @param logWarning a function used to log warning text
+ * @returns Either a decoded certificate or a validation error
+ */
+export const decodeCertificateAndLogMissingValues = (
+  logWarning: (warn: string) => void
+) => (x: unknown): ReturnType<typeof Certificates.decode> => {
+  const decodedValude = Certificates.decode(x);
+
+  decodedValude.map(value => {
+    match(value)
+      .when(TestCertificate.is, te => getTestCertificateValidationErrors(te, x))
+      .when(VacCertificate.is, vc => getVacCertificateValidationErrors(vc, x))
+      .when(RecoveryCertificate.is, rc =>
+        getRecoveryCertificateValidationErrors(rc, x)
+      )
+      .exhaustive()
+      .mapLeft((err: string) => logWarning(`Missing map values|${err}`));
+  });
+  return decodedValude;
+};
+
+/**
  * Parse a qr code image to get Certificate information payload
  *
  * @param qrcode
  * @returns
  */
 export const parseQRCode = (
-  qrcode: string
+  qrcode: string,
+  logWarning: (warn: string) => void
 ): Either<IQRParsingFailure, Certificates> =>
   e
     .fromNullable<Error>(new Error("can not decode an empty string"))(qrcode)
@@ -109,7 +146,12 @@ export const parseQRCode = (
     )
     .chain<ReadonlyMap<number, unknown>>(withTrace(readHCert))
     .map(m => m.get(1))
-    .chain(withTrace(Certificates.decode, "Certificates.decode"))
+    .chain(
+      withTrace(
+        decodeCertificateAndLogMissingValues(logWarning),
+        "Certificates.decode"
+      )
+    )
     .mapLeft(_ => ({ qrcode, reason: _.message }));
 
 /**
@@ -119,7 +161,8 @@ export const parseQRCode = (
  * @returns
  */
 export const parseQRCodeAlt = (
-  qrcode: string
+  qrcode: string,
+  logWarning: (warn: string) => void
 ): Either<IQRParsingFailure, Certificates> =>
   e
     .fromNullable<Error>(new Error("can not decode an empty string"))(qrcode)
@@ -137,5 +180,10 @@ export const parseQRCodeAlt = (
     )
     .chain<ReadonlyMap<number, unknown>>(withTrace(readHCert))
     .map(m => m.get(1))
-    .chain(withTrace(Certificates.decode, "Certificates.decode"))
+    .chain(
+      withTrace(
+        decodeCertificateAndLogMissingValues(logWarning),
+        "Certificates.decode"
+      )
+    )
     .mapLeft(_ => ({ qrcode, reason: _.message }));

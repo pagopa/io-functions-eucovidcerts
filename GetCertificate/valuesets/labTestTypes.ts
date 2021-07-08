@@ -2,8 +2,15 @@
 /* eslint-disable sort-keys */
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { IReadonlyTranslatableMap } from "../../utils/conversions";
+import { VALUESET_PLACEHOLDER } from "./placeholder";
 
 export const labTestTypes: IReadonlyTranslatableMap = {
+  placeholder: {
+    displays: {
+      [PreferredLanguageEnum.it_IT]: VALUESET_PLACEHOLDER,
+      [PreferredLanguageEnum.en_GB]: VALUESET_PLACEHOLDER
+    }
+  },
   "LP6464-4": {
     displays: {
       [PreferredLanguageEnum.it_IT]: "Test molecolare",
