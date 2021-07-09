@@ -46,7 +46,7 @@ Right {
         "is": "IT",
         "ma": Some {
           "_tag": "Some",
-          "value": "Abbott Rapid Diagnostics, Panbio COVID-19 Ag Test",
+          "value": "Abbott Rapid Diagnostics, Panbio COVID-19 Ag Rapid Test",
         },
         "nm": "Roche LightCycler qPCR",
         "sc": 2021-05-03T10:27:15.000Z,
@@ -147,7 +147,7 @@ Right {
         "is": "IT",
         "ma": Some {
           "_tag": "Some",
-          "value": "Abbott Rapid Diagnostics, Panbio COVID-19 Ag Test",
+          "value": "Abbott Rapid Diagnostics, Panbio COVID-19 Ag Rapid Test",
         },
         "nm": "Roche LightCycler qPCR",
         "sc": 2021-05-03T10:27:15.000Z,
