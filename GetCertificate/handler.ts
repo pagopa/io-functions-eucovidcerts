@@ -1,9 +1,4 @@
-import * as express from "express";
-
-import {
-  withRequestMiddlewares,
-  wrapRequestHandler
-} from "@pagopa/io-functions-commons/dist/src/utils/request_middleware";
+/* eslint-disable no-console */
 import {
   IResponseErrorForbiddenNotAuthorized,
   IResponseErrorInternal,
@@ -12,8 +7,6 @@ import {
   ResponseErrorInternal,
   ResponseSuccessJson
 } from "@pagopa/ts-commons/lib/responses";
-import { RequiredBodyPayloadMiddleware } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/required_body_payload";
-import { ContextMiddleware } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/context_middleware";
 import {
   fromEither,
   fromLeft,
@@ -54,18 +47,22 @@ type Failures =
   | IResponseErrorInternal
   | IResponseErrorValidation
   | IResponseErrorForbiddenNotAuthorized;
-type GetCertificateHandler = (
-  context: Context,
-  params: GetCertificateParams
-) => Promise<IResponseSuccessJson<Certificate> | Failures>;
+type GetCertificateHandler = ({
+  context,
+  params
+}: {
+  readonly context: Context;
+  readonly params: GetCertificateParams;
+}) => Promise<IResponseSuccessJson<Certificate> | Failures>;
 export const GetCertificateHandler = (
   dgcClientSelector: ReturnType<typeof createDGCClientSelector>
-): GetCertificateHandler => async (
+): GetCertificateHandler => async ({
   context,
-  { fiscal_code, auth_code: authCodeSHA256, preferred_languages }
-): Promise<IResponseSuccessJson<Certificate> | Failures> => {
+  params: { fiscal_code, auth_code, preferred_languages }
+}): Promise<IResponseSuccessJson<Certificate> | Failures> => {
   // prints a certificate into huma nreadable text - italian only for now
   //  const printer = printers[PreferredLanguageEnum.it_IT];
+
   const hashedFiscalCode = toSHA256(fiscal_code);
   const selectedLanguage = o
     .fromNullable(preferred_languages)
@@ -88,7 +85,7 @@ export const GetCertificateHandler = (
             dgcClient
               .getCertificateByAutAndCF({
                 body: {
-                  authCodeSHA256,
+                  authCodeSHA256: auth_code,
                   cfSHA256: hashedFiscalCode
                 }
               })
@@ -170,13 +167,4 @@ export const GetCertificateHandler = (
 
 export const getGetCertificateHandler = (
   dgcClientSelector: ReturnType<typeof createDGCClientSelector>
-): express.RequestHandler => {
-  const handler = GetCertificateHandler(dgcClientSelector);
-
-  return wrapRequestHandler(
-    withRequestMiddlewares(
-      ContextMiddleware(),
-      RequiredBodyPayloadMiddleware(GetCertificateParams)
-    )(handler)
-  );
-};
+): GetCertificateHandler => GetCertificateHandler(dgcClientSelector);
