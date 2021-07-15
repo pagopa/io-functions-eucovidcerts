@@ -8,18 +8,21 @@ export const testResults: IReadonlyTranslatableMap = {
   placeholder: {
     displays: {
       [PreferredLanguageEnum.it_IT]: VALUESET_PLACEHOLDER,
+      [PreferredLanguageEnum.de_DE]: VALUESET_PLACEHOLDER,
       [PreferredLanguageEnum.en_GB]: VALUESET_PLACEHOLDER
     }
   },
   "260415000": {
     displays: {
       [PreferredLanguageEnum.it_IT]: "Negativo",
+      [PreferredLanguageEnum.de_DE]: "Negativer",
       [PreferredLanguageEnum.en_GB]: "Not detected"
     }
   },
   "260373001": {
     displays: {
       [PreferredLanguageEnum.it_IT]: "Positivo",
+      [PreferredLanguageEnum.de_DE]: "Positiver",
       [PreferredLanguageEnum.en_GB]: "Detected"
     }
   }

@@ -8,12 +8,14 @@ export const labTestTypes: IReadonlyTranslatableMap = {
   placeholder: {
     displays: {
       [PreferredLanguageEnum.it_IT]: VALUESET_PLACEHOLDER,
+      [PreferredLanguageEnum.de_DE]: VALUESET_PLACEHOLDER,
       [PreferredLanguageEnum.en_GB]: VALUESET_PLACEHOLDER
     }
   },
   "LP6464-4": {
     displays: {
       [PreferredLanguageEnum.it_IT]: "Test molecolare",
+      [PreferredLanguageEnum.de_DE]: "Molekularer Test",
       [PreferredLanguageEnum.en_GB]:
         "Nucleic acid amplification with probe detection"
     }
@@ -21,6 +23,7 @@ export const labTestTypes: IReadonlyTranslatableMap = {
   "LP217198-3": {
     displays: {
       [PreferredLanguageEnum.it_IT]: "Test antigenico rapido",
+      [PreferredLanguageEnum.de_DE]: "Antigen-Schnelltest",
       [PreferredLanguageEnum.en_GB]: "Rapid immunoassay"
     }
   }
