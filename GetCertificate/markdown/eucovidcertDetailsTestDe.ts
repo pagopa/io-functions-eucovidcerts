@@ -6,7 +6,7 @@ import { formatCertificateIssuer, formatDateAndTime } from "../printer";
 const fileLanguage = PreferredLanguageEnum.de_DE;
 
 export const getDetailPrinter = (te: TestEntry): string =>
-    `
+  `
 ## Test Zertifikat  
 ***
 **Bescheinigung gültig für 48 Stunden ab dem Zeitpunkt der Abholung**
@@ -24,10 +24,11 @@ Testergebnis
 ${te.nm ? `Molekularer Testname  ` : ""}
 ${te.nm ? `**${te.nm}**  ` : ""}
 
-${te.ma && isSome(te.ma)
-        ? `Name des Antigentests und Name des Herstellers  `
-        : ""
-    }
+${
+  te.ma && isSome(te.ma)
+    ? `Name des Antigentests und Name des Herstellers  `
+    : ""
+}
 ${te.ma && isSome(te.ma) ? `**${te.ma.value}**  ` : ""}
 
 Datum und Uhrzeit der Probenentnahme  

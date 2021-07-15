@@ -1,21 +1,22 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { VaccinationEntry } from "../certificate";
 import {
-    isVaccinationProcessEnded,
-    formatDate,
-    formatCertificateIssuer
+  isVaccinationProcessEnded,
+  formatDate,
+  formatCertificateIssuer
 } from "../printer";
 
 const fileLanguage = PreferredLanguageEnum.de_DE;
 
 export const getDetailPrinter = (v: VaccinationEntry): string =>
-    `
+  `
 ## Impfstoffdaten  
 ***
-${isVaccinationProcessEnded(v)
-        ? "**Zertifizierung gültig für 270 Tage (9 Monate) ab dem Datum der letzten Verabreichung**"
-        : "**Zertifizierung gültig bis zur nächsten Dosis**"
-    }
+${
+  isVaccinationProcessEnded(v)
+    ? "**Zertifizierung gültig für 270 Tage (9 Monate) ab dem Datum der letzten Verabreichung**"
+    : "**Zertifizierung gültig bis zur nächsten Dosis**"
+}
 ***
 
 Zielkrankheit oder -wirkstoff  

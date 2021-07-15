@@ -5,7 +5,7 @@ import { formatCertificateIssuer, formatDate } from "../printer";
 const fileLanguage = PreferredLanguageEnum.de_DE;
 
 export const getDetailPrinter = (tr: RecoveryEntry): string =>
-    `
+  `
 ## Heilungsurkunde
 
 Zielkrankheit oder Erreger, von dem die Person geheilt wird  

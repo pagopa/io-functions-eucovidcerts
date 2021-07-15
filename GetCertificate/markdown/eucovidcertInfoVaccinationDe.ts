@@ -7,7 +7,7 @@ const fileLanguage = PreferredLanguageEnum.de_DE;
 const uvci = (c: Certificates): string => printUvci(some(fileLanguage), c);
 
 export const getInfoPrinter = (c: Certificates): string =>
-    `
+  `
 Surname(s) and forename(s)  
 *Vorname und Nachname*  
 **${c.nam.fn} ${c.nam.gn}**  

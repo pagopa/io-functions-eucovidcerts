@@ -6,6 +6,8 @@ import {
 import * as o from "fp-ts/lib/Option";
 import * as moment from "moment-timezone";
 import { match } from "ts-pattern";
+import { pipe } from "fp-ts/lib/pipeable";
+import { SupportedLanguage } from "../utils/conversions";
 import {
   Certificates,
   TestCertificate,
@@ -17,20 +19,34 @@ import {
 } from "./certificate";
 import * as vacDetailsEn from "./markdown/eucovidcertDetailsVaccinationEn";
 import * as vacDetailsIt from "./markdown/eucovidcertDetailsVaccinationIt";
+import * as vacDetailsDe from "./markdown/eucovidcertDetailsVaccinationDe";
 import * as testDetailsIt from "./markdown/eucovidcertDetailsTestIt";
 import * as testDetailsEn from "./markdown/eucovidcertDetailsTestEn";
+import * as testDetailsDe from "./markdown/eucovidcertDetailsTestDe";
 import * as recoveryDetailsIt from "./markdown/eucovidcertDetailsRecoveryIt";
 import * as recoveryDetailsEn from "./markdown/eucovidcertDetailsRecoveryEn";
-import * as vacInfoEn from "./markdown/eucovidcertInfoVaccinationEn";
+import * as recoveryDetailsDe from "./markdown/eucovidcertDetailsRecoveryDe";
+import * as vacInfoMultilanguage from "./markdown/eucovidcertInfoVaccinationEn";
 
 const TIME_ZONE = "Europe/Rome";
 
 const DATE_FORMAT_EN = "YYYY-MM-DD";
 const DATE_FORMAT_ITA = "DD-MM-YYYY";
 
+const dateFormatForLanguage: { [key in SupportedLanguage]: string } = {
+  [PreferredLanguageEnum.it_IT]: DATE_FORMAT_ITA,
+  [PreferredLanguageEnum.en_GB]: DATE_FORMAT_EN,
+  [PreferredLanguageEnum.de_DE]: DATE_FORMAT_EN
+};
+
 const DATE_TIME_FORMAT_EN = "YYYY-MM-DD HH:mm";
 const DATE_TIME_FORMAT_ITA = "DD-MM-YYYY HH:mm";
 
+const dateAndTimeFormatForLanguage: { [key in SupportedLanguage]: string } = {
+  [PreferredLanguageEnum.it_IT]: DATE_TIME_FORMAT_ITA,
+  [PreferredLanguageEnum.en_GB]: DATE_TIME_FORMAT_EN,
+  [PreferredLanguageEnum.de_DE]: DATE_TIME_FORMAT_EN
+};
 interface IPrintersForLanguage {
   readonly detailVaccinePrinter: (v: VaccinationEntry) => string;
   readonly detailTestPrinter: (t: TestEntry) => string;
@@ -48,9 +64,9 @@ const printersConfigurations = new Map<PreferredLanguage, IPrintersForLanguage>(
         detailVaccinePrinter: vacDetailsIt.getDetailPrinter,
         detailTestPrinter: testDetailsIt.getDetailPrinter,
         detailRecoveryPrinter: recoveryDetailsIt.getDetailPrinter,
-        infoVaccinePrinter: vacInfoEn.getInfoPrinter,
-        infoTestPrinter: vacInfoEn.getInfoPrinter,
-        infoRecoveryPrinter: vacInfoEn.getInfoPrinter
+        infoVaccinePrinter: vacInfoMultilanguage.getInfoPrinter,
+        infoTestPrinter: vacInfoMultilanguage.getInfoPrinter,
+        infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
       }
     ],
     [
@@ -59,9 +75,20 @@ const printersConfigurations = new Map<PreferredLanguage, IPrintersForLanguage>(
         detailVaccinePrinter: vacDetailsEn.getDetailPrinter,
         detailTestPrinter: testDetailsEn.getDetailPrinter,
         detailRecoveryPrinter: recoveryDetailsEn.getDetailPrinter,
-        infoVaccinePrinter: vacInfoEn.getInfoPrinter,
-        infoTestPrinter: vacInfoEn.getInfoPrinter,
-        infoRecoveryPrinter: vacInfoEn.getInfoPrinter
+        infoVaccinePrinter: vacInfoMultilanguage.getInfoPrinter,
+        infoTestPrinter: vacInfoMultilanguage.getInfoPrinter,
+        infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
+      }
+    ],
+    [
+      PreferredLanguageEnum.de_DE,
+      {
+        detailVaccinePrinter: vacDetailsDe.getDetailPrinter,
+        detailTestPrinter: testDetailsDe.getDetailPrinter,
+        detailRecoveryPrinter: recoveryDetailsDe.getDetailPrinter,
+        infoVaccinePrinter: vacInfoMultilanguage.getInfoPrinter,
+        infoTestPrinter: vacInfoMultilanguage.getInfoPrinter,
+        infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
       }
     ]
   ]
@@ -71,9 +98,9 @@ export const defaultPrinter: IPrintersForLanguage = {
   detailVaccinePrinter: vacDetailsEn.getDetailPrinter,
   detailTestPrinter: testDetailsEn.getDetailPrinter,
   detailRecoveryPrinter: recoveryDetailsEn.getDetailPrinter,
-  infoVaccinePrinter: vacInfoEn.getInfoPrinter,
-  infoTestPrinter: vacInfoEn.getInfoPrinter,
-  infoRecoveryPrinter: vacInfoEn.getInfoPrinter
+  infoVaccinePrinter: vacInfoMultilanguage.getInfoPrinter,
+  infoTestPrinter: vacInfoMultilanguage.getInfoPrinter,
+  infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
 };
 
 /**
@@ -142,7 +169,7 @@ export const printUvci = (
     .when(VacCertificate.is, cv => cv.v[0].ci)
     .when(TestCertificate.is, ct => ct.t[0].ci)
     .when(RecoveryCertificate.is, cr => cr.r[0].ci)
-    .exhaustive(); // TODO
+    .exhaustive();
 
 /**
  * Check if Vaccination has ended
@@ -160,20 +187,12 @@ export const isVaccinationProcessEnded = (v: VaccinationEntry): boolean =>
  * @param _lang the preferred language
  * @returns a formatted date
  */
-export const formatDate = (d: Date, _lang: PreferredLanguage): string =>
-  match(_lang)
-    .when(
-      l => l === PreferredLanguageEnum.en_GB,
-      _ =>
-        moment(d)
-          .tz(TIME_ZONE)
-          .format(DATE_FORMAT_EN)
-    )
-    .otherwise(() =>
-      moment(d)
-        .tz(TIME_ZONE)
-        .format(DATE_FORMAT_ITA)
-    );
+export const formatDate = (d: Date, lang: SupportedLanguage): string =>
+  pipe(dateFormatForLanguage[lang], format =>
+    moment(d)
+      .tz(TIME_ZONE)
+      .format(format)
+  );
 
 /**
  * Format date and time value based on language
@@ -182,27 +201,28 @@ export const formatDate = (d: Date, _lang: PreferredLanguage): string =>
  * @param _lang the preferred language
  * @returns a formatted date with time
  */
-export const formatDateAndTime = (d: Date, _lang: PreferredLanguage): string =>
-  match(_lang)
-    .when(
-      l => l === PreferredLanguageEnum.en_GB,
-      _ =>
-        moment(d)
-          .tz(TIME_ZONE)
-          .format(DATE_TIME_FORMAT_EN)
-    )
-    .otherwise(() =>
-      moment(d)
-        .tz(TIME_ZONE)
-        .format(DATE_TIME_FORMAT_ITA)
-    );
+export const formatDateAndTime = (d: Date, lang: SupportedLanguage): string =>
+  // eslint-disable-next-line sonarjs/no-identical-functions
+  pipe(dateAndTimeFormatForLanguage[lang], format =>
+    moment(d)
+      .tz(TIME_ZONE)
+      .format(format)
+  );
 
 /**
  * The issuer (is) field value used by Italy Healthcare Department
  */
 export const ITALY_HEALTHCARE_ISSUER = "IT";
+
 export const HEALTHCARE_DEP_IT = "Ministero della Salute";
 export const HEALTHCARE_DEP_EN = "Ministry of Health";
+export const HEALTHCARE_DEP_DE = "Gesundheitsministerium";
+
+const healthcareIssuerForLanguage: { [key in SupportedLanguage]: string } = {
+  [PreferredLanguageEnum.it_IT]: HEALTHCARE_DEP_IT,
+  [PreferredLanguageEnum.en_GB]: HEALTHCARE_DEP_EN,
+  [PreferredLanguageEnum.de_DE]: HEALTHCARE_DEP_DE
+};
 
 /**
  * Format Certificate Issuer based on its value and preferred language
@@ -213,13 +233,6 @@ export const HEALTHCARE_DEP_EN = "Ministry of Health";
  */
 export const formatCertificateIssuer = (
   c: string,
-  lang: PreferredLanguage
+  lang: SupportedLanguage
 ): string =>
-  c !== ITALY_HEALTHCARE_ISSUER
-    ? c
-    : match(lang)
-        .when(
-          l => l === PreferredLanguageEnum.it_IT,
-          _ => HEALTHCARE_DEP_IT
-        )
-        .otherwise(() => HEALTHCARE_DEP_EN);
+  c !== ITALY_HEALTHCARE_ISSUER ? c : healthcareIssuerForLanguage[lang];
