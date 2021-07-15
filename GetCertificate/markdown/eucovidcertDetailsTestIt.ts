@@ -24,11 +24,10 @@ Risultato del test
 ${te.nm ? `Nome del test molecolare  ` : ""}
 ${te.nm ? `**${te.nm}**  ` : ""}
 
-${
-  te.ma && isSome(te.ma)
+${te.ma && isSome(te.ma)
     ? `Nome del test antigenico e nome del produttore  `
     : ""
-}
+  }
 ${te.ma && isSome(te.ma) ? `**${te.ma.value}**  ` : ""}
 
 Data e ora del prelievo del campione  
@@ -40,10 +39,10 @@ ${te.dr ? `**${formatDateAndTime(te.dr, fileLanguage)}**  ` : ""}
 Centro o struttura in cui è stato eseguito il test  
 **${te.tc}**  
 
-Stato Membro in cui è stato eseguito il test  
+Stato in cui è stato eseguito il test  
 **${te.co}**  
 
-Struttura che ha rilasciato la certificazione  
+Soggetto che ha rilasciato la certificazione  
 **${formatCertificateIssuer(te.is, fileLanguage)}**  
 
 Identificativo univoco del certificato  

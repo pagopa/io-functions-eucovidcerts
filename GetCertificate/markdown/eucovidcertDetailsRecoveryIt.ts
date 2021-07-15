@@ -14,10 +14,10 @@ Malattia o agente bersaglio da cui la persona è guarita
 Data del primo test molecolare positivo  
 **${formatDate(tr.fr, fileLanguage)}**  
 
-Stato Membro in cui è stato eseguito il primo test molecolare positivo  
+Stato in cui è stato eseguito il primo test molecolare positivo  
 **${tr.co}**  
 
-Struttura che ha rilasciato la certificazione  
+Soggetto che ha rilasciato la certificazione  
 **${formatCertificateIssuer(tr.is, fileLanguage)}**  
  
 Certificazione valida dal  

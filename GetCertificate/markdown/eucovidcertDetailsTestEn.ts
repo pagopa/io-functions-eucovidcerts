@@ -36,7 +36,7 @@ ${te.dr ? `**${formatDateAndTime(te.dr, fileLanguage)}**  ` : ""}
 Testing centre or facility  
 **${te.tc}**  
 
-Member State of test  
+State of test  
 **${te.co}**  
 
 Certificate issuer  

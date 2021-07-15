@@ -14,7 +14,7 @@ Disease or agent the citizen has recovered from
 Date of first positive NAAT test result  
 **${formatDate(tr.fr, fileLanguage)}**  
 
-Member State of test  
+State of test  
 **${tr.co}**  
 
 Certificate issuer  
