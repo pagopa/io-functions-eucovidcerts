@@ -26,4 +26,4 @@ export type AllMiddlewaresFailureResults<M> = ParamsUnion<
 >;
 export type AllMiddlewaresResults<M> = ParamsUnion<MiddlewaresResults<M>>;
 
-type ParamsUnion<OBJ> = OBJ[keyof OBJ];
+export type ParamsUnion<OBJ> = OBJ[keyof OBJ];

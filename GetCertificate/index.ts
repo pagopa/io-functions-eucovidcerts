@@ -28,16 +28,10 @@ const dgcClientSelector = createDGCClientSelector(config, process.env);
 
 const handler = getGetCertificateHandler(dgcClientSelector);
 
-const otherMiddlewares = {
-  context: ContextMiddleware()
-};
-
 // Add express route
-setupGetCertificate<{ readonly context: Context }>(
-  app,
-  handler,
-  otherMiddlewares
-);
+setupGetCertificate<{ readonly context: Context }>(app, handler, {
+  context: ContextMiddleware()
+});
 
 const azureFunctionHandler = createAzureFunctionHandler(app);
 

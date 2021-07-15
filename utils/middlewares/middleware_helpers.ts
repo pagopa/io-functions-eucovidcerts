@@ -9,7 +9,7 @@ import {
   ResponseErrorInternal
 } from "@pagopa/ts-commons/lib/responses";
 import { sequenceS } from "fp-ts/lib/Apply";
-import { isRight } from "fp-ts/lib/Either";
+import { isRight, toError } from "fp-ts/lib/Either";
 import * as TE from "fp-ts/lib/TaskEither";
 import { identity } from "fp-ts/lib/function";
 import { IRequestMiddlewares } from "./middleware_types";
@@ -38,10 +38,15 @@ const getMiddlewaresTaskEithers = <K, R, T>(
 export type EnforceNonEmptyRecord<R> = keyof R extends never ? never : R;
 
 type IRequestHandler<Params, Return> = (
-  args: { [key in keyof Params]: Params[key] }
+  argsss: Params
 ) => Promise<IResponse<Return>>;
 
-export const withRequestMiddlewares = <Params extends Record<string, T>, R, T>(
+export const withRequestMiddlewares = <
+  R,
+  T,
+  K extends string | number | symbol,
+  Params extends Record<K, T> = Record<K, T>
+>(
   middlewares: IRequestMiddlewares<Params, R, T>
 ) => <RH>(
   handler: IRequestHandler<Params, RH>
@@ -50,11 +55,12 @@ export const withRequestMiddlewares = <Params extends Record<string, T>, R, T>(
 ): Promise<IResponse<RH | R | "IResponseErrorInternal">> =>
   Object.keys(middlewares).length > 0
     ? sequenceS(TE.taskEither)(getMiddlewaresTaskEithers(middlewares)(request))
-        .mapLeft<IResponse<R> | IResponseErrorInternal>(identity)
+        .mapLeft(x => x as IResponse<R> | IResponseErrorInternal)
         .chain(params2 =>
-          TE.tryCatch(
-            () => handler(params2 as Params),
-            _ => ResponseErrorInternal(`error executing endpoint handler`)
+          TE.tryCatch(() => handler(params2 as Params), toError).mapLeft(err =>
+            ResponseErrorInternal(
+              `Error executing endpoint handler:` + err.message
+            )
           )
         )
         .fold<IResponse<RH | R | "IResponseErrorInternal">>(identity, identity)

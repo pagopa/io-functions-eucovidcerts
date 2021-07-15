@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable functional/prefer-readonly-type */
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -12,67 +13,80 @@ import {
   IResponseErrorValidation,
   IResponseSuccessJson
 } from "@pagopa/ts-commons/lib/responses";
-import { ContextMiddleware } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/context_middleware";
 import { Certificate } from "../generated/definitions/Certificate";
 import { GetCertificateParams } from "../generated/definitions/GetCertificateParams";
 
 import { withRequestMiddlewares } from "../utils/middlewares/middleware_helpers";
-import {
-  AllMiddlewaresFailureResults,
-  AllMiddlewaresResults,
-  IRequestMiddlewares,
-  MiddlewaresResults
-} from "../utils/middlewares/middleware_types";
+import { IRequestMiddlewares } from "../utils/middlewares/middleware_types";
 
 type Failures =
   | IResponseErrorInternal
   | IResponseErrorValidation
   | IResponseErrorForbiddenNotAuthorized;
 
-// todo: generate
+// todo: generate it
 export type IGeneratedRequestHandlerParams = Readonly<{
   params: GetCertificateParams;
 }>;
 
 export type IRequestHandlerParams<
-  OtherParams extends { readonly [key: string]: any }
+  OtherParams extends Record<string, K>,
+  K
 > = IGeneratedRequestHandlerParams & OtherParams;
 
-export type IRequestHandler<OtherParams> = (
-  args: IRequestHandlerParams<OtherParams>
+export type IRequestHandlerr<OtherParams extends Record<string, K>, K> = (
+  argss: IRequestHandlerParams<OtherParams, K>
 ) => Promise<IResponseSuccessJson<Certificate> | Failures>;
+
+// handler: (req: express.Request) => Promise<IResponse<T>>
+
+const generatedMiddlewares: IRequestMiddlewares<
+  IGeneratedRequestHandlerParams,
+  "IResponseErrorValidation",
+  GetCertificateParams
+> = {
+  params: RequiredBodyPayloadMiddleware(GetCertificateParams)
+};
 
 // todo: setup<Name>
 export const setupGetCertificate = <
-  OtherParams extends { readonly [key: string]: T },
-  R = any,
-  T = any
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  OtherParams extends Record<string, K> | never,
+  H extends string = string,
+  K extends Context = Context
 >(
   app: express.Express,
   // todo: IRequestHandler<Name>
   // TODO: WIP, use OtherParams instead
-  handler: IRequestHandler<{ context: Context }>,
-  middlewares?: IRequestMiddlewares<OtherParams, R, T>
+  handler: IRequestHandlerr<OtherParams, K>,
+  middlewares?: IRequestMiddlewares<OtherParams, H, K>
 ): void => {
-  const generatedMiddlewares = {
-    params: RequiredBodyPayloadMiddleware(GetCertificateParams)
-  };
+  // eslint-disable-next-line functional/no-let
+  let wrappedWithMiddlewares;
+  if (middlewares) {
+    const allMiddlewares = {
+      ...middlewares,
+      ...generatedMiddlewares
+    };
 
-  // TODO: WIP, extract it
-  const otherMiddlewares = {
-    context: ContextMiddleware()
-  };
-
-  const allMiddlewares = {
-    ...otherMiddlewares,
-    params: RequiredBodyPayloadMiddleware(GetCertificateParams)
-  };
-
-  const wrappedWithMiddlewares = withRequestMiddlewares<
-    IRequestHandlerParams<{ context: Context }>,
-    AllMiddlewaresFailureResults<typeof allMiddlewares>,
-    AllMiddlewaresResults<typeof allMiddlewares>
-  >(allMiddlewares)(handler);
+    wrappedWithMiddlewares = withRequestMiddlewares<
+      "IResponseErrorValidation" | H,
+      GetCertificateParams | K,
+      keyof IRequestHandlerParams<OtherParams, K>,
+      IGeneratedRequestHandlerParams & OtherParams
+    >(allMiddlewares)(handler);
+  } else {
+    wrappedWithMiddlewares = withRequestMiddlewares<
+      "IResponseErrorValidation",
+      GetCertificateParams,
+      keyof IGeneratedRequestHandlerParams,
+      IGeneratedRequestHandlerParams
+    >(generatedMiddlewares)(
+      handler as (
+        argss: IGeneratedRequestHandlerParams
+      ) => Promise<IResponseSuccessJson<Certificate> | Failures>
+    );
+  }
 
   const handlerWithMiddlewares = wrapRequestHandler(wrappedWithMiddlewares);
 
