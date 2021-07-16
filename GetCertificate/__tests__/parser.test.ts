@@ -6,8 +6,7 @@ import {
 import {
   decodeCertificateAndLogMissingValues,
   withTrace,
-  parseQRCode,
-  parseQRCodeAlt
+  parseQRCode
 } from "../parser";
 import {
   aValidAntigenTestCertificate,
@@ -17,9 +16,8 @@ import {
 import { isRight } from "fp-ts/lib/Either";
 
 describe.each`
-  title                     | parser
-  ${"using parseQRCode"}    | ${parseQRCode}
-  ${"using parseQRCodeAlt"} | ${parseQRCodeAlt}
+  title                  | parser
+  ${"using parseQRCode"} | ${parseQRCode}
 `("qr parsers tests $title", ({ parser }) => {
   it("should return a valid Vaccination cartificate", async () => {
     const rawb64png =
@@ -40,6 +38,14 @@ describe.each`
   it("should return a valid Test certificate", async () => {
     const rawb64png =
       "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";
+    const test = parser(rawb64png);
+    expect(test).toMatchSnapshot();
+    expect(TestCertificate.is(test.value)).toBe(true);
+  });
+
+  it("should return a valid Test cert", async () => {
+    const rawb64png =
+      "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";
     const test = parser(rawb64png);
     expect(test).toMatchSnapshot();
     expect(TestCertificate.is(test.value)).toBe(true);
