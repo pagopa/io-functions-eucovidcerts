@@ -14,13 +14,15 @@ const translatableMap: IReadonlyTranslatableMap = {
   placeholder: {
     displays: {
       [PreferredLanguageEnum.it_IT]: "---",
-      [PreferredLanguageEnum.en_GB]: "---"
+      [PreferredLanguageEnum.en_GB]: "---",
+      [PreferredLanguageEnum.de_DE]: "---"
     }
   },
   "0001": {
     displays: {
       [PreferredLanguageEnum.it_IT]: "test display in it",
-      [PreferredLanguageEnum.en_GB]: "test display in en"
+      [PreferredLanguageEnum.en_GB]: "test display in en",
+      [PreferredLanguageEnum.de_DE]: "test display in de"
     }
   }
 };

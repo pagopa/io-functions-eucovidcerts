@@ -26,12 +26,13 @@ export const errorsToError = (errors: Errors): Error =>
  * An object representing a value translated in every supported languages
  */
 
-export type SuportedLanguage =
+export type SupportedLanguage =
   | PreferredLanguageEnum.en_GB
+  | PreferredLanguageEnum.de_DE
   | PreferredLanguageEnum.it_IT;
 
 export interface ITranslatable {
-  readonly displays: { [key in SuportedLanguage]: string };
+  readonly displays: { [key in SupportedLanguage]: string };
 }
 
 export interface IReadonlyTranslatableMap {

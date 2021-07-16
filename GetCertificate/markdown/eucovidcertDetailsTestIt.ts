@@ -40,10 +40,10 @@ ${te.dr ? `**${formatDateAndTime(te.dr, fileLanguage)}**  ` : ""}
 Centro o struttura in cui è stato eseguito il test  
 **${te.tc}**  
 
-Stato Membro in cui è stato eseguito il test  
+Stato in cui è stato eseguito il test  
 **${te.co}**  
 
-Struttura che ha rilasciato la certificazione  
+Soggetto che ha rilasciato la certificazione  
 **${formatCertificateIssuer(te.is, fileLanguage)}**  
 
 Identificativo univoco del certificato  

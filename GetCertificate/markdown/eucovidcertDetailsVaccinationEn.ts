@@ -37,7 +37,7 @@ Number in a series of vaccinations doses / overall number of vaccination in the 
 Date of vaccination  
 **${formatDate(v.dt, fileLanguage)}**  
 
-Member State of vaccination  
+State of vaccination  
 **${v.co}**
 
 Certificate issuer  

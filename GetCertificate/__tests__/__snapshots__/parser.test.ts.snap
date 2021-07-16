@@ -53,12 +53,14 @@ Right {
         "tg": "COVID-19",
         "tr": Object {
           "displays": Object {
+            "de_DE": "Negativer",
             "en_GB": "Not detected",
             "it_IT": "Negativo",
           },
         },
         "tt": Object {
           "displays": Object {
+            "de_DE": "Molekularer Test",
             "en_GB": "Nucleic acid amplification with probe detection",
             "it_IT": "Test molecolare",
           },
@@ -97,12 +99,14 @@ Right {
         "tg": "COVID-19",
         "tr": Object {
           "displays": Object {
+            "de_DE": "Negativer",
             "en_GB": "Not detected",
             "it_IT": "Negativo",
           },
         },
         "tt": Object {
           "displays": Object {
+            "de_DE": "Molekularer Test",
             "en_GB": "Nucleic acid amplification with probe detection",
             "it_IT": "Test molecolare",
           },

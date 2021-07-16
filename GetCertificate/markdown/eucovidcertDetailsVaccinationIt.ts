@@ -37,10 +37,10 @@ Numero della dose effettuata / numero totale dosi previste
 Data dell’ultima somministrazione  
 **${formatDate(v.dt, fileLanguage)}**  
 
-Stato Membro in cui è stata eseguita la vaccinazione  
+Stato in cui è stata eseguita la vaccinazione  
 **${v.co}**  
 
-Struttura che ha rilasciato la certificazione  
+Soggetto che ha rilasciato la certificazione  
 **${formatCertificateIssuer(v.is, fileLanguage)}**  
 
 Identificativo univoco del certificato  
