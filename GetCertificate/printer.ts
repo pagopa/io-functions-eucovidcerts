@@ -56,43 +56,34 @@ interface IPrintersForLanguage {
   readonly infoRecoveryPrinter: (c: Certificates) => string;
 }
 
-const printersConfigurations = new Map<PreferredLanguage, IPrintersForLanguage>(
-  [
-    [
-      PreferredLanguageEnum.it_IT,
-      {
-        detailVaccinePrinter: vacDetailsIt.getDetailPrinter,
-        detailTestPrinter: testDetailsIt.getDetailPrinter,
-        detailRecoveryPrinter: recoveryDetailsIt.getDetailPrinter,
-        infoVaccinePrinter: vacInfoMultilanguage.getInfoPrinter,
-        infoTestPrinter: vacInfoMultilanguage.getInfoPrinter,
-        infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
-      }
-    ],
-    [
-      PreferredLanguageEnum.en_GB,
-      {
-        detailVaccinePrinter: vacDetailsEn.getDetailPrinter,
-        detailTestPrinter: testDetailsEn.getDetailPrinter,
-        detailRecoveryPrinter: recoveryDetailsEn.getDetailPrinter,
-        infoVaccinePrinter: vacInfoMultilanguage.getInfoPrinter,
-        infoTestPrinter: vacInfoMultilanguage.getInfoPrinter,
-        infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
-      }
-    ],
-    [
-      PreferredLanguageEnum.de_DE,
-      {
-        detailVaccinePrinter: vacDetailsDe.getDetailPrinter,
-        detailTestPrinter: testDetailsDe.getDetailPrinter,
-        detailRecoveryPrinter: recoveryDetailsDe.getDetailPrinter,
-        infoVaccinePrinter: vacInfoMultilanguage.getInfoPrinter,
-        infoTestPrinter: vacInfoMultilanguage.getInfoPrinter,
-        infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
-      }
-    ]
-  ]
-);
+const printersConfigurations: {
+  [key in SupportedLanguage]: IPrintersForLanguage;
+} = {
+  [PreferredLanguageEnum.it_IT]: {
+    detailVaccinePrinter: vacDetailsIt.getDetailPrinter,
+    detailTestPrinter: testDetailsIt.getDetailPrinter,
+    detailRecoveryPrinter: recoveryDetailsIt.getDetailPrinter,
+    infoVaccinePrinter: vacInfoMultilanguage.getInfoPrinter,
+    infoTestPrinter: vacInfoMultilanguage.getInfoPrinter,
+    infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
+  },
+  [PreferredLanguageEnum.en_GB]: {
+    detailVaccinePrinter: vacDetailsEn.getDetailPrinter,
+    detailTestPrinter: testDetailsEn.getDetailPrinter,
+    detailRecoveryPrinter: recoveryDetailsEn.getDetailPrinter,
+    infoVaccinePrinter: vacInfoMultilanguage.getInfoPrinter,
+    infoTestPrinter: vacInfoMultilanguage.getInfoPrinter,
+    infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
+  },
+  [PreferredLanguageEnum.de_DE]: {
+    detailVaccinePrinter: vacDetailsDe.getDetailPrinter,
+    detailTestPrinter: testDetailsDe.getDetailPrinter,
+    detailRecoveryPrinter: recoveryDetailsDe.getDetailPrinter,
+    infoVaccinePrinter: vacInfoMultilanguage.getInfoPrinter,
+    infoTestPrinter: vacInfoMultilanguage.getInfoPrinter,
+    infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
+  }
+};
 
 export const defaultPrinter: IPrintersForLanguage = {
   detailVaccinePrinter: vacDetailsEn.getDetailPrinter,
@@ -114,7 +105,14 @@ export const getPrinterForLanguage = (
   lang: o.Option<PreferredLanguage>
 ): IPrintersForLanguage =>
   lang
-    .chain(l => o.fromNullable(printersConfigurations.get(l)))
+    .chain(l =>
+      o.fromNullable(
+        (printersConfigurations as Record<
+          PreferredLanguage,
+          IPrintersForLanguage
+        >)[l]
+      )
+    )
     .getOrElse(defaultPrinter);
 
 /**

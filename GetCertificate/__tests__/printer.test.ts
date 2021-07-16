@@ -1,11 +1,14 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
+import { some } from "fp-ts/lib/Option";
 
 import {
   formatCertificateIssuer,
   ITALY_HEALTHCARE_ISSUER,
   HEALTHCARE_DEP_IT,
   HEALTHCARE_DEP_EN,
-  HEALTHCARE_DEP_DE
+  HEALTHCARE_DEP_DE,
+  getPrinterForLanguage,
+  defaultPrinter
 } from "../printer";
 
 describe("Printer", () => {
@@ -39,5 +42,10 @@ describe("Printer", () => {
       PreferredLanguageEnum.en_GB
     );
     expect(result).toEqual("a value");
+  });
+
+  it("should get defaultPrinter if prefererred language is not supported", () => {
+    const result = getPrinterForLanguage(some(PreferredLanguageEnum.fr_FR));
+    expect(result).toBe(defaultPrinter);
   });
 });
