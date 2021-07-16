@@ -32,9 +32,12 @@ describe("GetCertificate", () => {
     const mockClientSelector: ReturnType<typeof createDGCClientSelector> = {
       select: (hashedFiscalCode): DGCClient => (client as any) as DGCClient
     };
-    const val = await GetCertificateHandler(mockClientSelector)(context, {
-      fiscal_code: aFiscalCode as FiscalCode,
-      auth_code: "anAuthCode"
+    const val = await GetCertificateHandler(mockClientSelector)({
+      context,
+      params: {
+        fiscal_code: aFiscalCode as FiscalCode,
+        auth_code: "anAuthCode"
+      }
     });
     console.log(val);
     expect(val).toMatchObject({
@@ -60,9 +63,12 @@ describe("GetCertificate", () => {
     };
 
     try {
-      const val = await GetCertificateHandler(mockClientSelector)(context, {
-        fiscal_code: aFiscalCode as FiscalCode,
-        auth_code: "anAuthCode"
+      const val = await GetCertificateHandler(mockClientSelector)({
+        context,
+        params: {
+          fiscal_code: aFiscalCode as FiscalCode,
+          auth_code: "anAuthCode"
+        }
       });
     } catch (error) {}
 
@@ -85,9 +91,12 @@ describe("GetCertificate", () => {
     };
 
     try {
-      const val = await GetCertificateHandler(mockClientSelector)(context, {
-        fiscal_code: aFiscalCode as FiscalCode,
-        auth_code: "anAuthCode"
+      const val = await GetCertificateHandler(mockClientSelector)({
+        context,
+        params: {
+          fiscal_code: aFiscalCode as FiscalCode,
+          auth_code: "anAuthCode"
+        }
       });
     } catch (error) {
       fail(error);
