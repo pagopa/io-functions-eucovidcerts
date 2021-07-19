@@ -31,7 +31,7 @@ Zertifizierung gültig bis
 *Diese Bescheinigung ist kein Reisedokument.  
 Die wissenschaftlichen Erkenntnisse zu COVID-19-Impfung, -Tests und -Wiederherstellung entwickeln sich weiter, auch unter Berücksichtigung der neuen Varianten des Virus.*  
 *Bitte informieren Sie sich vor der Reise über die am Zielort geltenden Gesundheitsmaßnahmen und die damit verbundenen Einschränkungen auch auf der Website:*   
-[https://reopen.europa.eu/it](https://reopen.europa.eu/it)
+[https://reopen.europa.eu/de](https://reopen.europa.eu/de)
   
 ***
   
