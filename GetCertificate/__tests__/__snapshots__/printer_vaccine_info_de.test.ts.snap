@@ -3,18 +3,18 @@
 exports[`Printer - Vaccine - Info - de_DE should print its markdown 1`] = `
 "
 Surname(s) and forename(s)  
-*Cognome e Nome*  
+*Vorname und Nachname*  
 **Di Caprio Marilù Teresa**  
 
 Date of birth  
-*Data di nascita (aaaa-mm-gg)*  
+*Geburtsdatum (JJJJ-MM-TT)*  
 **1977-06-16**  
 
 Unique Certificate Identifier  
-*Identificativo univoco del certificato*  
+*Eindeutige Kennung des Zertifikats*  
 **01ITE7300E1AB2A84C719004F103DCB1F70A#6**  
 
-[copia l’identificativo](iohandledlink://copy:01ITE7300E1AB2A84C719004F103DCB1F70A#6)
+[kopiere die Kennung](iohandledlink://copy:01ITE7300E1AB2A84C719004F103DCB1F70A#6)
 <br/><br/><br/><br/><br/>
 "
 `;
