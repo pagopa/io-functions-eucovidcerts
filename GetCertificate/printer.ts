@@ -27,6 +27,7 @@ import * as recoveryDetailsIt from "./markdown/eucovidcertDetailsRecoveryIt";
 import * as recoveryDetailsEn from "./markdown/eucovidcertDetailsRecoveryEn";
 import * as recoveryDetailsDe from "./markdown/eucovidcertDetailsRecoveryDe";
 import * as vacInfoMultilanguage from "./markdown/eucovidcertInfoVaccinationEn";
+import * as vacInfoGerman from "./markdown/eucovidcertInfoVaccinationDe";
 
 const TIME_ZONE = "Europe/Rome";
 
@@ -79,9 +80,9 @@ const printersConfigurations: {
     detailVaccinePrinter: vacDetailsDe.getDetailPrinter,
     detailTestPrinter: testDetailsDe.getDetailPrinter,
     detailRecoveryPrinter: recoveryDetailsDe.getDetailPrinter,
-    infoVaccinePrinter: vacInfoMultilanguage.getInfoPrinter,
-    infoTestPrinter: vacInfoMultilanguage.getInfoPrinter,
-    infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
+    infoVaccinePrinter: vacInfoGerman.getInfoPrinter,
+    infoTestPrinter: vacInfoGerman.getInfoPrinter,
+    infoRecoveryPrinter: vacInfoGerman.getInfoPrinter
   }
 };
 
