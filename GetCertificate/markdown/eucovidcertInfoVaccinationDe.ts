@@ -20,6 +20,6 @@ Unique Certificate Identifier
 *Eindeutige Kennung des Zertifikats*  
 **${uvci(c)}**  
 
-[kopiere die Kennung](iohandledlink://copy:${uvci(c)})
+[Kopiere die Kennung](iohandledlink://copy:${uvci(c)})
 <br/><br/><br/><br/><br/>
 `;
