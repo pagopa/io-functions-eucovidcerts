@@ -131,7 +131,7 @@ export const createClient = (
               () => responseRaw.json(),
               error => ResponseErrorInternal(String(error))
             ),
-            x => x,
+
             // If the profile was not found or service is not authorized returns status code 403
             TE.filterOrElseW(
               _ => responseRaw.status !== 404 && responseRaw.status !== 403,

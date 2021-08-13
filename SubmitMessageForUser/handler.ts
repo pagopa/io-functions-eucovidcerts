@@ -115,7 +115,7 @@ export const getSubmitMessageForUserHandler = (
       submitMessageForUser(client, telemetryClient, request),
       // map a response coming from the downstream service onto the current response
       TE.chainW(applyToExpressResponse(response)),
-      x => x,
+
       // map an error occurred into this proxy onto the current response
       TE.mapLeft(_ => _.apply(response)),
       TE.toUnion

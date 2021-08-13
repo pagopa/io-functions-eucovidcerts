@@ -97,7 +97,7 @@ export const GetCertificateHandler = (
         })
       )
     ),
-    x => x,
+
     // separates bad cases from success, and assign each failure its correct response
     TE.chain(e => {
       switch (e.status) {
