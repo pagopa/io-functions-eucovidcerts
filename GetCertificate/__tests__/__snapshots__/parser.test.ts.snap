@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`qr parsers tests using parseQRCode should return a valid Recovery certificate 1`] = `
-Right {
+Object {
   "_tag": "Right",
-  "value": Object {
+  "right": Object {
     "dob": 1977-06-16T00:00:00.000Z,
     "nam": Object {
       "fn": "Di Caprio",
@@ -28,9 +28,9 @@ Right {
 `;
 
 exports[`qr parsers tests using parseQRCode should return a valid Test cert 1`] = `
-Right {
+Object {
   "_tag": "Right",
-  "value": Object {
+  "right": Object {
     "dob": 1977-06-16T00:00:00.000Z,
     "nam": Object {
       "fn": "Di Caprio",
@@ -44,7 +44,7 @@ Right {
         "co": "IT",
         "dr": 2021-05-11T12:27:15.000Z,
         "is": "IT",
-        "ma": None {
+        "ma": Object {
           "_tag": "None",
         },
         "nm": "Roche LightCycler qPCR",
@@ -73,9 +73,9 @@ Right {
 `;
 
 exports[`qr parsers tests using parseQRCode should return a valid Test certificate 1`] = `
-Right {
+Object {
   "_tag": "Right",
-  "value": Object {
+  "right": Object {
     "dob": 1977-06-16T00:00:00.000Z,
     "nam": Object {
       "fn": "Di Caprio",
@@ -89,7 +89,7 @@ Right {
         "co": "IT",
         "dr": 2021-05-11T12:27:15.000Z,
         "is": "IT",
-        "ma": Some {
+        "ma": Object {
           "_tag": "Some",
           "value": "Abbott Rapid Diagnostics, Panbio COVID-19 Ag Rapid Test",
         },
@@ -119,9 +119,9 @@ Right {
 `;
 
 exports[`qr parsers tests using parseQRCode should return a valid Vaccination cartificate 1`] = `
-Right {
+Object {
   "_tag": "Right",
-  "value": Object {
+  "right": Object {
     "dob": 1977-06-16T00:00:00.000Z,
     "nam": Object {
       "fn": "Di Caprio",
