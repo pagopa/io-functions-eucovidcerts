@@ -5,9 +5,13 @@
  */
 
 import { AzureFunction, Context } from "@azure/functions";
+import { pipe } from "fp-ts/lib/function";
+import * as t from "io-ts";
+import * as E from "fp-ts/lib/Either";
+
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
-import * as t from "io-ts";
+
 import { toSHA256 } from "../utils/conversions";
 
 const Failure = t.interface({
@@ -36,9 +40,11 @@ const NewProfileInput = t.interface({
 type NewProfileInput = t.TypeOf<typeof NewProfileInput>;
 
 const index: AzureFunction = async (context: Context, input: unknown) =>
-  NewProfileInput.decode(input)
-    .mapLeft(permanentDecodeFailure)
-    .bimap(
+  pipe(
+    input,
+    NewProfileInput.decode,
+    E.mapLeft(permanentDecodeFailure),
+    E.bimap(
       _ => {
         context.log.error(`NewProfile|${_.reason}`);
         return _;
@@ -50,6 +56,7 @@ const index: AzureFunction = async (context: Context, input: unknown) =>
         );
         return { kind: "SUCCESS" } as Success;
       }
-    );
+    )
+  );
 
 export default index;

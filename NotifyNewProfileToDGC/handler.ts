@@ -1,18 +1,27 @@
 import { Context } from "@azure/functions";
-import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
+
 import { toError } from "fp-ts/lib/Either";
-import { fromEither, left2v, taskEither, tryCatch } from "fp-ts/lib/TaskEither";
-import { errorsToError } from "../utils/conversions";
+import * as E from "fp-ts/lib/Either";
+import * as TE from "fp-ts/lib/TaskEither";
+import { flow, pipe } from "fp-ts/lib/function";
+
+import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
+
 import { createDGCClientSelector } from "../utils/dgcClientSelector";
+import { errorsToError } from "../utils/conversions";
 
 const logPrefix = "NotifyNewProfile";
 
 export const NotifyNewProfile = (
   dgcClientSelector: ReturnType<typeof createDGCClientSelector>
 ) => async (context: Context, input: unknown): Promise<string> =>
-  fromEither(NonEmptyString.decode(input).mapLeft(errorsToError))
-    .chain(cfSHA256 =>
-      tryCatch(
+  pipe(
+    input,
+    NonEmptyString.decode,
+    E.mapLeft(errorsToError),
+    TE.fromEither,
+    TE.chain(cfSHA256 =>
+      TE.tryCatch(
         () =>
           dgcClientSelector.select(cfSHA256).managePreviousCertificates({
             body: { cfSHA256 }
@@ -24,20 +33,20 @@ export const NotifyNewProfile = (
             }`
           )
       )
-    )
-    .chain(_ => fromEither(_).mapLeft(errorsToError))
-    .chain(_ => {
+    ),
+    TE.chain(flow(TE.fromEither, TE.mapLeft(errorsToError))),
+    TE.chain(_ => {
       if (_.status === 200) {
-        return taskEither.of("OK");
+        return TE.of("OK");
       }
-      return left2v(
+      return TE.left(
         new Error(
           `managePreviousCertificates status response [${_.status}] unexpected`
         )
       );
-    })
-    .getOrElseL(err => {
+    }),
+    TE.getOrElse(err => {
       context.log.error(`${logPrefix}|ERROR|${err}`);
       throw err;
     })
-    .run();
+  )();
