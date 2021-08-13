@@ -44,7 +44,7 @@ describe("toTWithMap", () => {
     const res = tranlatableMapCodec.decode("0001");
 
     expect(isRight(res)).toBe(true);
-    expect(res.value).toEqual(translatableMap["0001"]);
+    expect((res as any).right).toEqual(translatableMap["0001"]);
   });
 
   it("should return left if key does not exit in map", () => {
@@ -57,7 +57,7 @@ describe("toTWithMap", () => {
     const res = tranlatableMapCodec_placeholder.decode("0002");
 
     expect(isRight(res)).toBe(true);
-    expect(res.value).toEqual(translatableMap.placeholder);
+    expect((res as any).right).toEqual(translatableMap.placeholder);
   });
 
   it("should check is", () => {
@@ -77,7 +77,7 @@ describe("toTWithMap - Simple map", () => {
     const res = mapCodec.decode("0001");
 
     expect(isRight(res)).toBe(true);
-    expect(res.value).toEqual(readonlyMap["0001"]);
+    expect((res as any).right).toEqual(readonlyMap["0001"]);
   });
 
   it("should return left if key does not exit in map", () => {
@@ -107,28 +107,28 @@ describe("toTWithMapOptional", () => {
     const res = optionalMapCodec.decode("0001");
 
     expect(isRight(res)).toBe(true);
-    expect(res.value).toEqual(o.some(translatableMap["0001"]));
+    expect((res as any).right).toEqual(o.some(translatableMap["0001"]));
   });
 
   it("should decode undefined value", () => {
     const res = optionalMapCodec.decode((undefined as any) as string);
 
     expect(isRight(res)).toBe(true);
-    expect(res.value).toEqual(o.none);
+    expect((res as any).right).toEqual(o.none);
   });
 
   it("should return a placeholder if key does not exit in map and placehodler is defined", () => {
     const res = optionalMapCodec_placeholder.decode("0002");
 
     expect(isRight(res)).toBe(true);
-    expect(res.value).toEqual(o.some(translatableMap.placeholder));
+    expect((res as any).right).toEqual(o.some(translatableMap.placeholder));
   });
 
   it("should decode empty string value", () => {
     const res = optionalMapCodec.decode("");
 
     expect(isRight(res)).toBe(true);
-    expect(res.value).toEqual(o.none);
+    expect((res as any).right).toEqual(o.none);
   });
 
   it("should fail if value is not present in map", () => {

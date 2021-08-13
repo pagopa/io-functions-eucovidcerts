@@ -1,15 +1,12 @@
 import { toError } from "fp-ts/lib/Either";
-import {
-  fromEither,
-  taskEither,
-  TaskEither,
-  tryCatch
-} from "fp-ts/lib/TaskEither";
-import { readableReport } from "@pagopa/ts-commons/lib/reporters";
-import { getFetch } from "@pagopa/ts-commons/lib/agent";
-
+import * as A from "fp-ts/lib/Array";
+import * as RA from "fp-ts/lib/ReadonlyArray";
+import * as T from "fp-ts/lib/Task";
+import * as TE from "fp-ts/lib/TaskEither";
 import { sequenceT } from "fp-ts/lib/Apply";
-import { array } from "fp-ts/lib/Array";
+import { pipe } from "fp-ts/lib/function";
+
+import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 
 import {
   common as azurestorageCommon,
@@ -18,9 +15,8 @@ import {
   createQueueService,
   createTableService
 } from "azure-storage";
-import { getConfig, IConfig } from "./config";
 
-const fetch = getFetch(process.env);
+import { getConfig, IConfig } from "./config";
 
 type ProblemSource = "Config" | "Url" | "AzureStorage";
 // eslint-disable-next-line functional/prefer-readonly-type, @typescript-eslint/naming-convention
@@ -28,7 +24,7 @@ export type HealthProblem<S extends ProblemSource> = string & { __source: S };
 export type HealthCheck<
   S extends ProblemSource = ProblemSource,
   T = true
-> = TaskEither<ReadonlyArray<HealthProblem<S>>, T>;
+> = TE.TaskEither<ReadonlyArray<HealthProblem<S>>, T>;
 
 // format and cast a problem message with its source
 const formatProblem = <S extends ProblemSource>(
@@ -49,23 +45,15 @@ const toHealthProblems = <S extends ProblemSource>(source: S) => (
  * @returns either true or an array of error messages
  */
 export const checkConfigHealth = (): HealthCheck<"Config", IConfig> =>
-  fromEither(getConfig()).mapLeft(errors =>
-    errors.map(e =>
-      // give each problem its own line
-      formatProblem("Config", readableReport([e]))
+  pipe(
+    getConfig(),
+    TE.fromEither,
+    TE.mapLeft(errors =>
+      errors.map(e =>
+        // give each problem its own line
+        formatProblem("Config", readableReport([e]))
+      )
     )
-  );
-
-/**
- * Check a url is reachable
- *
- * @param url url to connect with
- *
- * @returns either true or an array of error messages
- */
-export const checkUrlHealth = (url: string): HealthCheck<"Url", true> =>
-  tryCatch(() => fetch(url, { method: "HEAD" }), toHealthProblems("Url")).map(
-    _ => true
   );
 
 /**
@@ -77,54 +65,63 @@ export const checkUrlHealth = (url: string): HealthCheck<"Url", true> =>
  */
 export const checkAzureStorageHealth = (
   connStr: string
-): HealthCheck<"AzureStorage"> =>
-  array
-    .sequence(taskEither)(
-      // try to instantiate a client for each product of azure storage
-      [
-        createBlobService,
-        createFileService,
-        createQueueService,
-        createTableService
-      ]
-        // for each, create a task that wraps getServiceProperties
-        .map(createService =>
-          tryCatch(
-            () =>
-              new Promise<
-                azurestorageCommon.models.ServicePropertiesResult.ServiceProperties
-              >((resolve, reject) =>
-                createService(connStr).getServiceProperties((err, result) => {
-                  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-                  err
-                    ? reject(err.message.replace(/\n/gim, " ")) // avoid newlines
-                    : resolve(result);
-                })
-              ),
-            toHealthProblems("AzureStorage")
-          )
+): HealthCheck<"AzureStorage"> => {
+  const applicativeValidation = TE.getApplicativeTaskValidation(
+    T.ApplicativePar,
+    RA.getSemigroup<HealthProblem<"AzureStorage">>()
+  );
+  return pipe(
+    // try to instantiate a client for each product of azure storage
+    [
+      createBlobService,
+      createFileService,
+      createQueueService,
+      createTableService
+    ]
+      // for each, create a task that wraps getServiceProperties
+      .map(createService =>
+        TE.tryCatch(
+          () =>
+            new Promise<
+              azurestorageCommon.models.ServicePropertiesResult.ServiceProperties
+            >((resolve, reject) =>
+              createService(connStr).getServiceProperties((err, result) => {
+                // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                err
+                  ? reject(err.message.replace(/\n/gim, " ")) // avoid newlines
+                  : resolve(result);
+              })
+            ),
+          toHealthProblems("AzureStorage")
         )
-    )
-    .map(_ => true);
+      ),
+    // run each taskEither and gather validation errors from each one of them, if any
+    A.sequence(applicativeValidation),
+    TE.map(_ => true)
+  );
+};
 
 /**
  * Execute all the health checks for the application
  *
  * @returns either true or an array of error messages
  */
-export const checkApplicationHealth = (): HealthCheck<ProblemSource, true> =>
-  taskEither
-    .of<ReadonlyArray<HealthProblem<ProblemSource>>, void>(void 0)
-    .chain(_ => checkConfigHealth())
-    .chain(config =>
-      // TODO: once we upgrade to fp-ts >= 1.19 we can use Validation to collect all errors, not just the first to happen
-      sequenceT(taskEither)<
-        ReadonlyArray<HealthProblem<ProblemSource>>,
-        // eslint-disable-next-line functional/prefer-readonly-type
-        Array<TaskEither<ReadonlyArray<HealthProblem<ProblemSource>>, true>>
-      >(
+export const checkApplicationHealth = (): HealthCheck<ProblemSource, true> => {
+  const applicativeValidation = TE.getApplicativeTaskValidation(
+    T.ApplicativePar,
+    RA.getSemigroup<HealthProblem<ProblemSource>>()
+  );
+  return pipe(
+    void 0,
+    TE.of,
+    TE.chain(_ => checkConfigHealth()),
+    TE.chain(config =>
+      // run each taskEither and gather validation errors from each one of them, if any
+      sequenceT(applicativeValidation)(
         checkAzureStorageHealth(config.QueueStorageConnection),
         checkAzureStorageHealth(config.EventsQueueStorageConnection)
       )
-    )
-    .map(_ => true);
+    ),
+    TE.map(_ => true)
+  );
+};

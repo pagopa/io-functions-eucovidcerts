@@ -21,6 +21,6 @@ describe("CommaSeparatedListOf", () => {
     const result = CommaSeparatedListOfStrings.decode(value);
 
     expect(isRight(result)).toBe(true);
-    expect(result.value).toEqual(expected);
+    expect((result as any).right).toEqual(expected);
   });
 });

@@ -4,6 +4,9 @@ import { IConfig } from "../config";
 import { toSHA256 } from "../conversions";
 import { createDGCClientSelector } from "../dgcClientSelector";
 import { createClient } from "../../generated/dgc/client";
+import { pipe } from "fp-ts/lib/function";
+
+import * as E from "fp-ts/lib/Either";
 
 const httpsAgent = require("../httpsAgent");
 const createClientModule = require("../../generated/dgc/client");
@@ -37,10 +40,19 @@ const aConfig = ({
   DGC_PROD_CLIENT_KEY: aProdKey,
   DGC_PROD_SERVER_CA: aProdCA,
   LOAD_TEST_FISCAL_CODES: [aLoadTestFiscalCode],
-  DGC_LOAD_TEST_URL: HttpsUrlFromString.decode(aLoadTestUrl).getOrElseL(fail),
+  DGC_LOAD_TEST_URL: pipe(
+    HttpsUrlFromString.decode(aLoadTestUrl),
+    E.getOrElseW(() => fail)
+  ),
   DGC_UAT_FISCAL_CODES: [aUATFiscalCode],
-  DGC_UAT_URL: HttpsUrlFromString.decode(aUATUrl).getOrElseL(fail),
-  DGC_PROD_URL: HttpsUrlFromString.decode(aPRODUrl).getOrElseL(fail)
+  DGC_UAT_URL: pipe(
+    HttpsUrlFromString.decode(aUATUrl),
+    E.getOrElseW(() => fail)
+  ),
+  DGC_PROD_URL: pipe(
+    HttpsUrlFromString.decode(aPRODUrl),
+    E.getOrElseW(() => fail)
+  )
 } as unknown) as IConfig;
 const aProcessEnv: NodeJS.ProcessEnv = {};
 
