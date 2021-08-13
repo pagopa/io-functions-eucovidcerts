@@ -4,6 +4,7 @@ import { isSome } from "fp-ts/lib/Option";
 import * as o from "fp-ts/lib/Option";
 import { getSemigroup, NonEmptyArray } from "fp-ts/lib/NonEmptyArray";
 import { sequenceT } from "fp-ts/lib/Apply";
+import { pipe } from "fp-ts/lib/function";
 import {
   Certificates,
   RecoveryCertificate,
@@ -20,12 +21,7 @@ const checkIReadableMapValue = (
   originalDetails: any
 ): Either<NonEmptyArray<string>, string> =>
   decodedCertificateDetails[checkProp] === VALUESET_PLACEHOLDER
-    ? e.left(
-        new NonEmptyArray<string>(
-          `${checkProp} "${originalDetails[checkProp]}" value not found`,
-          []
-        )
-      )
+    ? e.left([`${checkProp} "${originalDetails[checkProp]}" value not found`])
     : e.right(checkProp);
 
 const checkITranslatableMapValue = (
@@ -36,12 +32,7 @@ const checkITranslatableMapValue = (
   originalDetails: any
 ): Either<NonEmptyArray<string>, string> =>
   decodedCertificateDetails[checkProp].displays.en_GB === VALUESET_PLACEHOLDER
-    ? e.left(
-        new NonEmptyArray<string>(
-          `${checkProp} "${originalDetails[checkProp]}" value not found`,
-          []
-        )
-      )
+    ? e.left([`${checkProp} "${originalDetails[checkProp]}" value not found`])
     : e.right(checkProp);
 
 const checkOptionalIReadableMapValue = (
@@ -57,12 +48,7 @@ const checkOptionalIReadableMapValue = (
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   (decodedCertificateDetails[checkProp] as o.Some<string>).value ===
     VALUESET_PLACEHOLDER
-    ? e.left(
-        new NonEmptyArray<string>(
-          `${checkProp} "${originalDetails[checkProp]}" value not found`,
-          []
-        )
-      )
+    ? e.left([`${checkProp} "${originalDetails[checkProp]}" value not found`])
     : e.right(checkProp);
 
 /**
@@ -79,14 +65,16 @@ export const getTestCertificateValidationErrors = (
 
   const applicativeValidation = e.getValidation(getSemigroup<string>());
 
-  return sequenceT(applicativeValidation)(
-    checkIReadableMapValue(details, "tg", originalDetails),
-    checkITranslatableMapValue(details, "tt", originalDetails),
-    checkITranslatableMapValue(details, "tr", originalDetails),
-    checkOptionalIReadableMapValue(details, "ma", originalDetails)
-  )
-    .map(_ => te)
-    .mapLeft(_ => `test details|${_.toArray().join(", ")}`);
+  return pipe(
+    sequenceT(applicativeValidation)(
+      checkIReadableMapValue(details, "tg", originalDetails),
+      checkITranslatableMapValue(details, "tt", originalDetails),
+      checkITranslatableMapValue(details, "tr", originalDetails),
+      checkOptionalIReadableMapValue(details, "ma", originalDetails)
+    ),
+    e.map(_ => te),
+    e.mapLeft(_ => `test details|${_.join(", ")}`)
+  );
 };
 
 /**
@@ -103,14 +91,16 @@ export const getVacCertificateValidationErrors = (
 
   const applicativeValidation = e.getValidation(getSemigroup<string>());
 
-  return sequenceT(applicativeValidation)(
-    checkIReadableMapValue(details, "tg", originalDetails),
-    checkIReadableMapValue(details, "vp", originalDetails),
-    checkIReadableMapValue(details, "mp", originalDetails),
-    checkIReadableMapValue(details, "ma", originalDetails)
-  )
-    .map(_ => ve)
-    .mapLeft(_ => `vaccination details|${_.toArray().join(", ")}`);
+  return pipe(
+    sequenceT(applicativeValidation)(
+      checkIReadableMapValue(details, "tg", originalDetails),
+      checkIReadableMapValue(details, "vp", originalDetails),
+      checkIReadableMapValue(details, "mp", originalDetails),
+      checkIReadableMapValue(details, "ma", originalDetails)
+    ),
+    e.map(_ => ve),
+    e.mapLeft(_ => `vaccination details|${_.join(", ")}`)
+  );
 };
 
 /**
@@ -125,7 +115,9 @@ export const getRecoveryCertificateValidationErrors = (
   const details = rc.r[0];
   const originalDetails = originalObj.r[0];
 
-  return checkIReadableMapValue(details, "tg", originalDetails)
-    .map(_ => rc)
-    .mapLeft(_ => `recovery details|${_.toArray().join(", ")}`);
+  return pipe(
+    checkIReadableMapValue(details, "tg", originalDetails),
+    e.map(_ => rc),
+    e.mapLeft(_ => `recovery details|${_.join(", ")}`)
+  );
 };
