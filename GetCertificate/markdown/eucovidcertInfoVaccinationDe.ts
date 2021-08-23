@@ -9,7 +9,7 @@ const uvci = (c: Certificates): string => printUvci(some(fileLanguage), c);
 export const getInfoPrinter = (c: Certificates): string =>
   `
 Surname(s) and forename(s)  
-*Vorname und Nachname*  
+*Nachname und Vorname*  
 **${c.nam.fn} ${c.nam.gn}**  
 
 Date of birth  
