@@ -121,6 +121,7 @@ export const createClient = (
             }),
           error => ResponseErrorInternal(String(error))
         ),
+        x => x,
         TE.chain(responseRaw =>
           pipe(
             TE.tryCatch<
@@ -145,15 +146,10 @@ export const createClient = (
             )
           )
         ),
-        TE.chain(
+        TE.chainW(
           flow(
             LimitedProfile.decode,
-            E.mapLeft(
-              _ =>
-                ResponseErrorInternal(`Failed to decode profile`) as
-                  | IResponseErrorInternal
-                  | IResponseErrorForbiddenNotAuthorizedForRecipient
-            ),
+            E.mapLeft(_ => ResponseErrorInternal(`Failed to decode profile`)),
             TE.fromEither
           )
         )
