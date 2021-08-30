@@ -3,7 +3,7 @@
 exports[`Printer - Recovery - Info - de_DE should print its markdown 1`] = `
 "
 Surname(s) and forename(s)  
-*Vorname und Nachname*  
+*Nachname und Vorname*  
 **Di Caprio Marilù Teresa**  
 
 Date of birth  
