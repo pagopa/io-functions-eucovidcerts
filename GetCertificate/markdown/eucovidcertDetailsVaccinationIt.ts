@@ -12,10 +12,11 @@ export const getDetailPrinter = (v: VaccinationEntry): string =>
   `
 ## Dati Vaccino  
 ***
-${isVaccinationProcessEnded(v)
+${
+  isVaccinationProcessEnded(v)
     ? "**Certificazione valida 12 mesi dalla data dell'ultima somministrazione**"
     : "**Certificazione valida fino alla prossima dose**"
-  }
+}
 ***
 
 Malattia o agente bersaglio  
