@@ -1,7 +1,7 @@
 ## Vaccination Certificate
 ***
 <!-- if dn==sd -->
-**Certification valid for 270 days (9 months) from the date of the last administration**
+**Certification valid for 12 months from the date of the last administration**
 <!-- else if dn<sd -->
 **Certification valid until next dose**
 <!-- endif -->
