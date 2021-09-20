@@ -3,7 +3,7 @@
   "description": "",
   "author": "IO team",
   "repository": "https://github.com/pagopa/io-functions-eucovidcerts",
-  "version": "1.12.3",
+  "version": "1.13.0",
   "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist && yarn generate",
