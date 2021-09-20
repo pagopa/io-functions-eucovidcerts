@@ -23,6 +23,11 @@ export const errorsToError = (errors: Errors): Error =>
   new Error(errorsToReadableMessages(errors).join("|"));
 
 /**
+ * proxy for older fp-ts `toString`
+ */
+export const toString = JSON.stringify;
+
+/**
  * An object representing a value translated in every supported languages
  */
 

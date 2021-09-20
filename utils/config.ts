@@ -9,6 +9,9 @@
 import * as t from "io-ts";
 import { ValidationError } from "io-ts";
 
+import * as E from "fp-ts/lib/Either";
+import { pipe } from "fp-ts/lib/function";
+
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { withDefault } from "@pagopa/ts-commons/lib/types";
 import { IntegerFromString } from "@pagopa/ts-commons/lib/numbers";
@@ -91,6 +94,9 @@ export const getConfig = (): t.Validation<IConfig> => errorOrConfig;
  * @throws validation errors found while parsing the application configuration
  */
 export const getConfigOrThrow = (): IConfig =>
-  errorOrConfig.getOrElseL((errors: ReadonlyArray<ValidationError>) => {
-    throw new Error(`Invalid configuration: ${readableReport(errors)}`);
-  });
+  pipe(
+    errorOrConfig,
+    E.getOrElseW((errors: ReadonlyArray<ValidationError>) => {
+      throw new Error(`Invalid configuration: ${readableReport(errors)}`);
+    })
+  );

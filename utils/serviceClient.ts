@@ -1,4 +1,6 @@
-import * as te from "fp-ts/lib/TaskEither";
+import * as TE from "fp-ts/lib/TaskEither";
+import * as E from "fp-ts/lib/Either";
+import { flow, pipe } from "fp-ts/lib/function";
 
 import {
   IResponseErrorInternal,
@@ -47,7 +49,7 @@ export interface IServiceClient {
     reqHeaders: NodeJS.Dict<string | ReadonlyArray<string>>,
     fiscalCode: FiscalCode,
     context: Context
-  ) => te.TaskEither<
+  ) => TE.TaskEither<
     IResponseErrorInternal | IResponseErrorForbiddenNotAuthorizedForRecipient,
     LimitedProfile
   >;
@@ -56,7 +58,7 @@ export interface IServiceClient {
     reqHeaders: NodeJS.Dict<string | ReadonlyArray<string>>,
     reqPayload: Response,
     context: Context
-  ) => te.TaskEither<IResponseErrorInternal, Response>;
+  ) => TE.TaskEither<IResponseErrorInternal, Response>;
 }
 
 /**
@@ -106,12 +108,8 @@ export const createClient = (
       fiscalCode,
       _context
     ): ReturnType<IServiceClient["getLimitedProfileByPost"]> =>
-      te
-        .tryCatch<
-          | IResponseErrorInternal
-          | IResponseErrorForbiddenNotAuthorizedForRecipient,
-          Response
-        >(
+      pipe(
+        TE.tryCatch(
           () =>
             fetchApi(`${selectApiUrl(fiscalCode).href}/profiles`, {
               body: JSON.stringify({ fiscal_code: fiscalCode }),
@@ -122,53 +120,60 @@ export const createClient = (
               method: "POST"
             }),
           error => ResponseErrorInternal(String(error))
-        )
-        .chain(responseRaw =>
-          te
-            .tryCatch<
+        ),
+        x => x,
+        TE.chain(responseRaw =>
+          pipe(
+            TE.tryCatch<
               | IResponseErrorInternal
               | IResponseErrorForbiddenNotAuthorizedForRecipient,
               unknown
             >(
               () => responseRaw.json(),
               error => ResponseErrorInternal(String(error))
-            )
+            ),
+
             // If the profile was not found or service is not authorized returns status code 403
-            .filterOrElseL(
+            TE.filterOrElseW(
               _ => responseRaw.status !== 404 && responseRaw.status !== 403,
               _ => ResponseErrorForbiddenNotAuthorizedForRecipient
-            )
+            ),
             // If the response is not 200 returns status code 500
-            .filterOrElseL(
+            TE.filterOrElseW(
               _ => responseRaw.ok,
               _ =>
                 ResponseErrorInternal(`Error calling client api: ${String(_)}`)
             )
-        )
-        .chain(response =>
-          te.fromEither(
-            LimitedProfile.decode(response).mapLeft(_ =>
-              ResponseErrorInternal(`Failed to decode profile`)
-            )
           )
         ),
+        TE.chainW(
+          flow(
+            LimitedProfile.decode,
+            E.mapLeft(_ => ResponseErrorInternal(`Failed to decode profile`)),
+            TE.fromEither
+          )
+        )
+      ),
+
     submitMessageForUser: (
       fiscalCode,
       reqHeaders,
       reqPayload
     ): ReturnType<IServiceClient["submitMessageForUser"]> =>
-      te.tryCatch(
-        () =>
-          fetchApi(`${selectApiUrl(fiscalCode).href}/messages`, {
-            body: JSON.stringify(reqPayload),
-            headers: {
-              ...proxyHeaders(reqHeaders),
-              ["X-Functions-Key"]: apiKey
-            },
+      pipe(
+        TE.tryCatch(
+          () =>
+            fetchApi(`${selectApiUrl(fiscalCode).href}/messages`, {
+              body: JSON.stringify(reqPayload),
+              headers: {
+                ...proxyHeaders(reqHeaders),
+                ["X-Functions-Key"]: apiKey
+              },
 
-            method: "POST"
-          }),
-        e => ResponseErrorInternal(toError(e).message)
+              method: "POST"
+            }),
+          e => ResponseErrorInternal(toError(e).message)
+        )
       )
   };
 };

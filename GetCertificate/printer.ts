@@ -6,7 +6,7 @@ import {
 import * as o from "fp-ts/lib/Option";
 import * as moment from "moment-timezone";
 import { match } from "ts-pattern";
-import { pipe } from "fp-ts/lib/pipeable";
+import { pipe } from "fp-ts/lib/function";
 import { SupportedLanguage } from "../utils/conversions";
 import {
   Certificates,
@@ -105,16 +105,18 @@ export const defaultPrinter: IPrintersForLanguage = {
 export const getPrinterForLanguage = (
   lang: o.Option<PreferredLanguage>
 ): IPrintersForLanguage =>
-  lang
-    .chain(l =>
+  pipe(
+    lang,
+    o.chain(l =>
       o.fromNullable(
         (printersConfigurations as Record<
           PreferredLanguage,
           IPrintersForLanguage
         >)[l]
       )
-    )
-    .getOrElse(defaultPrinter);
+    ),
+    o.getOrElse(() => defaultPrinter)
+  );
 
 /**
  * Returns the Detail markdown filled with data from the input Certificate

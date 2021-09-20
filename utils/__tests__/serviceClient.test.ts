@@ -1,8 +1,11 @@
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { HttpsUrlFromString } from "@pagopa/ts-commons/lib/url";
+import { pipe } from "fp-ts/lib/function";
 import { context } from "../../__mocks__/durable-functions";
 import { createClient, createPoolSelector } from "../serviceClient";
+
+import * as e from "fp-ts/lib/Either";
 
 const aFiscalCodeSet = [
   "PRVPRV25A01H501B", // c58c7c882b44499b1c55a5772eb89aff92e9777583dc28544c9cbaf3aba434f9
@@ -16,14 +19,17 @@ const aFiscalCodeSet = [
   "GGGGGP25A01H501Z" //f079e7dce3e56e6a3d19fc3a2ef9c4473c2644d917ec45bc72cd0a75dfbbdbb0
 ] as FiscalCode[];
 
-const elem1 = HttpsUrlFromString.decode("https://elem1.com").getOrElseL(_ =>
-  fail(`Failed to decode elem1: ${readableReport(_)}`)
+const elem1 = pipe(
+  HttpsUrlFromString.decode("https://elem1.com"),
+  e.getOrElseW(_ => fail(`Failed to decode elem1: ${readableReport(_)}`))
 );
-const elem2 = HttpsUrlFromString.decode("https://elem2.com").getOrElseL(_ =>
-  fail(`Failed to decode elem2: ${readableReport(_)}`)
+const elem2 = pipe(
+  HttpsUrlFromString.decode("https://elem2.com"),
+  e.getOrElseW(_ => fail(`Failed to decode elem2: ${readableReport(_)}`))
 );
-const elem3 = HttpsUrlFromString.decode("https://elem3.com").getOrElseL(_ =>
-  fail(`Failed to decode elem3: ${readableReport(_)}`)
+const elem3 = pipe(
+  HttpsUrlFromString.decode("https://elem3.com"),
+  e.getOrElseW(_ => fail(`Failed to decode elem3: ${readableReport(_)}`))
 );
 
 const mockFetch = <T>(status: number, json: T): typeof fetch => {
@@ -91,11 +97,13 @@ describe("createClient#getLimitedProfileByPost", () => {
       [{ href: "https://localhost" } as any],
       "secret"
     );
-    const response = await client
-      .getLimitedProfileByPost({} as any, aFiscalCodeSet[0], context)
-      .run();
-    expect(response.isLeft()).toBeTruthy();
-    expect(response.value).toHaveProperty(
+    const response = await client.getLimitedProfileByPost(
+      {} as any,
+      aFiscalCodeSet[0],
+      context
+    )();
+    expect(e.isLeft(response)).toBeTruthy();
+    expect((response as any).left).toHaveProperty(
       "kind",
       "IResponseErrorForbiddenNotAuthorizedForRecipient"
     );
@@ -108,11 +116,13 @@ describe("createClient#getLimitedProfileByPost", () => {
       [{ href: "https://localhost" } as any],
       "secret"
     );
-    const response = await client
-      .getLimitedProfileByPost({} as any, aFiscalCodeSet[0], context)
-      .run();
-    expect(response.isLeft()).toBeTruthy();
-    expect(response.value).toHaveProperty(
+    const response = await client.getLimitedProfileByPost(
+      {} as any,
+      aFiscalCodeSet[0],
+      context
+    )();
+    expect(e.isLeft(response)).toBeTruthy();
+    expect((response as any).left).toHaveProperty(
       "kind",
       "IResponseErrorForbiddenNotAuthorizedForRecipient"
     );

@@ -23,6 +23,6 @@ describe("Certificate", () => {
 
     const res = Certificate.decode(aRevokedCertificate);
     expect(isRight(res)).toBe(true);
-    expect(res.value).toEqual(aRevokedCertificateDecoded);
+    expect((res as any).right).toEqual(aRevokedCertificateDecoded);
   });
 });

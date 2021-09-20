@@ -1,7 +1,11 @@
 import { TelemetryClient } from "applicationinsights";
 import * as express from "express";
 import * as t from "io-ts";
-import * as te from "fp-ts/lib/TaskEither";
+import * as E from "fp-ts/lib/Either";
+import * as TE from "fp-ts/lib/TaskEither";
+import { toError } from "fp-ts/lib/Either";
+import { flow, pipe } from "fp-ts/lib/function";
+import { Context } from "@azure/functions";
 
 import {
   IResponseErrorInternal,
@@ -12,11 +16,8 @@ import {
   IResponseErrorForbiddenNotAuthorizedForRecipient,
   ResponseErrorInternal
 } from "@pagopa/ts-commons/lib/responses";
-
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
-import { toError } from "fp-ts/lib/Either";
-import { identity } from "fp-ts/lib/function";
-import { Context } from "@azure/functions";
+
 import { IServiceClient } from "../utils/serviceClient";
 
 // a codec that identifies a payload containing a fiscal code
@@ -34,8 +35,8 @@ const WithFiscalCode = t.interface({
  */
 const applyToExpressResponse = (expressResponse: express.Response) => (
   fetchResponse: Response
-): te.TaskEither<IResponseErrorInternal, void> =>
-  te.tryCatch(
+): TE.TaskEither<IResponseErrorInternal, void> =>
+  TE.tryCatch(
     async () => {
       for (const [key, value] of fetchResponse.headers.entries()) {
         expressResponse.set(key, value);
@@ -65,48 +66,60 @@ export const submitMessageForUser = (
   client: IServiceClient,
   telemetryClient: TelemetryClient,
   request: express.Request
-): te.TaskEither<ProxyFailures, Response> =>
-  te.taskEither
-    .of<ProxyFailures, unknown>(request.body)
-    .chain(body =>
-      te.fromEither(
-        WithFiscalCode.decode(body).bimap(
+): TE.TaskEither<ProxyFailures, Response> =>
+  pipe(
+    request.body,
+    TE.of,
+    TE.chain(
+      flow(
+        WithFiscalCode.decode,
+        E.bimap(
           ResponseErrorFromValidationErrors(WithFiscalCode),
           fc => fc.fiscal_code
-        )
+        ),
+        TE.fromEither
       )
-    )
-    .chain(fiscal_code =>
-      client
-        .getLimitedProfileByPost(
+    ),
+    TE.chainW(fiscal_code =>
+      pipe(
+        client.getLimitedProfileByPost(
           request.headers,
           fiscal_code,
           request.app.get("context") as Context
-        )
-        .map(e => ({ ...e, fiscal_code }))
-    )
-    .filterOrElse(
+        ),
+        TE.map(e => ({ ...e, fiscal_code }))
+      )
+    ),
+    TE.filterOrElseW(
       profile => profile.sender_allowed,
-      ResponseErrorForbiddenNotAuthorizedForRecipient
-    )
-    .chain(_ =>
+      () => ResponseErrorForbiddenNotAuthorizedForRecipient
+    ),
+    TE.chainW(profile =>
       client.submitMessageForUser(
-        _.fiscal_code,
+        profile.fiscal_code,
         request.headers,
         request.body,
         request.app.get("context") as Context
       )
-    );
+    )
+  );
 
 export const getSubmitMessageForUserHandler = (
   client: IServiceClient,
   telemetryClient: TelemetryClient
 ): express.RequestHandler => async (request, response): Promise<void> =>
   // call proxy logic
-  submitMessageForUser(client, telemetryClient, request)
-    // map a response coming from the downstream service onto the current response
-    .chain(applyToExpressResponse(response))
-    // map an error occurred into this proxy onto the current response
-    .mapLeft(_ => _.apply(response))
-    .fold(identity, identity)
-    .run();
+  {
+    // eslint-disable-next-line sonarjs/prefer-immediate-return
+    const p = pipe(
+      submitMessageForUser(client, telemetryClient, request),
+      // map a response coming from the downstream service onto the current response
+      TE.chainW(applyToExpressResponse(response)),
+
+      // map an error occurred into this proxy onto the current response
+      TE.mapLeft(_ => _.apply(response)),
+      TE.toUnion
+    );
+
+    return p();
+  };
