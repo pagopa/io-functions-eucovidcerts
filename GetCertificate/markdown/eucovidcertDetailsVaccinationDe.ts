@@ -14,7 +14,7 @@ export const getDetailPrinter = (v: VaccinationEntry): string =>
 ***
 ${
   isVaccinationProcessEnded(v)
-    ? "**Zertifizierung gültig für 270 Tage (9 Monate) ab dem Datum der letzten Verabreichung**"
+    ? "**Zertifizierung gültig für 12 Monate ab dem Datum der letzten Verabreichung**"
     : "**Zertifizierung gültig bis zur nächsten Dosis**"
 }
 ***
