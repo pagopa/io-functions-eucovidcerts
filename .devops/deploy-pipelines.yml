@@ -146,6 +146,13 @@ stages:
             # fails if response status is not 2xx
             curl -f 'https://$(PRODUCTION_APP_NAME)-staging.azurewebsites.net/$(HEALTHCHECK_PATH)'
           displayName: 'Healthcheck'
+          
+      - script: |
+            # fails if response status is not 2xx
+            # fake events won't be processed
+            curl -f -X POST 'https://$(PRODUCTION_APP_NAME)-staging.azurewebsites.net/api/v1/io-events-webhook/fake-event'
+          displayName: 'Test weebhook is operational'
+
 
   # Promote the staging instance to production
   - stage: Deploy_production
