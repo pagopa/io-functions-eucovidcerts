@@ -135,7 +135,7 @@ stages:
   # Check that the staging instance is healthy
   - stage: Healthcheck
     pool:
-      name: $[variables.AGENT_POOL]
+      name: io-prod-linux
     dependsOn:
       - Deploy_staging
     jobs:
