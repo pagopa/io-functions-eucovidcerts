@@ -12,7 +12,7 @@ import {
 
 import * as E from "fp-ts/lib/Either";
 import * as TE from "fp-ts/lib/TaskEither";
-import { pipe } from "fp-ts/lib/function";
+import { flow, pipe } from "fp-ts/lib/function";
 
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import { Context } from "@azure/functions";
@@ -37,34 +37,40 @@ export const IOEventsWebhookHandler = () => (
 ): Promise<IResponseSuccessAccepted<unknown> /* | IResponseErrorInternal */> =>
   pipe(
     eventName,
-    E.of,
-    ExpectedEvents.decode,
-    E.mapLeft(_ => {
-      context.log.warn(
-        `Discarded incoming event from IO: ${eventName}`,
-        "Unexpeced event"
-      );
-      return ResponseSuccessAccepted();
-    }),
-    E.chainW(_ =>
-      ExpectedEventsWithPayload.decode({
-        name: eventName,
-        payload: eventPayload
+    // check the incoming event is expected, otherwise just skip it
+    flow(
+      ExpectedEvents.decode,
+      E.mapLeft(_ => {
+        context.log.warn(
+          `Discarded incoming event from IO: ${eventName}`,
+          "Unexpected event"
+        );
+        return ResponseSuccessAccepted();
       })
     ),
-    E.mapLeft(_ => {
-      context.log.warn(
-        `Discarded incoming event from IO: ${eventName}`,
-        "Wrong payload"
-      );
-      return ResponseSuccessAccepted();
-    }),
-    TE.fromEither,
-    TE.map(({ payload: { hashedFiscalCode } }) => {
+    // check payload to be consistent with the event, otherwise just skip it
+    flow(
+      E.chainW(_ =>
+        ExpectedEventsWithPayload.decode({
+          name: eventName,
+          payload: eventPayload
+        })
+      ),
+      E.mapLeft(_ => {
+        context.log.warn(
+          `Discarded incoming event from IO: ${eventName}`,
+          "Wrong payload"
+        );
+        return ResponseSuccessAccepted();
+      })
+    ),
+    // if fine, just propagate the event
+    E.map(({ payload: { hashedFiscalCode } }) => {
       // eslint-disable-next-line functional/immutable-data
       context.bindings.outputFiscalCode = hashedFiscalCode;
       return ResponseSuccessAccepted();
     }),
+    TE.fromEither,
     TE.toUnion
   )();
 

@@ -10,7 +10,7 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-describe("InfoHandler", () => {
+describe("IOEventsWebhookHandler", () => {
   it("should consume an expected event", async () => {
     const mockContext = ({ log: console, bindings: {} } as unknown) as Context;
     const name = "service-subscribed" as NonEmptyString;
