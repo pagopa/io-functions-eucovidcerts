@@ -25,7 +25,7 @@ describe("IOEventsWebhookHandler", () => {
     );
   });
 
-  it("should not consume an expected event", async () => {
+  it("should not consume an unexpected event", async () => {
     const mockContext = ({ log: console, bindings: {} } as unknown) as Context;
     const name = "unexpected-event" as NonEmptyString;
     const payload = { hashedFiscalCode: "fakevalue" };
