@@ -53,15 +53,17 @@ paths:
         - name: eventName
           in: path
           type: string
+          required: true
         - name: eventPayload
           in: body
-          type: object
+          schema:
+            type: object
+          required: false
       responses:
         '202':
           description: >-
-            The event is received. Either is consumed or discarded, an acceptance message is retrieved
-          schema:
-            $ref: '#/definitions/Certificate'
+            The event is received. Either is consumed or discarded, an
+            acceptance message is retrieved
         '401':
           description: Unauthorized
         '500':
