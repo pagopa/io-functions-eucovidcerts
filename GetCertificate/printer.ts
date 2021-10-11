@@ -181,7 +181,7 @@ export const printUvci = (
  * @returns true if process ended, false otherwise
  */
 export const isVaccinationProcessEnded = (v: VaccinationEntry): boolean =>
-  v.dn >= v.sd;
+  v.dn >= v.sd; // we may have more doses than the total in case of additional, "booster doses"
 
 /**
  * Test validity in hours, based on type
