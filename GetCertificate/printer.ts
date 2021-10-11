@@ -29,6 +29,8 @@ import * as recoveryDetailsDe from "./markdown/eucovidcertDetailsRecoveryDe";
 import * as vacInfoMultilanguage from "./markdown/eucovidcertInfoVaccinationEn";
 import * as vacInfoGerman from "./markdown/eucovidcertInfoVaccinationDe";
 
+import { labTestTypes, molecularTest } from "./valuesets/labTestTypes";
+
 const TIME_ZONE = "Europe/Rome";
 
 const DATE_FORMAT_EN = "YYYY-MM-DD";
@@ -179,7 +181,16 @@ export const printUvci = (
  * @returns true if process ended, false otherwise
  */
 export const isVaccinationProcessEnded = (v: VaccinationEntry): boolean =>
-  v.dn === v.sd;
+  v.dn >= v.sd;
+
+/**
+ * Test validity in hours, based on type
+ *
+ * @param v the VaccinationEntry to check
+ * @returns the validity of the test, in hours
+ */
+export const testValidity = (v: TestEntry): string =>
+  v.tt === labTestTypes[molecularTest] ? "72" : "48";
 
 /**
  * Format date value based on language

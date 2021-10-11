@@ -1,7 +1,11 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { isSome } from "fp-ts/lib/Option";
 import { TestEntry } from "../certificate";
-import { formatCertificateIssuer, formatDateAndTime } from "../printer";
+import {
+  formatCertificateIssuer,
+  formatDateAndTime,
+  testValidity
+} from "../printer";
 
 const fileLanguage = PreferredLanguageEnum.de_DE;
 
@@ -9,7 +13,9 @@ export const getDetailPrinter = (te: TestEntry): string =>
   `
 ## Test Zertifikat  
 ***
-**Bescheinigung gültig für 48 Stunden ab dem Zeitpunkt der Abholung**
+**Bescheinigung gültig für ${testValidity(
+    te
+  )} Stunden ab dem Zeitpunkt der Abholung**
 ***
 
 Zielkrankheit oder -wirkstoff  
