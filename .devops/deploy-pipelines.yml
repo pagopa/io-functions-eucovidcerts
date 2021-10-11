@@ -150,7 +150,7 @@ stages:
         - script: |
             # fails if response status is not 2xx
             # fake events won't be processed
-            curl -f -X POST 'https://$(PRODUCTION_APP_NAME)-staging.azurewebsites.net/api/v1/io-events-webhook/fake-event'
+            curl -f -X POST 'https://$(PRODUCTION_APP_NAME)-staging.azurewebsites.net/api/v1/io-events-webhook/fake-event' --data ""
           displayName: 'Test weebhook is operational'
 
 
