@@ -4,6 +4,9 @@ import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generat
 import { IReadonlyTranslatableMap } from "../../utils/conversions";
 import { VALUESET_PLACEHOLDER } from "./placeholder";
 
+export const molecularTest = "LP6464-4";
+export const rapidImmunoassay = "LP217198-3";
+
 export const labTestTypes: IReadonlyTranslatableMap = {
   placeholder: {
     displays: {
@@ -12,7 +15,7 @@ export const labTestTypes: IReadonlyTranslatableMap = {
       [PreferredLanguageEnum.de_DE]: VALUESET_PLACEHOLDER
     }
   },
-  "LP6464-4": {
+  [molecularTest]: {
     displays: {
       [PreferredLanguageEnum.it_IT]: "Test molecolare",
       [PreferredLanguageEnum.de_DE]: "Molekularer Test",
@@ -20,7 +23,7 @@ export const labTestTypes: IReadonlyTranslatableMap = {
         "Nucleic acid amplification with probe detection"
     }
   },
-  "LP217198-3": {
+  [rapidImmunoassay]: {
     displays: {
       [PreferredLanguageEnum.it_IT]: "Test antigenico rapido",
       [PreferredLanguageEnum.en_GB]: "Rapid immunoassay",

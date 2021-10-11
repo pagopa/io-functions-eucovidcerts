@@ -4,7 +4,7 @@ exports[`Printer - Test - Detail - it_IT should print its markdown 1`] = `
 "
 ## Dati Tampone  
 ***
-**Certificazione valida 48 ore dall'ora del prelievo**
+**Certificazione valida 72 ore dall'ora del prelievo**
 ***
 
 Malattia o agente bersaglio  
