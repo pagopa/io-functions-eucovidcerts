@@ -4,7 +4,7 @@ exports[`Printer - Test - Detail - de_DE should print its markdown 1`] = `
 "
 ## Test Zertifikat  
 ***
-**Bescheinigung gültig für 48 Stunden ab dem Zeitpunkt der Abholung**
+**Bescheinigung gültig für 72 Stunden ab dem Zeitpunkt der Abholung**
 ***
 
 Zielkrankheit oder -wirkstoff  
