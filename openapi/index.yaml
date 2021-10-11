@@ -45,6 +45,31 @@ paths:
             $ref: '#/definitions/ProblemJson'
         '504':
           description: Gateway Timeout
+  /io-webhook/{eventName}:
+    post:
+      operationId: IOWebhook
+      summary: Endpoint to receive IO public events
+      parameters:
+        - name: eventName
+          in: path
+          type: string
+          required: true
+        - name: eventPayload
+          in: body
+          schema:
+            type: object
+          required: false
+      responses:
+        '202':
+          description: >-
+            The event is received. Either is consumed or discarded, an
+            acceptance message is retrieved
+        '401':
+          description: Unauthorized
+        '500':
+          description: Generic server error
+          schema:
+            $ref: '#/definitions/ProblemJson'
 securityDefinitions:
   ApiKey:
     type: apiKey

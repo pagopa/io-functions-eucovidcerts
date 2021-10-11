@@ -1,0 +1,27 @@
+{
+  "bindings": [
+    {
+      "authLevel": "function",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "route": "api/v1/io-events-webhook/{eventName}",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "type": "queue",
+      "direction": "out",
+      "name": "outputFiscalCode",
+      "queueName": "%EUCOVIDCERT_NOTIFY_NEW_PROFILE_QUEUE_NAME%",
+      "connection": "QueueStorageConnection"
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "$return"
+    }
+  ],
+  "scriptFile": "../dist/IOEventsWebhook/index.js"
+}
