@@ -17,7 +17,7 @@ describe("IOEventsWebhookHandler", () => {
     const payload = { hashedFiscalCode: "fakevalue" };
     const handler = IOEventsWebhookHandler();
 
-    const response = await handler(mockContext, name, payload);
+    const response = await handler(mockContext, { name, payload });
 
     expect(response.kind).toBe("IResponseSuccessAccepted");
     expect(mockContext.bindings.outputFiscalCode).toBe(
@@ -31,7 +31,7 @@ describe("IOEventsWebhookHandler", () => {
     const payload = { hashedFiscalCode: "fakevalue" };
     const handler = IOEventsWebhookHandler();
 
-    const response = await handler(mockContext, name, payload);
+    const response = await handler(mockContext, { name, payload });
 
     expect(response.kind).toBe("IResponseSuccessAccepted");
     expect(mockContext.bindings.outputFiscalCode).toBe(undefined);
@@ -46,7 +46,7 @@ describe("IOEventsWebhookHandler", () => {
     const payload = { wrongField: "fakevalue" };
     const handler = IOEventsWebhookHandler();
 
-    const response = await handler(mockContext, name, payload);
+    const response = await handler(mockContext, { name, payload });
 
     expect(response.kind).toBe("IResponseSuccessAccepted");
     expect(mockContext.bindings.outputFiscalCode).toBe(undefined);

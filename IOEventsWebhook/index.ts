@@ -10,7 +10,7 @@ const app = express();
 secureExpressApp(app);
 
 // Add express route
-app.get("/api/v1/io-events-webhook/:eventName", IOEventsWebhook());
+app.post("/api/v1/io-events-webhook", IOEventsWebhook());
 
 const azureFunctionHandler = createAzureFunctionHandler(app);
 

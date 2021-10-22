@@ -5,7 +5,7 @@
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
-      "route": "api/v1/io-events-webhook/{eventName}",
+      "route": "api/v1/io-events-webhook",
       "methods": [
         "post"
       ]
