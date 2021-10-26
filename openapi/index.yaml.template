@@ -39,20 +39,16 @@ paths:
             $ref: "#/definitions/ProblemJson"
         '504':
           description: Gateway Timeout
-  /io-webhook/{eventName}:
+  /io-webhook:
     post:
       operationId: IOWebhook
       summary: Endpoint to receive IO public events
       parameters:
-        - name: eventName
-          in: path
-          type: string
-          required: true
-        - name: eventPayload
+        - name: event
           in: body
           schema:
-            type: object
-          required: false
+            $ref: "#/definitions/WebhookEvent"
+          required: true
       responses:
         '202':
           description: >-
@@ -182,3 +178,12 @@ definitions:
 
   ProblemJson:
     $ref: "../node_modules/@pagopa/io-functions-commons/openapi/definitions.yaml#/ProblemJson"
+  WebhookEvent:
+    type: object
+    properties:
+      name: 
+        type: string
+      payload: 
+        type: object
+    required:
+      - name
