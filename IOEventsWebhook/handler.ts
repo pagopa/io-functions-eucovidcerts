@@ -13,20 +13,21 @@ import * as E from "fp-ts/lib/Either";
 import * as TE from "fp-ts/lib/TaskEither";
 import { flow, pipe } from "fp-ts/lib/function";
 
-import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
+import { FiscalCode, NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import { Context } from "@azure/functions";
 import { ContextMiddleware } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/context_middleware";
 import { RequiredBodyPayloadMiddleware } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/required_body_payload";
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
+import { toSHA256 } from "../utils/conversions";
 
 type ExpectedEvents = t.TypeOf<typeof ExpectedEvents>;
-const ExpectedEvents = t.literal("service-subscribed");
+const ExpectedEvents = t.literal("service:subscribed");
 
 type ExpectedEventsWithPayload = t.TypeOf<typeof ExpectedEventsWithPayload>;
 const ExpectedEventsWithPayload = t.interface({
   name: ExpectedEvents,
   payload: t.interface({
-    hashedFiscalCode: NonEmptyString
+    fiscalCode: FiscalCode
   })
 });
 
@@ -49,9 +50,9 @@ export const IOEventsWebhookHandler = () => (
     ),
 
     // if fine, just propagate the event
-    E.map(({ payload: { hashedFiscalCode } }) => {
+    E.map(({ payload: { fiscalCode } }) => {
       // eslint-disable-next-line functional/immutable-data
-      context.bindings.outputFiscalCode = hashedFiscalCode;
+      context.bindings.outputFiscalCode = toSHA256(fiscalCode);
       return ResponseSuccessAccepted();
     }),
     TE.fromEither,
