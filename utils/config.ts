@@ -54,8 +54,6 @@ export const IConfig = t.intersection([
     isProduction: t.boolean,
 
     EUCOVIDCERT_NOTIFY_NEW_PROFILE_QUEUE_NAME: NonEmptyString,
-    EUCOVIDCERT_PROFILE_CREATED_QUEUE_NAME: NonEmptyString,
-    EventsQueueStorageConnection: NonEmptyString,
     QueueStorageConnection: NonEmptyString,
 
     // fn-services variables
