@@ -2,6 +2,7 @@ import { Client as DGCClient, createClient } from "../generated/dgc/client";
 import { IConfig } from "./config";
 import { toSHA256 } from "./conversions";
 import { getFetchWithClientCertificate } from "./httpsAgent";
+import { mockGetCertificateByAutAndCF } from "./mockDGCClient";
 
 /**
  * Defines a selector object of a type T.
@@ -61,16 +62,20 @@ export const createDGCClientSelector = (
       DGC_UAT_SERVER_CA
     )
   });
-  const loadTestClient = createClient({
-    basePath: "",
-    baseUrl: DGC_LOAD_TEST_URL.href,
-    fetchApi: getFetchWithClientCertificate(
-      env,
-      DGC_LOAD_TEST_CLIENT_CERT,
-      DGC_LOAD_TEST_CLIENT_KEY,
-      DGC_LOAD_TEST_SERVER_CA
-    )
-  });
+  const loadTestClient = {
+    ...createClient({
+      basePath: "",
+      baseUrl: DGC_LOAD_TEST_URL.href,
+      fetchApi: getFetchWithClientCertificate(
+        env,
+        DGC_LOAD_TEST_CLIENT_CERT,
+        DGC_LOAD_TEST_CLIENT_KEY,
+        DGC_LOAD_TEST_SERVER_CA
+      )
+    }),
+    // Mock getCertificate request with a fake certificate
+    getCertificateByAutAndCF: mockGetCertificateByAutAndCF
+  };
 
   return {
     select: (hashedFiscalCode): DGCClient =>
