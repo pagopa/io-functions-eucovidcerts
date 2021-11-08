@@ -2,7 +2,7 @@ import { Client as DGCClient, createClient } from "../generated/dgc/client";
 import { IConfig } from "./config";
 import { toSHA256 } from "./conversions";
 import { getFetchWithClientCertificate } from "./httpsAgent";
-import { mockClient } from "./mockDGCClient";
+import { fakeClient } from "./fakeDGCClient";
 
 /**
  * Defines a selector object of a type T.
@@ -59,7 +59,7 @@ export const createDGCClientSelector = (
     )
   });
 
-  const loadTestClient = mockClient;
+  const loadTestClient = fakeClient;
 
   return {
     select: (hashedFiscalCode): DGCClient =>

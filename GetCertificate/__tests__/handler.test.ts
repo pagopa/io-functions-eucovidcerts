@@ -13,7 +13,7 @@ import {
   aLoadTestFiscalCode,
   aProcessEnv
 } from "../../__mocks__/clientSelectorConfig";
-import { mockQRCodeInfo } from "../../utils/mockDGCClient";
+import { fakeQRCodeInfo } from "../../utils/fakeDGCClient";
 import { StatusEnum } from "../../generated/definitions/ValidCertificate";
 
 const aFiscalCode = "PRVPRV25A01H501B";
@@ -122,9 +122,9 @@ describe("GetCertificate", () => {
         expect(val.value.status).toEqual(StatusEnum.valid);
         if (val.value.status === StatusEnum.valid) {
           expect(val.value.qr_code.content).toEqual(
-            mockQRCodeInfo.data!.qrcodeB64
+            fakeQRCodeInfo.data!.qrcodeB64
           );
-          expect(val.value.uvci).toEqual(mockQRCodeInfo.data!.uvci);
+          expect(val.value.uvci).toEqual(fakeQRCodeInfo.data!.uvci);
           expect(val.value.info).toBeDefined();
           expect(val.value.info!.length).toBeGreaterThan(0);
           expect(val.value.detail).toBeDefined();
