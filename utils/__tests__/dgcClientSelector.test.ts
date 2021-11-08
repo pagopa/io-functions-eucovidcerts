@@ -90,14 +90,7 @@ describe("createDGCClientSelector", () => {
       aUATKey,
       aUATCA
     );
-    expect(mockGetFetchWithClientCertificate).nthCalledWith(
-      3,
-      aProcessEnv,
-      aTestCert,
-      aTestKey,
-      aTestCA
-    );
-    expect(mockCreateClient).toBeCalledTimes(3);
+    expect(mockCreateClient).toBeCalledTimes(2);
 
     // We check that the returned client from the selector is the expected one
     expect(client).toHaveProperty("_kind", aTestCert);
@@ -121,14 +114,7 @@ describe("createDGCClientSelector", () => {
       aUATKey,
       aUATCA
     );
-    expect(mockGetFetchWithClientCertificate).nthCalledWith(
-      3,
-      aProcessEnv,
-      aTestCert,
-      aTestKey,
-      aTestCA
-    );
-    expect(mockCreateClient).toBeCalledTimes(3);
+    expect(mockCreateClient).toBeCalledTimes(2);
 
     // We check that the returned client from the selector is the expected one
     expect(client).toHaveProperty("_kind", aUATCert);
@@ -152,14 +138,7 @@ describe("createDGCClientSelector", () => {
       aUATKey,
       aUATCA
     );
-    expect(mockGetFetchWithClientCertificate).nthCalledWith(
-      3,
-      aProcessEnv,
-      aTestCert,
-      aTestKey,
-      aTestCA
-    );
-    expect(mockCreateClient).toBeCalledTimes(3);
+    expect(mockCreateClient).toBeCalledTimes(2);
 
     // We check that the returned client from the selector is the expected one
     expect(client).toHaveProperty("_kind", aProdCert);

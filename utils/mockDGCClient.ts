@@ -34,6 +34,7 @@ const mockManagePreviousCertificates: DGCClient["managePreviousCertificates"] = 
  * A DGC Client Mock
  */
 export const mockClient = {
+  _kind: "test_cert",
   // Mock getCertificate request with a fake certificate
   getCertificateByAutAndCF: mockGetCertificateByAutAndCF,
   managePreviousCertificates: mockManagePreviousCertificates
