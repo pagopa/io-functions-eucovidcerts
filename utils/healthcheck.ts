@@ -118,8 +118,7 @@ export const checkApplicationHealth = (): HealthCheck<ProblemSource, true> => {
     TE.chain(config =>
       // run each taskEither and gather validation errors from each one of them, if any
       sequenceT(applicativeValidation)(
-        checkAzureStorageHealth(config.QueueStorageConnection),
-        checkAzureStorageHealth(config.EventsQueueStorageConnection)
+        checkAzureStorageHealth(config.QueueStorageConnection)
       )
     ),
     TE.map(_ => true)
