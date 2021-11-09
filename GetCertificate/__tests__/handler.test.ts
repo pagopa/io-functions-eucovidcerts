@@ -8,6 +8,14 @@ import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import * as e from "fp-ts/lib/Either";
 import * as t from "io-ts";
 
+import {
+  aConfig,
+  aLoadTestFiscalCode,
+  aProcessEnv
+} from "../../__mocks__/clientSelectorConfig";
+import { fakeQRCodeInfo } from "../../utils/fakeDGCClient";
+import { StatusEnum } from "../../generated/definitions/ValidCertificate";
+
 const aFiscalCode = "PRVPRV25A01H501B";
 
 describe("GetCertificate", () => {
@@ -98,5 +106,33 @@ describe("GetCertificate", () => {
         "GetCertificateParams|parseQRCode|unable to parse QRCode"
       )
     );
+  });
+
+  it("should return a fake certificate in case of test users", async () => {
+    try {
+      const val = await GetCertificateHandler(
+        createDGCClientSelector(aConfig, aProcessEnv)
+      )(context, {
+        fiscal_code: aLoadTestFiscalCode,
+        auth_code: "anAuthCode"
+      });
+
+      expect(val.kind).toEqual("IResponseSuccessJson");
+      if (val.kind === "IResponseSuccessJson") {
+        expect(val.value.status).toEqual(StatusEnum.valid);
+        if (val.value.status === StatusEnum.valid) {
+          expect(val.value.qr_code.content).toEqual(
+            fakeQRCodeInfo.data!.qrcodeB64
+          );
+          expect(val.value.uvci).toEqual(fakeQRCodeInfo.data!.uvci);
+          expect(val.value.info).toBeDefined();
+          expect(val.value.info!.length).toBeGreaterThan(0);
+          expect(val.value.detail).toBeDefined();
+          expect(val.value.detail!.length).toBeGreaterThan(0);
+        }
+      }
+    } catch (error) {
+      fail(error);
+    }
   });
 });
