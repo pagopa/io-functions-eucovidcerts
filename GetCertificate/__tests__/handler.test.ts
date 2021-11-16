@@ -157,7 +157,7 @@ describe("GetCertificate", () => {
 
       expect(val).toMatchObject({
         kind: "IResponseSuccessJson",
-        value: { info: "‎", status: "expired" }
+        value: { info: " ", status: "expired" }
       });
     } catch (error) {
       fail(error);

@@ -109,7 +109,7 @@ export const GetCertificateHandler = (
             e,
             TE.fromPredicate(
               i => i.status === 200,
-              () => ({ info: "‎", status: ExpiredEnum.expired })
+              () => ({ info: " ", status: ExpiredEnum.expired })
             ),
             TE.map(i => i.value),
             // try to enhance raw certificate with parsed data
