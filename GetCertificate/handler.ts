@@ -23,6 +23,7 @@ import { Context } from "@azure/functions";
 import * as o from "fp-ts/lib/Option";
 import * as E from "fp-ts/lib/Either";
 import * as TE from "fp-ts/lib/TaskEither";
+import * as T from "fp-ts/lib/Task";
 import { StatusEnum } from "../generated/definitions/ValidCertificate";
 import { Certificate } from "../generated/definitions/Certificate";
 import { GetCertificateParams } from "../generated/definitions/GetCertificateParams";
@@ -30,6 +31,7 @@ import { Mime_typeEnum } from "../generated/definitions/QRCode";
 import { toSHA256 } from "../utils/conversions";
 import { createDGCClientSelector } from "../utils/dgcClientSelector";
 import { toString } from "../utils/conversions";
+import { StatusEnum as ExpiredEnum } from "../generated/definitions/ExpiredCertificate";
 import { parseQRCode } from "./parser";
 import { printDetails, printInfo, printUvci } from "./printer";
 
@@ -102,7 +104,55 @@ export const GetCertificateHandler = (
     TE.chain(e => {
       switch (e.status) {
         case 200:
-          return TE.of(e.value);
+        case 404:
+          return pipe(
+            e,
+            TE.fromPredicate(
+              i => i.status === 200,
+              () => ({ info: "‎", status: ExpiredEnum.expired })
+            ),
+            TE.map(i => i.value),
+            // try to enhance raw certificate with parsed data
+            TE.map(({ data: { qrcodeB64 = "", uvci = undefined } = {} }) => ({
+              printedCertificate: pipe(
+                parseQRCode(qrcodeB64, warning =>
+                  context.log.warn(`${logPrefix}|parseQRCode|${warning}`)
+                ),
+                E.mapLeft(_ => {
+                  context.log.error(
+                    `${logPrefix}|parseQRCode|unable to parse QRCode|${_.reason}`
+                  );
+                  return _;
+                }),
+                E.fold(
+                  _ => undefined,
+                  f => ({
+                    detail: printDetails(selectedLanguage, f),
+                    info: printInfo(selectedLanguage, f),
+                    uvci: printUvci(selectedLanguage, f)
+                  })
+                )
+              ),
+              qrcodeB64,
+              uvci
+            })),
+            // compose a response payload
+            TE.map(c => ({
+              detail: c.printedCertificate?.detail,
+              info: c.printedCertificate?.info,
+              qr_code: {
+                content: c.qrcodeB64,
+                mime_type: Mime_typeEnum["image/png"]
+              },
+              status: StatusEnum.valid,
+              // if we successful pardsed the qr code, we retrieve the identifier from the parsing
+              //   otherwise we retrieve the identifier eventually received from DGC
+              uvci: c.printedCertificate?.uvci || c.uvci
+            })),
+            TE.toUnion,
+            T.map(ResponseSuccessJson),
+            TE.rightTask
+          );
         case 400:
           return TE.left(
             ResponseErrorValidation("Bad Request", "") as Failures
@@ -119,44 +169,7 @@ export const GetCertificateHandler = (
         }
       }
     }),
-    // try to enhance raw certificate with parsed data
-    TE.map(({ data: { qrcodeB64 = "", uvci = undefined } = {} }) => ({
-      printedCertificate: pipe(
-        parseQRCode(qrcodeB64, warning =>
-          context.log.warn(`${logPrefix}|parseQRCode|${warning}`)
-        ),
-        E.mapLeft(_ => {
-          context.log.error(
-            `${logPrefix}|parseQRCode|unable to parse QRCode|${_.reason}`
-          );
-          return _;
-        }),
-        E.fold(
-          _ => undefined,
-          f => ({
-            detail: printDetails(selectedLanguage, f),
-            info: printInfo(selectedLanguage, f),
-            uvci: printUvci(selectedLanguage, f)
-          })
-        )
-      ),
-      qrcodeB64,
-      uvci
-    })),
-    // compose a response payload
-    TE.map(c => ({
-      detail: c.printedCertificate?.detail,
-      info: c.printedCertificate?.info,
-      qr_code: {
-        content: c.qrcodeB64,
-        mime_type: Mime_typeEnum["image/png"]
-      },
-      status: StatusEnum.valid,
-      // if we successful pardsed the qr code, we retrieve the identifier from the parsing
-      //   otherwise we retrieve the identifier eventually received from DGC
-      uvci: c.printedCertificate?.uvci || c.uvci
-    })),
-    TE.map(ResponseSuccessJson),
+
     // fold failures and success cases into a single response pipeline
     TE.toUnion
   )();
