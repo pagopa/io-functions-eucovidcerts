@@ -137,7 +137,7 @@ describe("GetCertificate", () => {
     }
   });
 
-  it("GIVEN an expired certificate request WHEN the getCertificate is invoked THEN the getCertificte return an expired certificate", async () => {
+  it("GIVEN an expired certificate request WHEN the getCertificate is invoked THEN the getCertificate return an expired certificate", async () => {
     const aDGCReturnValue = { status: 404 };
 
     const client = {
