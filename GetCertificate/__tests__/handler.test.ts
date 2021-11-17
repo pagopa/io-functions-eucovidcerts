@@ -15,6 +15,7 @@ import {
 } from "../../__mocks__/clientSelectorConfig";
 import { fakeQRCodeInfo } from "../../utils/fakeDGCClient";
 import { StatusEnum } from "../../generated/definitions/ValidCertificate";
+import { ResponseSuccessJson } from "@pagopa/ts-commons/lib/responses";
 
 const aFiscalCode = "PRVPRV25A01H501B";
 
@@ -131,6 +132,33 @@ describe("GetCertificate", () => {
           expect(val.value.detail!.length).toBeGreaterThan(0);
         }
       }
+    } catch (error) {
+      fail(error);
+    }
+  });
+
+  it("GIVEN an expired certificate request WHEN the getCertificate is invoked THEN the getCertificate return an expired certificate", async () => {
+    const aDGCReturnValue = { status: 404 };
+
+    const client = {
+      getCertificateByAutAndCF: (_: any) =>
+        Promise.resolve(e.right(aDGCReturnValue))
+    };
+
+    const mockClientSelector: ReturnType<typeof createDGCClientSelector> = {
+      select: (hashedFiscalCode): DGCClient => (client as any) as DGCClient
+    };
+
+    try {
+      const val = await GetCertificateHandler(mockClientSelector)(context, {
+        fiscal_code: aFiscalCode as FiscalCode,
+        auth_code: "anAuthCode"
+      });
+
+      expect(val).toMatchObject({
+        kind: "IResponseSuccessJson",
+        value: { info: " ", status: "expired" }
+      });
     } catch (error) {
       fail(error);
     }
