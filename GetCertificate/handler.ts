@@ -10,20 +10,24 @@ import {
   IResponseErrorValidation,
   IResponseSuccessJson,
   ResponseErrorInternal,
+  ResponseErrorValidation,
   ResponseSuccessJson
 } from "@pagopa/ts-commons/lib/responses";
 import { RequiredBodyPayloadMiddleware } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/required_body_payload";
 import { ContextMiddleware } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/context_middleware";
 import { fromEither, tryCatch } from "fp-ts/lib/TaskEither";
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
-import { ResponseErrorValidation } from "@pagopa/ts-commons/lib/responses";
 import { flow, pipe } from "fp-ts/lib/function";
-import { PreferredLanguage } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
+import {
+  PreferredLanguage,
+  PreferredLanguageEnum
+} from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { Context } from "@azure/functions";
 import * as o from "fp-ts/lib/Option";
 import * as E from "fp-ts/lib/Either";
 import * as TE from "fp-ts/lib/TaskEither";
 import * as T from "fp-ts/lib/Task";
+import { IResponseType } from "@pagopa/ts-commons/lib/requests";
 import { StatusEnum } from "../generated/definitions/ValidCertificate";
 import { Certificate } from "../generated/definitions/Certificate";
 import { GetCertificateParams } from "../generated/definitions/GetCertificateParams";
@@ -32,8 +36,12 @@ import { toSHA256 } from "../utils/conversions";
 import { createDGCClientSelector } from "../utils/dgcClientSelector";
 import { toString } from "../utils/conversions";
 import { StatusEnum as ExpiredEnum } from "../generated/definitions/ExpiredCertificate";
+import { SearchSingleQrCodeResponseDTO } from "../generated/dgc/SearchSingleQrCodeResponseDTO";
 import { parseQRCode } from "./parser";
 import { printDetails, printInfo, printUvci } from "./printer";
+
+const LOG_PREFIX = "GetCertificateParams";
+const EMPTY_STRING_FOR_MARKDOWN = " "; // Workaround to let App markdown rendering an empty string without errors
 
 const assertNever = (x: never): never => {
   throw new Error(`Unexpected object: ${toString(x)}`);
@@ -47,6 +55,67 @@ type GetCertificateHandler = (
   context: Context,
   params: GetCertificateParams
 ) => Promise<IResponseSuccessJson<Certificate> | Failures>;
+
+type ISuccessCertificateResponses = IResponseType<
+  200 | 404,
+  SearchSingleQrCodeResponseDTO,
+  never
+>;
+
+export const processSuccessCertificateGeneration = (
+  context: Context,
+  selectedLanguage: o.Option<PreferredLanguageEnum>,
+  e: ISuccessCertificateResponses
+): TE.TaskEither<never, IResponseSuccessJson<Certificate>> =>
+  pipe(
+    e,
+    TE.fromPredicate(
+      i => i.status === 200,
+      () => ({ info: EMPTY_STRING_FOR_MARKDOWN, status: ExpiredEnum.expired })
+    ),
+    TE.map(i => i.value),
+    // try to enhance raw certificate with parsed data
+    TE.map(({ data: { qrcodeB64 = "", uvci = undefined } = {} }) => ({
+      printedCertificate: pipe(
+        parseQRCode(qrcodeB64, warning =>
+          context.log.warn(`${LOG_PREFIX}|parseQRCode|${warning}`)
+        ),
+        E.mapLeft(_ => {
+          context.log.error(
+            `${LOG_PREFIX}|parseQRCode|unable to parse QRCode|${_.reason}`
+          );
+          return _;
+        }),
+        E.fold(
+          _ => undefined,
+          f => ({
+            detail: printDetails(selectedLanguage, f),
+            info: printInfo(selectedLanguage, f),
+            uvci: printUvci(selectedLanguage, f)
+          })
+        )
+      ),
+      qrcodeB64,
+      uvci
+    })),
+    // compose a response payload
+    TE.map(c => ({
+      detail: c.printedCertificate?.detail,
+      info: c.printedCertificate?.info,
+      qr_code: {
+        content: c.qrcodeB64,
+        mime_type: Mime_typeEnum["image/png"]
+      },
+      status: StatusEnum.valid,
+      // if we successful pardsed the qr code, we retrieve the identifier from the parsing
+      //   otherwise we retrieve the identifier eventually received from DGC
+      uvci: c.printedCertificate?.uvci || c.uvci
+    })),
+    TE.toUnion,
+    T.map(ResponseSuccessJson),
+    TE.rightTask
+  );
+
 // eslint-disable-next-line max-lines-per-function
 export const GetCertificateHandler = (
   dgcClientSelector: ReturnType<typeof createDGCClientSelector>
@@ -64,8 +133,6 @@ export const GetCertificateHandler = (
     o.map(langs => langs.filter(PreferredLanguage.is)),
     o.chain(langs => (langs.length > 0 ? o.some(langs[0]) : o.none))
   );
-
-  const logPrefix = "GetCertificateParams";
 
   return pipe(
     hashedFiscalCode,
@@ -93,7 +160,7 @@ export const GetCertificateHandler = (
         TE.chain(fromEither),
         TE.mapLeft(failure => {
           context.log.error(
-            `${logPrefix}|dgcClient.getCertificateByAutAndCF|request failure|${failure.kind}`
+            `${LOG_PREFIX}|dgcClient.getCertificateByAutAndCF|request failure|${failure.kind}`
           );
           return failure;
         })
@@ -105,53 +172,10 @@ export const GetCertificateHandler = (
       switch (e.status) {
         case 200:
         case 404:
-          return pipe(
-            e,
-            TE.fromPredicate(
-              i => i.status === 200,
-              () => ({ info: " ", status: ExpiredEnum.expired })
-            ),
-            TE.map(i => i.value),
-            // try to enhance raw certificate with parsed data
-            TE.map(({ data: { qrcodeB64 = "", uvci = undefined } = {} }) => ({
-              printedCertificate: pipe(
-                parseQRCode(qrcodeB64, warning =>
-                  context.log.warn(`${logPrefix}|parseQRCode|${warning}`)
-                ),
-                E.mapLeft(_ => {
-                  context.log.error(
-                    `${logPrefix}|parseQRCode|unable to parse QRCode|${_.reason}`
-                  );
-                  return _;
-                }),
-                E.fold(
-                  _ => undefined,
-                  f => ({
-                    detail: printDetails(selectedLanguage, f),
-                    info: printInfo(selectedLanguage, f),
-                    uvci: printUvci(selectedLanguage, f)
-                  })
-                )
-              ),
-              qrcodeB64,
-              uvci
-            })),
-            // compose a response payload
-            TE.map(c => ({
-              detail: c.printedCertificate?.detail,
-              info: c.printedCertificate?.info,
-              qr_code: {
-                content: c.qrcodeB64,
-                mime_type: Mime_typeEnum["image/png"]
-              },
-              status: StatusEnum.valid,
-              // if we successful pardsed the qr code, we retrieve the identifier from the parsing
-              //   otherwise we retrieve the identifier eventually received from DGC
-              uvci: c.printedCertificate?.uvci || c.uvci
-            })),
-            TE.toUnion,
-            T.map(ResponseSuccessJson),
-            TE.rightTask
+          return processSuccessCertificateGeneration(
+            context,
+            selectedLanguage,
+            e
           );
         case 400:
           return TE.left(
@@ -163,7 +187,7 @@ export const GetCertificateHandler = (
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const unexpectedStatusCode = (e as any)?.status ?? "";
           context.log.error(
-            `${logPrefix}|dgcClient.getCertificateByAutAndCF|unexpected status code|${unexpectedStatusCode}`
+            `${LOG_PREFIX}|dgcClient.getCertificateByAutAndCF|unexpected status code|${unexpectedStatusCode}`
           );
           return assertNever(e);
         }
