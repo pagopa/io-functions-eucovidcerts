@@ -14,7 +14,7 @@ export const getDetailPrinter = (v: VaccinationEntry): string =>
 ***
 ${
   isVaccinationProcessEnded(v)
-    ? "**Certification valid for 12 months from the date of the last administration**"
+    ? "**Certification valid for 9 months from the date of the last administration**"
     : "**Certification valid until next dose**"
 }
 ***
