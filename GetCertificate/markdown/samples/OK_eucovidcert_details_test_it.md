@@ -1,6 +1,6 @@
 ## Dati Tampone
 ***
-**Certificazione valida 48 ore dall'ora del prelievo**
+**Certificazione valida [48/72] ore dall'ora del prelievo**
 ***
 
 Malattia o agente bersaglio  

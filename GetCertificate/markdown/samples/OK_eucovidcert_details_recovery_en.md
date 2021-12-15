@@ -1,4 +1,7 @@
 ## Recovery Certifcate
+***
+**Certificate valid in the European Union up to the end date of validity, and in Italy for 180 days (6 months) from the start date of validity.
+***  
 
 Disease or agent the citizen has recovered from  
 **<tg>**  <!-- https://github.com/eu-digital-green-certificates/ehn-dgc-schema/blob/main/valuesets/disease-agent-targeted.json -->
