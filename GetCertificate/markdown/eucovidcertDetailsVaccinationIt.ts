@@ -14,8 +14,8 @@ export const getDetailPrinter = (v: VaccinationEntry): string =>
 ***
 ${
   isVaccinationProcessEnded(v)
-    ? "**Certificazione valida 12 mesi dalla data dell'ultima somministrazione**"
-    : "**Certificazione valida fino alla prossima dose**"
+    ? "**Certificazione valida 270 giorni (9 mesi) dalla data dell’ultima somministrazione, salvo modifiche normative**"
+    : "**Certificazione valida dal 15° giorno dalla data di somministrazione e fino al tempo massimo previsto per la dose successiva**"
 }
 ***
 

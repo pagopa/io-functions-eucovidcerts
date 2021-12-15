@@ -4,7 +4,7 @@ exports[`Printer - Test - Detail - de_DE should print its markdown 1`] = `
 "
 ## Impfstoffdaten  
 ***
-**Zertifizierung gültig für 12 Monate ab dem Datum der letzten Verabreichung**
+**Zertifizierung gültig für 9 Monate ab dem Datum der letzten Verabreichung**
 ***
 
 Zielkrankheit oder -wirkstoff  

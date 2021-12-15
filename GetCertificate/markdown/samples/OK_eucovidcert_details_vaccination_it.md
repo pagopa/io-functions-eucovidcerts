@@ -1,9 +1,9 @@
 ## Dati Vaccino
 ***
 <!-- if dn==sd -->
-**Certificazione valida 12 mesi dalla data dell'ultima somministrazione**
+**Certificazione valida 270 giorni (9 mesi) dalla data dell’ultima somministrazione, salvo modifiche normative**
 <!-- else if dn<sd -->
-**Certificazione valida fino alla prossima dose**
+**Certificazione valida dal 15° giorno dalla data di somministrazione e fino al tempo massimo previsto per la dose successiva**
 <!-- endif -->
 ***
 
