@@ -13,9 +13,7 @@ export const getDetailPrinter = (te: TestEntry): string =>
   `
 ## Test Certificate
 ***
-**Certification valid for ${testValidity(
-    te
-  )} hours from the time of collection**
+**Certification valid for ${testValidity(te)} hours from the time of sampling**
 ***
 
 Disease or agent targeted  

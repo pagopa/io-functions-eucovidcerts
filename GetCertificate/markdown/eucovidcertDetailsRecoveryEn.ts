@@ -7,6 +7,9 @@ const fileLanguage = PreferredLanguageEnum.en_GB;
 export const getDetailPrinter = (tr: RecoveryEntry): string =>
   `
 ## Recovery Certificate  
+***
+**Certificate valid in the European Union up to the end date of validity, and in Italy for 180 days (6 months) from the start date of validity.
+***  
 
 Disease or agent the citizen has recovered from  
 **${tr.tg}**  

@@ -1,6 +1,6 @@
 ## Test Certificate
 ***
-**Certification valid for 48 hours from the time of collection**
+**Certification valid for [48/72] hours from the time of sampling**
 ***
 
 Disease or agent targeted  

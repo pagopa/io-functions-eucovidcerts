@@ -4,7 +4,7 @@ exports[`Printer - Test - Detail - en_GB should print its markdown 1`] = `
 "
 ## Vaccination Certificate  
 ***
-**Certification valid for 9 months from the date of the last administration**
+**Certificate valid for 270 days (9 months) from the date of the last administration, unless regulatory changes are made**
 ***
 
 Disease or agent targeted  
