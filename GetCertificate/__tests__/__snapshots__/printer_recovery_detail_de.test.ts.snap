@@ -3,6 +3,9 @@
 exports[`Printer - Recovery - Detail - de_DE should print its markdown 1`] = `
 "
 ## Heilungsurkunde
+***
+Der Green Pass ist in der Europäischen Union bis zum Ende der Gültigkeitsdauer und in Italien 180 Tage (6 Monate) gültig
+***
 
 Zielkrankheit oder Erreger, von dem die Person geheilt wird  
 **COVID-19**  
@@ -40,6 +43,9 @@ Weitere Informationen und den Download des Zertifikats im druckfähigen PDF-Form
 exports[`Printer - Recovery - Detail - de_DE should print its markdown with placeholder, if some value is not in valueset 1`] = `
 "
 ## Heilungsurkunde
+***
+Der Green Pass ist in der Europäischen Union bis zum Ende der Gültigkeitsdauer und in Italien 180 Tage (6 Monate) gültig
+***
 
 Zielkrankheit oder Erreger, von dem die Person geheilt wird  
 **---**  
