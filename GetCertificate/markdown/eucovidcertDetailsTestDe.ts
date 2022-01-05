@@ -13,9 +13,7 @@ export const getDetailPrinter = (te: TestEntry): string =>
   `
 ## Test Zertifikat  
 ***
-**Bescheinigung gültig für ${testValidity(
-    te
-  )} Stunden ab dem Zeitpunkt der Abholung**
+**Der Green Pass ist ${testValidity(te)} Stunden ab dem Test gültig**
 ***
 
 Zielkrankheit oder -wirkstoff  
