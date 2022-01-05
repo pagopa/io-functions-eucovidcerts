@@ -8,6 +8,7 @@ import { QRCode } from "jsqr";
 import { readableReport } from "@pagopa/ts-commons/lib/reporters";
 import { match } from "ts-pattern";
 import { pipe } from "fp-ts/lib/function";
+import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import {
   Certificates,
   RecoveryCertificate,
@@ -129,23 +130,24 @@ export const decodeCertificateAndLogMissingValues = (
   return decodedValude;
 };
 
-/**
- * Parse a qr code image to get Certificate information payload
- *
- * @param qrcode
- * @returns
- */
-export const parseQRCode = (
-  qrcode: string,
-  logWarning: (warn: string) => void
-): Either<IQRParsingFailure, Certificates> =>
+// exported for testing purpose
+export const extractDataFromPng = (
+  rawPng: NonEmptyString
+): Either<Error, string> =>
   pipe(
-    qrcode,
-    e.fromNullable<Error>(new Error("can not decode an empty string")),
+    e.right(rawPng),
     e.chain(withTrace(base64ToBuffer)),
     e.chain(withTrace(bufferToPng)),
     e.chain(withTrace(pngToQrcode)),
-    e.map(qr => qr.data),
+    e.map(qr => qr.data)
+  );
+
+// exported for testing purpose
+export const decodeCertificateData = (logWarning: (warn: string) => void) => (
+  data: string
+): Either<Error, Certificates> =>
+  pipe(
+    e.right(data),
     e.map(removePrefix),
     e.chain(withTrace(base45Decode)),
     e.chain(withTrace(inflate)),
@@ -159,6 +161,31 @@ export const parseQRCode = (
         decodeCertificateAndLogMissingValues(logWarning),
         "Certificates.decode"
       )
-    ),
+    )
+  );
+
+/**
+ * Parse a qr code image to get Certificate information payload
+ *
+ * @param qrcode
+ * @returns
+ */
+export const parseQRCode = (
+  qrcode: string,
+  logWarning: (warn: string) => void
+): Either<IQRParsingFailure, Certificates> =>
+  pipe(
+    // formal input validation
+    qrcode,
+    NonEmptyString.decode,
+    e.mapLeft(_ => new Error("can not decode an empty string")),
+
+    // get data from encoded png string
+    e.chain(extractDataFromPng),
+
+    // parse certificate data
+    e.chain(decodeCertificateData(logWarning)),
+
+    // map an eventually occurred error
     e.mapLeft(_ => ({ qrcode, reason: _.message }))
   );
