@@ -15,7 +15,8 @@ import {
 } from "../../__mocks__/clientSelectorConfig";
 import { fakeQRCodeInfo } from "../../utils/fakeDGCClient";
 import { StatusEnum } from "../../generated/definitions/ValidCertificate";
-import { ResponseSuccessJson } from "@pagopa/ts-commons/lib/responses";
+import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
+import { string } from "fp-ts";
 
 const aFiscalCode = "PRVPRV25A01H501B";
 
@@ -137,30 +138,45 @@ describe("GetCertificate", () => {
     }
   });
 
-  it("GIVEN an expired certificate request WHEN the getCertificate is invoked THEN the getCertificate return an expired certificate", async () => {
-    const aDGCReturnValue = { status: 404 };
+  it.each`
+    scenario                     | preferred_languages
+    ${"italian language"}        | ${[PreferredLanguageEnum.it_IT]}
+    ${"english language"}        | ${[PreferredLanguageEnum.en_GB]}
+    ${"german language"}         | ${[PreferredLanguageEnum.de_DE]}
+    ${"unhandled language"}      | ${[PreferredLanguageEnum.fr_FR]}
+    ${"no language"}             | ${[]}
+    ${"no language (undefined)"} | ${undefined}
+  `(
+    "GIVEN an expired certificate request with $scenario WHEN the getCertificate is invoked THEN the getCertificate return an expired certificate",
+    async ({ preferred_languages }) => {
+      const aDGCReturnValue = { status: 404 };
 
-    const client = {
-      getCertificateByAutAndCF: (_: any) =>
-        Promise.resolve(e.right(aDGCReturnValue))
-    };
+      const client = {
+        getCertificateByAutAndCF: (_: any) =>
+          Promise.resolve(e.right(aDGCReturnValue))
+      };
 
-    const mockClientSelector: ReturnType<typeof createDGCClientSelector> = {
-      select: (hashedFiscalCode): DGCClient => (client as any) as DGCClient
-    };
+      const mockClientSelector: ReturnType<typeof createDGCClientSelector> = {
+        select: (hashedFiscalCode): DGCClient => (client as any) as DGCClient
+      };
 
-    try {
-      const val = await GetCertificateHandler(mockClientSelector)(context, {
-        fiscal_code: aFiscalCode as FiscalCode,
-        auth_code: "anAuthCode"
-      });
+      try {
+        const val = await GetCertificateHandler(mockClientSelector)(context, {
+          fiscal_code: aFiscalCode as FiscalCode,
+          auth_code: "anAuthCode",
+          preferred_languages
+        });
 
-      expect(val).toMatchObject({
-        kind: "IResponseSuccessJson",
-        value: { info: " ", status: "expired" }
-      });
-    } catch (error) {
-      fail(error);
+        expect(val).toMatchObject({
+          kind: "IResponseSuccessJson",
+          value: { info: expect.any(String), status: "expired" }
+        });
+        // we send something as info
+        const info: string = (val as any).value?.info || "";
+        expect(info.length).toBeGreaterThan(0);
+      } catch (error) {
+        fail(error);
+      }
     }
-  });
+  );
 });
