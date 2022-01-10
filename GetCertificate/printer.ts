@@ -28,6 +28,9 @@ import * as recoveryDetailsEn from "./markdown/eucovidcertDetailsRecoveryEn";
 import * as recoveryDetailsDe from "./markdown/eucovidcertDetailsRecoveryDe";
 import * as vacInfoMultilanguage from "./markdown/eucovidcertInfoVaccinationEn";
 import * as vacInfoGerman from "./markdown/eucovidcertInfoVaccinationDe";
+import * as expiredInfoIt from "./markdown/eucovidcertExpiredInfoIt";
+import * as expiredInfoEn from "./markdown/eucovidcertExpiredInfoEn";
+import * as expiredInfoDe from "./markdown/eucovidcertExpiredInfoDe";
 
 import { labTestTypes, molecularTest } from "./valuesets/labTestTypes";
 
@@ -51,6 +54,7 @@ const dateAndTimeFormatForLanguage: { [key in SupportedLanguage]: string } = {
   [PreferredLanguageEnum.de_DE]: DATE_TIME_FORMAT_EN
 };
 interface IPrintersForLanguage {
+  readonly expiredInfoPrinter: () => string;
   readonly detailVaccinePrinter: (v: VaccinationEntry) => string;
   readonly detailTestPrinter: (t: TestEntry) => string;
   readonly detailRecoveryPrinter: (r: RecoveryEntry) => string;
@@ -63,6 +67,7 @@ const printersConfigurations: {
   [key in SupportedLanguage]: IPrintersForLanguage;
 } = {
   [PreferredLanguageEnum.it_IT]: {
+    expiredInfoPrinter: expiredInfoIt.getInfoPrinter,
     detailVaccinePrinter: vacDetailsIt.getDetailPrinter,
     detailTestPrinter: testDetailsIt.getDetailPrinter,
     detailRecoveryPrinter: recoveryDetailsIt.getDetailPrinter,
@@ -71,6 +76,7 @@ const printersConfigurations: {
     infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
   },
   [PreferredLanguageEnum.en_GB]: {
+    expiredInfoPrinter: expiredInfoEn.getInfoPrinter,
     detailVaccinePrinter: vacDetailsEn.getDetailPrinter,
     detailTestPrinter: testDetailsEn.getDetailPrinter,
     detailRecoveryPrinter: recoveryDetailsEn.getDetailPrinter,
@@ -79,6 +85,7 @@ const printersConfigurations: {
     infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
   },
   [PreferredLanguageEnum.de_DE]: {
+    expiredInfoPrinter: expiredInfoDe.getInfoPrinter,
     detailVaccinePrinter: vacDetailsDe.getDetailPrinter,
     detailTestPrinter: testDetailsDe.getDetailPrinter,
     detailRecoveryPrinter: recoveryDetailsDe.getDetailPrinter,
@@ -88,14 +95,8 @@ const printersConfigurations: {
   }
 };
 
-export const defaultPrinter: IPrintersForLanguage = {
-  detailVaccinePrinter: vacDetailsEn.getDetailPrinter,
-  detailTestPrinter: testDetailsEn.getDetailPrinter,
-  detailRecoveryPrinter: recoveryDetailsEn.getDetailPrinter,
-  infoVaccinePrinter: vacInfoMultilanguage.getInfoPrinter,
-  infoTestPrinter: vacInfoMultilanguage.getInfoPrinter,
-  infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
-};
+export const defaultPrinter: IPrintersForLanguage =
+  printersConfigurations[PreferredLanguageEnum.en_GB];
 
 /**
  * Return the correct IPrintersForLanguage based on preferred language,
@@ -173,6 +174,16 @@ export const printUvci = (
     .when(TestCertificate.is, ct => ct.t[0].ci)
     .when(RecoveryCertificate.is, cr => cr.r[0].ci)
     .exhaustive();
+
+/**
+ * Returns the markdown info text to be rendered when a Certificate is found to be expired
+ * based on preferred language
+ *
+ * @param lang the preferred language
+ * @returns a string containing the Info markdown
+ */
+export const printExpiredInfo = (lang: o.Option<PreferredLanguage>): string =>
+  getPrinterForLanguage(lang).expiredInfoPrinter();
 
 /**
  * Check if Vaccination has ended

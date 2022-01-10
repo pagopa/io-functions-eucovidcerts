@@ -38,7 +38,12 @@ import { toString } from "../utils/conversions";
 import { StatusEnum as ExpiredEnum } from "../generated/definitions/ExpiredCertificate";
 import { SearchSingleQrCodeResponseDTO } from "../generated/dgc/SearchSingleQrCodeResponseDTO";
 import { parseQRCode } from "./parser";
-import { printDetails, printInfo, printUvci } from "./printer";
+import {
+  printDetails,
+  printExpiredInfo,
+  printInfo,
+  printUvci
+} from "./printer";
 
 const LOG_PREFIX = "GetCertificateParams";
 const EMPTY_STRING_FOR_MARKDOWN = " "; // Workaround to let App markdown rendering an empty string without errors
@@ -71,7 +76,10 @@ export const processSuccessCertificateGeneration = (
     e,
     TE.fromPredicate(
       i => i.status === 200,
-      () => ({ info: EMPTY_STRING_FOR_MARKDOWN, status: ExpiredEnum.expired })
+      () => ({
+        info: printExpiredInfo(selectedLanguage) || EMPTY_STRING_FOR_MARKDOWN,
+        status: ExpiredEnum.expired
+      })
     ),
     TE.map(i => i.value),
     // try to enhance raw certificate with parsed data
