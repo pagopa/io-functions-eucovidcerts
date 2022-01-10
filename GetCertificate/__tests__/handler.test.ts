@@ -169,11 +169,11 @@ describe("GetCertificate", () => {
 
         expect(val).toMatchObject({
           kind: "IResponseSuccessJson",
-          value: { info: expect.any(String), status: "expired" }
+          value: {
+            info: expect.stringMatching("^.*[a-zA-Z]+.*$"), // at least one character
+            status: "expired"
+          }
         });
-        // we send something as info
-        const info: string = (val as any).value?.info || "";
-        expect(info.length).toBeGreaterThan(0);
       } catch (error) {
         fail(error);
       }
