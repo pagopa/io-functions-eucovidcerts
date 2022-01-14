@@ -94,6 +94,9 @@ definitions:
       uvci:
         description: Unique identifier of the Certificate
         type: string
+      header_info: 
+        description: The header info (title, subtitle, logo)
+        $ref: "#/definitions/HeaderInfo"
       info:
         description: A markdown-formatted text in which show basic Certificate information for the Citizen to read.
         type: string
@@ -111,6 +114,7 @@ definitions:
     required:
       - qr_code
       - status
+      - header_info
   RevokedCertificate:
     type: object
     properties:
@@ -122,6 +126,9 @@ definitions:
         type: string
         enum:
           - revoked
+      header_info: 
+        description: The header info (title, subtitle, logo)
+        $ref: "#/definitions/HeaderInfo"
       info:
         description: |-
           A human-readable message, in plain text or Markdown format, 
@@ -132,6 +139,7 @@ definitions:
         $ref: "#/definitions/Timestamp"
     required:
       - status
+      - header_info
   ExpiredCertificate:
     type: object
     properties:
@@ -143,6 +151,9 @@ definitions:
         type: string
         enum:
           - expired
+      header_info: 
+        description: The header info (title, subtitle, logo)
+        $ref: "#/definitions/HeaderInfo"
       info:
         description: |-
           A human-readable message, in plain text or Markdown format,
@@ -151,6 +162,23 @@ definitions:
     required:
       - status
       - info
+      - header_info
+  HeaderInfo:
+    type: object
+    properties: 
+      title:
+        description: Header title
+        type: string
+      subtitle:
+        description: Header subtitle
+        type: string
+      logo_id:
+        description: Header logo identifier
+        type: string
+    required:
+      - title
+      - subtitle
+      - logo_id
   FiscalCode:
     $ref: "../node_modules/@pagopa/io-functions-commons/openapi/definitions.yaml#/FiscalCode"
   Timestamp:
