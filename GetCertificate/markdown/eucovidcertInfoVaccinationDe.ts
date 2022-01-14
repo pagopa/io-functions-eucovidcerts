@@ -1,10 +1,18 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { some } from "fp-ts/lib/Option";
-import { Certificates } from "../certificate";
+import { Certificates, ItalianValidityOnlyCertificates } from "../certificate";
 import { formatDate, printUvci } from "../printer";
 
 const fileLanguage = PreferredLanguageEnum.de_DE;
 const uvci = (c: Certificates): string => printUvci(some(fileLanguage), c);
+
+const printExemptionInfo = `
+***
+TODO
+CERTIFICAZIONE VALIDA SOLO IN ITALIA  
+sostitutiva, ove previsto dalla normativa vigente, della Certificazione verde COVID-19
+***
+`;
 
 export const getInfoPrinter = (c: Certificates): string =>
   `
@@ -21,5 +29,7 @@ Unique Certificate Identifier
 **${uvci(c)}**  
 
 [Kopiere die Kennung](iohandledlink://copy:${uvci(c)})
+
+${ItalianValidityOnlyCertificates.is(c) ? printExemptionInfo : ""}
 <br/><br/><br/><br/><br/>
 `;
