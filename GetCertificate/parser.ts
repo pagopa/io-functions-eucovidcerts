@@ -11,11 +11,13 @@ import { pipe } from "fp-ts/lib/function";
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import {
   Certificates,
+  ExemptionCertificate,
   RecoveryCertificate,
   TestCertificate,
   VacCertificate
 } from "./certificate";
 import {
+  getExemptionCertificateValidationErrors,
   getRecoveryCertificateValidationErrors,
   getTestCertificateValidationErrors,
   getVacCertificateValidationErrors
@@ -121,6 +123,9 @@ export const decodeCertificateAndLogMissingValues = (
           )
           .when(RecoveryCertificate.is, rc =>
             getRecoveryCertificateValidationErrors(rc, x)
+          )
+          .when(ExemptionCertificate.is, ec =>
+            getExemptionCertificateValidationErrors(ec, x)
           )
           .exhaustive(),
         E.mapLeft((err: string) => logWarning(`Missing map values|${err}`))
