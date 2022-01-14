@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Printer - Exemption - de_DE should print its detail page 1`] = `
+"
+TODO
+"
+`;
+
+exports[`Printer - Exemption - de_DE should print its info page 1`] = `
+"
+Surname(s) and forename(s)  
+*Nachname und Vorname*  
+**Di Caprio Marilù Teresa**  
+
+Date of birth  
+*Geburtsdatum (JJJJ-MM-TT)*  
+**1977-06-16**  
+
+Unique Certificate Identifier  
+*Eindeutige Kennung des Zertifikats*  
+**01ITE7300E1AB2A84C719004F103DCB1F70A#8**  
+
+[Kopiere die Kennung](iohandledlink://copy:01ITE7300E1AB2A84C719004F103DCB1F70A#8)
+
+
+***
+TODO
+CERTIFICAZIONE VALIDA SOLO IN ITALIA  
+sostitutiva, ove previsto dalla normativa vigente, della Certificazione verde COVID-19
+***
+
+<br/><br/><br/><br/><br/>
+"
+`;
