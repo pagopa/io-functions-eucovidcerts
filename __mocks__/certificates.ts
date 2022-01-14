@@ -96,3 +96,20 @@ export const aValidRecoveryCertificate = {
     }
   ]
 };
+
+export const aValidExemptionCertificate = {
+  ver: "1.0.0",
+  nam: {
+    fnt: "DI<CAPRIO",
+    fn: "Di Caprio",
+    gnt: "MARILU<TERESA",
+    gn: "Marilù Teresa"
+  },
+  dob: "1977-06-16",
+  e: [
+    {
+      tg: "840539006",
+      ci: "01ITE7300E1AB2A84C719004F103DCB1F70A#8"
+    }
+  ]
+};

@@ -25,6 +25,10 @@ const PersonName = t.interface({
   gnt: t.string // Standardized Given Name
 });
 
+// *************************
+// Entries
+// *************************
+
 export type VaccinationEntry = t.TypeOf<typeof VaccinationEntry>;
 export const VaccinationEntry = t.interface({
   tg: t.string.pipe(toTWithMap(diseaseAgentTargeted, PLACEHOLDER_KEY)), // disease or agent targeted
@@ -72,6 +76,19 @@ export const RecoveryEntry = t.intersection([
   t.partial({})
 ]);
 
+export type ExemptionEntry = t.TypeOf<typeof ExemptionEntry>;
+export const ExemptionEntry = t.intersection([
+  t.interface({
+    tg: t.string.pipe(toTWithMap(diseaseAgentTargeted, PLACEHOLDER_KEY)), // disease or agent targeted
+    ci: t.string // Unique Certificate Identifier: UVCI
+  }),
+  t.partial({})
+]);
+
+// *************************
+// Certificates
+// *************************
+
 export type VacCertificate = t.TypeOf<typeof VacCertificate>;
 export const VacCertificate = t.interface({
   ver: NonEmptyString,
@@ -96,9 +113,23 @@ export const RecoveryCertificate = t.interface({
   r: t.readonlyArray<typeof RecoveryEntry>(RecoveryEntry)
 });
 
+export type ExemptionCertificate = t.TypeOf<typeof ExemptionCertificate>;
+export const ExemptionCertificate = t.interface({
+  ver: NonEmptyString,
+  nam: PersonName,
+  dob: DateFromString,
+  e: t.readonlyArray<typeof ExemptionEntry>(ExemptionEntry)
+});
+
 export type Certificates = t.TypeOf<typeof Certificates>;
 export const Certificates = t.union([
   VacCertificate,
   TestCertificate,
-  RecoveryCertificate
+  RecoveryCertificate,
+  ExemptionCertificate
 ]);
+
+export type ItalianValidityOnlyCertificates = t.TypeOf<
+  typeof ItalianValidityOnlyCertificates
+>;
+export const ItalianValidityOnlyCertificates = ExemptionCertificate;
