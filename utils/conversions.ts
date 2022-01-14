@@ -39,6 +39,8 @@ const supportedLanguages = [
   PreferredLanguageEnum.de_DE
 ] as const;
 
+export const DefaultLanguage: SupportedLanguage = PreferredLanguageEnum.en_GB;
+
 export type SupportedLanguage = typeof supportedLanguages[number];
 
 export const isSupportedLanguage = (

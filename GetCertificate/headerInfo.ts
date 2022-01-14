@@ -4,7 +4,11 @@ import { pipe } from "fp-ts/lib/function";
 
 import * as O from "fp-ts/lib/Option";
 
-import { isSupportedLanguage, SupportedLanguage } from "../utils/conversions";
+import {
+  DefaultLanguage,
+  isSupportedLanguage,
+  SupportedLanguage
+} from "../utils/conversions";
 
 import { HeaderInfo } from "../generated/definitions/HeaderInfo";
 import { Certificates } from "./certificate";
@@ -37,7 +41,7 @@ export const getHeaderInfoForLanguage = (
   const language = pipe(
     lang,
     O.chain(l => (isSupportedLanguage(l) ? O.some(l) : O.none)),
-    O.getOrElse(() => PreferredLanguageEnum.en_GB as SupportedLanguage)
+    O.getOrElse(() => DefaultLanguage)
   );
   return pipe(
     certificate,
