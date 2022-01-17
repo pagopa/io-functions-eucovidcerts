@@ -179,9 +179,9 @@ describe("GetCertificate", () => {
             info: expect.stringMatching("^.*[a-zA-Z]+.*$"), // at least one character
             status: "expired",
             header_info: expect.objectContaining({
-              logo_id: expect.stringMatching("^.*[a-zA-Z0-9]+.*$"), // at least one character,
-              title: expect.any(String),
-              subtitle: expect.any(String)
+              logo_id: "",
+              title: "",
+              subtitle: ""
             })
           }
         });

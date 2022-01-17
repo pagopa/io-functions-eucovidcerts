@@ -3,6 +3,8 @@ import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import { pipe } from "fp-ts/lib/function";
 
 import * as O from "fp-ts/lib/Option";
+import { match } from "ts-pattern";
+import { HeaderInfo } from "../generated/definitions/HeaderInfo";
 
 import {
   DefaultLanguage,
@@ -10,29 +12,48 @@ import {
   SupportedLanguage
 } from "../utils/conversions";
 
-import { HeaderInfo } from "../generated/definitions/HeaderInfo";
-import { Certificates } from "./certificate";
+import {
+  Certificates,
+  RecoveryCertificate,
+  TestCertificate,
+  VacCertificate
+} from "./certificate";
 
-// TODO: Move to env variables
 const EUROPEAN_LOGO_ID = "1" as NonEmptyString;
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ITALIAN_LOGO_ID = "2" as NonEmptyString;
+
+/* 
+Title and subtitle of certificate header 
+for each supported languageF
+*/
 
 const standardTitleAndSubtitle: {
   [key in SupportedLanguage]: Omit<HeaderInfo, "logo_id">;
 } = {
   [PreferredLanguageEnum.it_IT]: {
     subtitle: "",
-    title: "TODO" as NonEmptyString
+    title: "Certificazione verde COVID-19" as NonEmptyString
   },
   [PreferredLanguageEnum.en_GB]: {
     subtitle: "",
-    title: "TODO" as NonEmptyString
+    title: "EU Digital COVID Certificate" as NonEmptyString
   },
   [PreferredLanguageEnum.de_DE]: {
     subtitle: "",
-    title: "TODO" as NonEmptyString
+    title: "Grünes COVID-19-Zertifikat" as NonEmptyString
   }
+};
+
+const getStandardHeader = (language: SupportedLanguage): HeaderInfo => ({
+  ...standardTitleAndSubtitle[language],
+  logo_id: EUROPEAN_LOGO_ID
+});
+
+const emptyHeader: HeaderInfo = {
+  logo_id: "",
+  subtitle: "",
+  title: ""
 };
 
 export const getHeaderInfoForLanguage = (
@@ -45,13 +66,13 @@ export const getHeaderInfoForLanguage = (
   );
   return pipe(
     certificate,
-    O.map(_c => ({
-      ...standardTitleAndSubtitle[language],
-      logo_id: EUROPEAN_LOGO_ID
-    })),
-    O.getOrElse(() => ({
-      ...standardTitleAndSubtitle[language],
-      logo_id: EUROPEAN_LOGO_ID
-    }))
+    O.map(c =>
+      match(c)
+        .when(VacCertificate.is, _vc => getStandardHeader(language))
+        .when(TestCertificate.is, _tc => getStandardHeader(language))
+        .when(RecoveryCertificate.is, _rc => getStandardHeader(language))
+        .exhaustive()
+    ),
+    O.getOrElse(() => emptyHeader)
   );
 };

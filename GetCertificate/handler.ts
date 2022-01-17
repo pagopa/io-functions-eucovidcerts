@@ -44,7 +44,7 @@ import {
   printInfo,
   printUvci
 } from "./printer";
-import { getHeaderInfoForLanguage } from "./headerInfo";
+import { getHeaderInfoForLanguage } from "./certificate.headerInfo";
 
 const LOG_PREFIX = "GetCertificateParams";
 const EMPTY_STRING_FOR_MARKDOWN = " "; // Workaround to let App markdown rendering an empty string without errors
