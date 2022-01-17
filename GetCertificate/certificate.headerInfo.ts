@@ -13,6 +13,7 @@ import {
 
 import {
   Certificates,
+  ExemptionCertificate,
   RecoveryCertificate,
   TestCertificate,
   VacCertificate
@@ -24,9 +25,8 @@ const ITALIAN_LOGO_ID = "esenzione";
 
 /* 
 Title and subtitle of certificate header 
-for each supported languageF
+for each supported language
 */
-
 const standardTitleAndSubtitle: {
   [key in SupportedLanguage]: Omit<HeaderInfo, "logo_id">;
 } = {
@@ -44,9 +44,35 @@ const standardTitleAndSubtitle: {
   }
 };
 
+/* 
+Title and subtitle of exemption certificate header 
+for each supported language
+*/
+const exemptionTitleAndSubtitle: {
+  [key in SupportedLanguage]: Omit<HeaderInfo, "logo_id">;
+} = {
+  [PreferredLanguageEnum.it_IT]: {
+    subtitle: "",
+    title: "Certificazione digitale di esenzione dalla vaccinazione anti-COVID-19" as NonEmptyString
+  },
+  [PreferredLanguageEnum.en_GB]: {
+    subtitle: "",
+    title: "Digital COVID-19 vaccination exemption certificate" as NonEmptyString
+  },
+  [PreferredLanguageEnum.de_DE]: {
+    subtitle: "",
+    title: "Digital COVID-19 vaccination exemption certificate" as NonEmptyString
+  }
+};
+
 const getStandardHeader = (language: SupportedLanguage): HeaderInfo => ({
   ...standardTitleAndSubtitle[language],
   logo_id: EUROPEAN_LOGO_ID
+});
+
+const getExemptionHeader = (language: SupportedLanguage): HeaderInfo => ({
+  ...exemptionTitleAndSubtitle[language],
+  logo_id: ITALIAN_LOGO_ID
 });
 
 const emptyHeader: HeaderInfo = {
@@ -67,6 +93,7 @@ export const getHeaderInfoForLanguage = (
         .when(VacCertificate.is, _vc => getStandardHeader(language))
         .when(TestCertificate.is, _tc => getStandardHeader(language))
         .when(RecoveryCertificate.is, _rc => getStandardHeader(language))
+        .when(ExemptionCertificate.is, _ivc => getExemptionHeader(language))
         .exhaustive()
   );
 
