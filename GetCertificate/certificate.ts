@@ -80,9 +80,16 @@ export type ExemptionEntry = t.TypeOf<typeof ExemptionEntry>;
 export const ExemptionEntry = t.intersection([
   t.interface({
     tg: t.string.pipe(toTWithMap(diseaseAgentTargeted, PLACEHOLDER_KEY)), // disease or agent targeted
-    ci: t.string // Unique Certificate Identifier: UVCI
+    fc: t.string, // Unique identifier of the certifying doctor (Codice Fiscale)
+    co: t.string, // Country of Test
+    is: t.string, // Certificate Issuer
+    df: DateFromString, // ISO 8601 Date: Certificate Valid From
+    ci: t.string, // Unique Certificate Identifier: UVCI
+    cu: t.string // Unique vaccination exemption code: CUEV
   }),
-  t.partial({})
+  t.partial({
+    du: DateFromString // ISO 8601 Date: Certificate Valid Until
+  })
 ]);
 
 // *************************

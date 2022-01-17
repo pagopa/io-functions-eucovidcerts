@@ -15,31 +15,19 @@ Target disease or agent
 **${ee.tg}**  
 
 Fiscal code of the certifying doctor  
-**TODO**  
+**${ee.fc}**  
   
 Certification validity start date  
-**${
-    "TODO"
-    // eslint-disable-next-line extra-rules/no-commented-out-code
-    // formatDate(ee.df, fileLanguage)
-  }**  
+**${formatDate(ee.df, fileLanguage)}**  
 
 End of validity date of the certification, if applicable  
-**${
-    "TODO"
-    // eslint-disable-next-line extra-rules/no-commented-out-code
-    /* formatDate(ee.du, fileLanguage) */
-  }**  
+**${ee.du ? formatDate(ee.du, fileLanguage) : ""}**  
 
 Unique vaccination exemption code (CUEV)  
-**TODO**  
+**${ee.cu}**  
 
 Certificate issuer  
-**${
-    "TODO"
-    // eslint-disable-next-line extra-rules/no-commented-out-code
-    // formatCertificateIssuer(tr.is, fileLanguage)
-  }**  
+**${formatCertificateIssuer(ee.is, fileLanguage)}**  
 
 ***  
 *This certification is valid only in Italy and can be used in place of the COVID-19 green certification

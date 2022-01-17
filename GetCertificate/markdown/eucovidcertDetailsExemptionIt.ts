@@ -15,35 +15,23 @@ Malattia o agente bersaglio
 **${ee.tg}**  
 
 Codice fiscale del medico certificatore  
-**TODO**  
+**${ee.fc}**  
  
 Data inizio validità della certificazione  
-**${
-    "TODO"
-    // eslint-disable-next-line extra-rules/no-commented-out-code
-    // formatDate(ee.df, fileLanguage)
-  }**  
+**${formatDate(ee.df, fileLanguage)}**  
 
 Data di fine validità della certificazione, ove prevista  
-**${
-    "TODO"
-    // eslint-disable-next-line extra-rules/no-commented-out-code
-    /* formatDate(ee.du, fileLanguage) */
-  }**  
+**${ee.du ? formatDate(ee.du, fileLanguage) : ""}**  
 
 Codice univoco esenzione vaccinale (CUEV)  
-**TODO**  
+**${ee.cu}**  
 
 Soggetto che ha rilasciato la certificazione digitale di esenzione  
-**${
-    "TODO"
-    // eslint-disable-next-line extra-rules/no-commented-out-code
-    // formatCertificateIssuer(tr.is, fileLanguage)
-  }**  
+**${formatCertificateIssuer(ee.is, fileLanguage)}**  
 
 ***  
 *Questa certificazione è valida solo in Italia e può essere utilizzata in sostituzione della Certificazione verde COVID-19 
-per lo svolgimento di attività e la fruizione di servizi secondo quanto previsto dalla normativa nazionale vigente*
+per lo svolgimento di attività e la fruizione di servizi secondo quanto previsto dalla normativa nazionale vigente*  
 ***  
   
 Per ulteriori informazioni e ed informativa privacy: 
