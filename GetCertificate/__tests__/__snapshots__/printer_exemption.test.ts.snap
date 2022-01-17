@@ -1,0 +1,310 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Printer - Exemption - de_DE should print detail page for a certificate with end date 1`] = `
+"
+TODO  
+TODO  
+TODO  
+## Certificate of Exemption  
+***  
+**Subject exempt from SARS-CoV-2 vaccination**  
+***  
+
+Target disease or agent  
+**COVID-19**  
+
+Fiscal code of the certifying doctor  
+**AAABBB12A10H501F**  
+  
+Certification validity start date  
+**2021-12-13**  
+
+End of validity date of the certification, if applicable  
+**2022-01-13**  
+
+Unique vaccination exemption code (CUEV)  
+**CUEV-ABCDE12345**  
+
+Certificate issuer  
+**Ministero della Salute**  
+
+***  
+*This certification is valid only in Italy and can be used in place of the COVID-19 green certification
+for the performance of activities and the use of services in accordance with the provisions of the national legislation in force*
+***  
+  
+For further information and privacy policy:  
+[www.dgc.gov.it](https://www.dgc.gov.it); 
+[www.salute.gov.it](https://www.salute.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Exemption - de_DE should print detail page for a certificate without end date 1`] = `
+"
+TODO  
+TODO  
+TODO  
+## Certificate of Exemption  
+***  
+**Subject exempt from SARS-CoV-2 vaccination**  
+***  
+
+Target disease or agent  
+**COVID-19**  
+
+Fiscal code of the certifying doctor  
+**AAABBB12A10H501F**  
+  
+Certification validity start date  
+**2021-12-13**  
+
+End of validity date of the certification, if applicable  
+****  
+
+Unique vaccination exemption code (CUEV)  
+**CUEV-ABCDE12345**  
+
+Certificate issuer  
+**Ministero della Salute**  
+
+***  
+*This certification is valid only in Italy and can be used in place of the COVID-19 green certification
+for the performance of activities and the use of services in accordance with the provisions of the national legislation in force*
+***  
+  
+For further information and privacy policy:  
+[www.dgc.gov.it](https://www.dgc.gov.it); 
+[www.salute.gov.it](https://www.salute.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Exemption - de_DE should print its info page 1`] = `
+"
+Surname(s) and forename(s)  
+*Nachname und Vorname*  
+**Di Caprio Marilù Teresa**  
+
+Date of birth  
+*Geburtsdatum (JJJJ-MM-TT)*  
+**1977-06-16**  
+
+Unique Certificate Identifier  
+*Eindeutige Kennung des Zertifikats*  
+**01IT1B321FE2B68D42A7AB6A2EC83E8F09F3#7**  
+
+[Kopiere die Kennung](iohandledlink://copy:01IT1B321FE2B68D42A7AB6A2EC83E8F09F3#7)
+
+
+***
+TODO
+CERTIFICAZIONE VALIDA SOLO IN ITALIA  
+sostitutiva, ove previsto dalla normativa vigente, della Certificazione verde COVID-19
+***
+
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Exemption - en_GB should print detail page for a certificate with end date 1`] = `
+"
+## Certificate of Exemption  
+***  
+**Subject exempt from SARS-CoV-2 vaccination**  
+***  
+
+Target disease or agent  
+**COVID-19**  
+
+Fiscal code of the certifying doctor  
+**AAABBB12A10H501F**  
+  
+Certification validity start date  
+**2021-12-13**  
+
+End of validity date of the certification, if applicable  
+**2022-01-13**  
+
+Unique vaccination exemption code (CUEV)  
+**CUEV-ABCDE12345**  
+
+Certificate issuer  
+**Ministero della Salute**  
+
+***  
+*This certification is valid only in Italy and can be used in place of the COVID-19 green certification
+for the performance of activities and the use of services in accordance with the provisions of the national legislation in force*
+***  
+  
+For further information and privacy policy:  
+[www.dgc.gov.it](https://www.dgc.gov.it); 
+[www.salute.gov.it](https://www.salute.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Exemption - en_GB should print detail page for a certificate without end date 1`] = `
+"
+## Certificate of Exemption  
+***  
+**Subject exempt from SARS-CoV-2 vaccination**  
+***  
+
+Target disease or agent  
+**COVID-19**  
+
+Fiscal code of the certifying doctor  
+**AAABBB12A10H501F**  
+  
+Certification validity start date  
+**2021-12-13**  
+
+End of validity date of the certification, if applicable  
+****  
+
+Unique vaccination exemption code (CUEV)  
+**CUEV-ABCDE12345**  
+
+Certificate issuer  
+**Ministero della Salute**  
+
+***  
+*This certification is valid only in Italy and can be used in place of the COVID-19 green certification
+for the performance of activities and the use of services in accordance with the provisions of the national legislation in force*
+***  
+  
+For further information and privacy policy:  
+[www.dgc.gov.it](https://www.dgc.gov.it); 
+[www.salute.gov.it](https://www.salute.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Exemption - en_GB should print its info page 1`] = `
+"
+Surname(s) and forename(s)  
+*Cognome e Nome*  
+**Di Caprio Marilù Teresa**  
+
+Date of birth  
+*Data di nascita (aaaa-mm-gg)*  
+**1977-06-16**  
+
+Unique Certificate Identifier  
+*Identificativo univoco del certificato*  
+**01IT1B321FE2B68D42A7AB6A2EC83E8F09F3#7**  
+
+[copia l’identificativo](iohandledlink://copy:01IT1B321FE2B68D42A7AB6A2EC83E8F09F3#7)
+
+
+***
+CERTIFICAZIONE VALIDA SOLO IN ITALIA  
+sostitutiva, ove previsto dalla normativa vigente, della Certificazione verde COVID-19  
+*VALID ONLY IN ITALY*  
+*replace the Digital COVID certificate, in accordance with the current national legislation*
+***
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Exemption - it_IT should print detail page for a certificate with end date 1`] = `
+"
+## Certificato di Esenzione  
+***  
+**Soggetto esente alla vaccinazione anti SARS-CoV-2**  
+***  
+
+Malattia o agente bersaglio  
+**COVID-19**  
+
+Codice fiscale del medico certificatore  
+**AAABBB12A10H501F**  
+ 
+Data inizio validità della certificazione  
+**13-12-2021**  
+
+Data di fine validità della certificazione, ove prevista  
+**13-01-2022**  
+
+Codice univoco esenzione vaccinale (CUEV)  
+**CUEV-ABCDE12345**  
+
+Soggetto che ha rilasciato la certificazione digitale di esenzione  
+**Ministero della Salute**  
+
+***  
+*Questa certificazione è valida solo in Italia e può essere utilizzata in sostituzione della Certificazione verde COVID-19 
+per lo svolgimento di attività e la fruizione di servizi secondo quanto previsto dalla normativa nazionale vigente*  
+***  
+  
+Per ulteriori informazioni e ed informativa privacy: 
+[www.dgc.gov.it](https://www.dgc.gov.it); 
+[www.salute.gov.it](https://www.salute.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Exemption - it_IT should print detail page for a certificate without end date 1`] = `
+"
+## Certificato di Esenzione  
+***  
+**Soggetto esente alla vaccinazione anti SARS-CoV-2**  
+***  
+
+Malattia o agente bersaglio  
+**COVID-19**  
+
+Codice fiscale del medico certificatore  
+**AAABBB12A10H501F**  
+ 
+Data inizio validità della certificazione  
+**13-12-2021**  
+
+Data di fine validità della certificazione, ove prevista  
+****  
+
+Codice univoco esenzione vaccinale (CUEV)  
+**CUEV-ABCDE12345**  
+
+Soggetto che ha rilasciato la certificazione digitale di esenzione  
+**Ministero della Salute**  
+
+***  
+*Questa certificazione è valida solo in Italia e può essere utilizzata in sostituzione della Certificazione verde COVID-19 
+per lo svolgimento di attività e la fruizione di servizi secondo quanto previsto dalla normativa nazionale vigente*  
+***  
+  
+Per ulteriori informazioni e ed informativa privacy: 
+[www.dgc.gov.it](https://www.dgc.gov.it); 
+[www.salute.gov.it](https://www.salute.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Exemption - it_IT should print its info page 1`] = `
+"
+Surname(s) and forename(s)  
+*Cognome e Nome*  
+**Di Caprio Marilù Teresa**  
+
+Date of birth  
+*Data di nascita (aaaa-mm-gg)*  
+**1977-06-16**  
+
+Unique Certificate Identifier  
+*Identificativo univoco del certificato*  
+**01IT1B321FE2B68D42A7AB6A2EC83E8F09F3#7**  
+
+[copia l’identificativo](iohandledlink://copy:01IT1B321FE2B68D42A7AB6A2EC83E8F09F3#7)
+
+
+***
+CERTIFICAZIONE VALIDA SOLO IN ITALIA  
+sostitutiva, ove previsto dalla normativa vigente, della Certificazione verde COVID-19  
+*VALID ONLY IN ITALY*  
+*replace the Digital COVID certificate, in accordance with the current national legislation*
+***
+<br/><br/><br/><br/><br/>
+"
+`;
