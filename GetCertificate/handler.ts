@@ -44,7 +44,10 @@ import {
   printInfo,
   printUvci
 } from "./printer";
-import { getHeaderInfoForLanguage } from "./certificate.headerInfo";
+import {
+  getFallbackHeaderInfoForLanguage,
+  getHeaderInfoForLanguage
+} from "./certificate.headerInfo";
 
 const LOG_PREFIX = "GetCertificateParams";
 const EMPTY_STRING_FOR_MARKDOWN = " "; // Workaround to let App markdown rendering an empty string without errors
@@ -78,7 +81,7 @@ export const processSuccessCertificateGeneration = (
     TE.fromPredicate(
       i => i.status === 200,
       () => ({
-        header_info: getHeaderInfoForLanguage(selectedLanguage)(O.none),
+        header_info: getFallbackHeaderInfoForLanguage(selectedLanguage),
         info: printExpiredInfo(selectedLanguage) || EMPTY_STRING_FOR_MARKDOWN,
         status: ExpiredEnum.expired
       })
@@ -100,7 +103,7 @@ export const processSuccessCertificateGeneration = (
           _ => undefined,
           f => ({
             detail: printDetails(selectedLanguage, f),
-            header_info: getHeaderInfoForLanguage(selectedLanguage)(O.some(f)),
+            header_info: getHeaderInfoForLanguage(selectedLanguage)(f),
             info: printInfo(selectedLanguage, f),
             uvci: printUvci(selectedLanguage, f)
           })
@@ -114,7 +117,7 @@ export const processSuccessCertificateGeneration = (
       detail: c.printedCertificate?.detail,
       header_info:
         c.printedCertificate?.header_info ??
-        getHeaderInfoForLanguage(selectedLanguage)(O.none),
+        getFallbackHeaderInfoForLanguage(selectedLanguage),
       info: c.printedCertificate?.info,
       qr_code: {
         content: c.qrcodeB64,

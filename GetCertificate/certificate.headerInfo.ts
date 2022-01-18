@@ -1,5 +1,4 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
-import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import { pipe } from "fp-ts/lib/function";
 
 import * as O from "fp-ts/lib/Option";
@@ -19,9 +18,9 @@ import {
   VacCertificate
 } from "./certificate";
 
-const EUROPEAN_LOGO_ID = "1" as NonEmptyString;
+const EUROPEAN_LOGO_ID = "1";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ITALIAN_LOGO_ID = "2" as NonEmptyString;
+const ITALIAN_LOGO_ID = "2";
 
 /* 
 Title and subtitle of certificate header 
@@ -33,15 +32,15 @@ const standardTitleAndSubtitle: {
 } = {
   [PreferredLanguageEnum.it_IT]: {
     subtitle: "",
-    title: "Certificazione verde COVID-19" as NonEmptyString
+    title: "Certificazione verde COVID-19"
   },
   [PreferredLanguageEnum.en_GB]: {
     subtitle: "",
-    title: "EU Digital COVID Certificate" as NonEmptyString
+    title: "EU Digital COVID Certificate"
   },
   [PreferredLanguageEnum.de_DE]: {
     subtitle: "",
-    title: "Grünes COVID-19-Zertifikat" as NonEmptyString
+    title: "Grünes COVID-19-Zertifikat"
   }
 };
 
@@ -58,21 +57,19 @@ const emptyHeader: HeaderInfo = {
 
 export const getHeaderInfoForLanguage = (
   lang: O.Option<PreferredLanguageEnum>
-) => (certificate: O.Option<Certificates>): HeaderInfo => {
-  const language = pipe(
+) => (certificate: Certificates): HeaderInfo =>
+  pipe(
     lang,
-    O.chain(l => (isSupportedLanguage(l) ? O.some(l) : O.none)),
-    O.getOrElse(() => DefaultLanguage)
-  );
-  return pipe(
-    certificate,
-    O.map(c =>
-      match(c)
+    O.filter(isSupportedLanguage),
+    O.getOrElse(() => DefaultLanguage),
+    language =>
+      match(certificate)
         .when(VacCertificate.is, _vc => getStandardHeader(language))
         .when(TestCertificate.is, _tc => getStandardHeader(language))
         .when(RecoveryCertificate.is, _rc => getStandardHeader(language))
         .exhaustive()
-    ),
-    O.getOrElse(() => emptyHeader)
   );
-};
+
+export const getFallbackHeaderInfoForLanguage = (
+  _lang: O.Option<PreferredLanguageEnum>
+): HeaderInfo => emptyHeader;
