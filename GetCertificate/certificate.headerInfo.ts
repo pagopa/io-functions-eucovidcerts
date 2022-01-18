@@ -18,9 +18,9 @@ import {
   VacCertificate
 } from "./certificate";
 
-const EUROPEAN_LOGO_ID = "1";
+const EUROPEAN_LOGO_ID = "greenpass";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ITALIAN_LOGO_ID = "2";
+const ITALIAN_LOGO_ID = "esenzione";
 
 /* 
 Title and subtitle of certificate header 
