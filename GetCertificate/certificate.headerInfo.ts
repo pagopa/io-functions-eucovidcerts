@@ -36,7 +36,7 @@ const standardTitleAndSubtitle: {
   },
   [PreferredLanguageEnum.en_GB]: {
     subtitle: "",
-    title: "EU Digital COVID Certificate"
+    title: "EU Digital COVID-19 Certificate"
   },
   [PreferredLanguageEnum.de_DE]: {
     subtitle: "",
@@ -53,15 +53,16 @@ const exemptionTitleAndSubtitle: {
 } = {
   [PreferredLanguageEnum.it_IT]: {
     subtitle: "",
-    title: "Certificazione digitale di esenzione dalla vaccinazione anti-COVID-19" as NonEmptyString
+    title:
+      "Certificazione digitale di esenzione dalla vaccinazione anti-COVID-19"
   },
   [PreferredLanguageEnum.en_GB]: {
     subtitle: "",
-    title: "Digital COVID-19 vaccination exemption certificate" as NonEmptyString
+    title: "Digital COVID-19 vaccination exemption certificate"
   },
   [PreferredLanguageEnum.de_DE]: {
     subtitle: "",
-    title: "Digital COVID-19 vaccination exemption certificate" as NonEmptyString
+    title: "Digital COVID-19 vaccination exemption certificate"
   }
 };
 

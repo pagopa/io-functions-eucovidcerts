@@ -6,9 +6,8 @@ const fileLanguage = PreferredLanguageEnum.de_DE;
 
 export const getDetailPrinter = (ee: ExemptionEntry): string =>
   `
-TODO  
-TODO  
-TODO  
+**German translation coming soon..**  
+  
 ## Certificate of Exemption  
 ***  
 **Subject exempt from SARS-CoV-2 vaccination**  

@@ -4,7 +4,8 @@ import { pipe } from "fp-ts/lib/function";
 import {
   VacCertificate,
   RecoveryCertificate,
-  TestCertificate
+  TestCertificate,
+  ExemptionCertificate
 } from "../certificate";
 import {
   decodeCertificateAndLogMissingValues,
@@ -169,4 +170,22 @@ describe("parser", () => {
       E.mapLeft(_ => fail("Unable to parse image"))
     );
   });
+
+  it.each`
+    filename
+    ${"Exemption_1"}
+    ${"Exemption_2"}
+  `(
+    "should read and decode exemption certificate from file $filename",
+    async ({ filename }) => {
+      pipe(
+        fs.readFileSync(`__mocks__/qrcodes/${filename}.png`, {
+          encoding: "base64"
+        }),
+        data => parseQRCode(data, s => {}),
+        E.map(parsed => expect(ExemptionCertificate.is(parsed)).toEqual(true)),
+        E.mapLeft(_ => fail("Unable to parse image"))
+      );
+    }
+  );
 });

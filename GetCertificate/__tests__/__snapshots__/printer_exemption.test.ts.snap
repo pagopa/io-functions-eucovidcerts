@@ -2,9 +2,8 @@
 
 exports[`Printer - Exemption - de_DE should print detail page for a certificate with end date 1`] = `
 "
-TODO  
-TODO  
-TODO  
+**German translation coming soon..**  
+  
 ## Certificate of Exemption  
 ***  
 **Subject exempt from SARS-CoV-2 vaccination**  
@@ -42,9 +41,8 @@ For further information and privacy policy:
 
 exports[`Printer - Exemption - de_DE should print detail page for a certificate without end date 1`] = `
 "
-TODO  
-TODO  
-TODO  
+**German translation coming soon..**  
+  
 ## Certificate of Exemption  
 ***  
 **Subject exempt from SARS-CoV-2 vaccination**  
