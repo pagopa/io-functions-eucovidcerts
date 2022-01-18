@@ -23,7 +23,7 @@ import {
   PreferredLanguageEnum
 } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { Context } from "@azure/functions";
-import * as o from "fp-ts/lib/Option";
+import * as O from "fp-ts/lib/Option";
 import * as E from "fp-ts/lib/Either";
 import * as TE from "fp-ts/lib/TaskEither";
 import * as T from "fp-ts/lib/Task";
@@ -44,6 +44,10 @@ import {
   printInfo,
   printUvci
 } from "./printer";
+import {
+  getFallbackHeaderInfoForLanguage,
+  getHeaderInfoForLanguage
+} from "./certificate.headerInfo";
 
 const LOG_PREFIX = "GetCertificateParams";
 const EMPTY_STRING_FOR_MARKDOWN = " "; // Workaround to let App markdown rendering an empty string without errors
@@ -69,7 +73,7 @@ type ISuccessCertificateResponses = IResponseType<
 
 export const processSuccessCertificateGeneration = (
   context: Context,
-  selectedLanguage: o.Option<PreferredLanguageEnum>,
+  selectedLanguage: O.Option<PreferredLanguageEnum>,
   e: ISuccessCertificateResponses
 ): TE.TaskEither<never, IResponseSuccessJson<Certificate>> =>
   pipe(
@@ -77,6 +81,7 @@ export const processSuccessCertificateGeneration = (
     TE.fromPredicate(
       i => i.status === 200,
       () => ({
+        header_info: getFallbackHeaderInfoForLanguage(selectedLanguage),
         info: printExpiredInfo(selectedLanguage) || EMPTY_STRING_FOR_MARKDOWN,
         status: ExpiredEnum.expired
       })
@@ -98,6 +103,7 @@ export const processSuccessCertificateGeneration = (
           _ => undefined,
           f => ({
             detail: printDetails(selectedLanguage, f),
+            header_info: getHeaderInfoForLanguage(selectedLanguage)(f),
             info: printInfo(selectedLanguage, f),
             uvci: printUvci(selectedLanguage, f)
           })
@@ -109,6 +115,9 @@ export const processSuccessCertificateGeneration = (
     // compose a response payload
     TE.map(c => ({
       detail: c.printedCertificate?.detail,
+      header_info:
+        c.printedCertificate?.header_info ??
+        getFallbackHeaderInfoForLanguage(selectedLanguage),
       info: c.printedCertificate?.info,
       qr_code: {
         content: c.qrcodeB64,
@@ -137,9 +146,9 @@ export const GetCertificateHandler = (
   const hashedFiscalCode = toSHA256(fiscal_code);
   const selectedLanguage = pipe(
     preferred_languages,
-    o.fromNullable,
-    o.map(langs => langs.filter(PreferredLanguage.is)),
-    o.chain(langs => (langs.length > 0 ? o.some(langs[0]) : o.none))
+    O.fromNullable,
+    O.map(langs => langs.filter(PreferredLanguage.is)),
+    O.chain(langs => (langs.length > 0 ? O.some(langs[0]) : O.none))
   );
 
   return pipe(

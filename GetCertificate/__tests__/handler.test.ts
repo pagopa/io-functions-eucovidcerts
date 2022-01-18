@@ -131,6 +131,12 @@ describe("GetCertificate", () => {
           expect(val.value.info!.length).toBeGreaterThan(0);
           expect(val.value.detail).toBeDefined();
           expect(val.value.detail!.length).toBeGreaterThan(0);
+          expect(val.value.header_info).toBeDefined();
+          expect(val.value.header_info).toMatchObject({
+            logo_id: expect.stringMatching("^.*[a-zA-Z0-9]+.*$"), // at least one character,
+            title: expect.any(String),
+            subtitle: expect.any(String)
+          });
         }
       }
     } catch (error) {
@@ -171,7 +177,12 @@ describe("GetCertificate", () => {
           kind: "IResponseSuccessJson",
           value: {
             info: expect.stringMatching("^.*[a-zA-Z]+.*$"), // at least one character
-            status: "expired"
+            status: "expired",
+            header_info: expect.objectContaining({
+              logo_id: "",
+              title: "",
+              subtitle: ""
+            })
           }
         });
       } catch (error) {

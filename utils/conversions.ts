@@ -4,7 +4,10 @@ import * as t from "io-ts";
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { errorsToReadableMessages } from "@pagopa/ts-commons/lib/reporters";
 import { Errors } from "io-ts";
-import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
+import {
+  PreferredLanguage,
+  PreferredLanguageEnum
+} from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import * as o from "fp-ts/lib/Option";
 
 /**
@@ -30,11 +33,20 @@ export const toString = JSON.stringify;
 /**
  * An object representing a value translated in every supported languages
  */
+const supportedLanguages = [
+  PreferredLanguageEnum.it_IT,
+  PreferredLanguageEnum.en_GB,
+  PreferredLanguageEnum.de_DE
+] as const;
 
-export type SupportedLanguage =
-  | PreferredLanguageEnum.en_GB
-  | PreferredLanguageEnum.de_DE
-  | PreferredLanguageEnum.it_IT;
+export const DefaultLanguage: SupportedLanguage = PreferredLanguageEnum.en_GB;
+
+export type SupportedLanguage = typeof supportedLanguages[number];
+
+export const isSupportedLanguage = (
+  lang: PreferredLanguage
+): lang is SupportedLanguage =>
+  (supportedLanguages as ReadonlyArray<PreferredLanguageEnum>).includes(lang);
 
 export interface ITranslatable {
   readonly displays: { [key in SupportedLanguage]: string };

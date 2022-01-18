@@ -7,7 +7,7 @@ import * as o from "fp-ts/lib/Option";
 import * as moment from "moment-timezone";
 import { match } from "ts-pattern";
 import { pipe } from "fp-ts/lib/function";
-import { SupportedLanguage } from "../utils/conversions";
+import { DefaultLanguage, SupportedLanguage } from "../utils/conversions";
 import {
   Certificates,
   TestCertificate,
@@ -96,7 +96,7 @@ const printersConfigurations: {
 };
 
 export const defaultPrinter: IPrintersForLanguage =
-  printersConfigurations[PreferredLanguageEnum.en_GB];
+  printersConfigurations[DefaultLanguage];
 
 /**
  * Return the correct IPrintersForLanguage based on preferred language,
