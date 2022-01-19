@@ -35,12 +35,12 @@ import { Mime_typeEnum } from "../generated/definitions/QRCode";
 import { toSHA256 } from "../utils/conversions";
 import { createDGCClientSelector } from "../utils/dgcClientSelector";
 import { toString } from "../utils/conversions";
-import { StatusEnum as ExpiredEnum } from "../generated/definitions/ExpiredCertificate";
+import { StatusEnum as RevokedEnum } from "../generated/definitions/RevokedCertificate";
 import { SearchSingleQrCodeResponseDTO } from "../generated/dgc/SearchSingleQrCodeResponseDTO";
 import { parseQRCode } from "./parser";
 import {
   printDetails,
-  printExpiredInfo,
+  printExpiredOrRevokedInfo,
   printInfo,
   printUvci
 } from "./printer";
@@ -82,8 +82,10 @@ export const processSuccessCertificateGeneration = (
       i => i.status === 200,
       () => ({
         header_info: getFallbackHeaderInfoForLanguage(selectedLanguage),
-        info: printExpiredInfo(selectedLanguage) || EMPTY_STRING_FOR_MARKDOWN,
-        status: ExpiredEnum.expired
+        info:
+          printExpiredOrRevokedInfo(selectedLanguage) ||
+          EMPTY_STRING_FOR_MARKDOWN,
+        status: RevokedEnum.revoked
       })
     ),
     TE.map(i => i.value),

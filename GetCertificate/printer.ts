@@ -182,8 +182,9 @@ export const printUvci = (
  * @param lang the preferred language
  * @returns a string containing the Info markdown
  */
-export const printExpiredInfo = (lang: o.Option<PreferredLanguage>): string =>
-  getPrinterForLanguage(lang).expiredInfoPrinter();
+export const printExpiredOrRevokedInfo = (
+  lang: o.Option<PreferredLanguage>
+): string => getPrinterForLanguage(lang).expiredInfoPrinter();
 
 /**
  * Check if Vaccination has ended
