@@ -16,7 +16,7 @@ import {
 import { fakeQRCodeInfo } from "../../utils/fakeDGCClient";
 import { StatusEnum } from "../../generated/definitions/ValidCertificate";
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
-import { string } from "fp-ts";
+import { RevokedCertificate } from "../../generated/definitions/RevokedCertificate";
 
 const aFiscalCode = "PRVPRV25A01H501B";
 
@@ -185,6 +185,7 @@ describe("GetCertificate", () => {
             })
           }
         });
+        expect(RevokedCertificate.is((val as any).value)).toBe(true);
       } catch (error) {
         fail(error);
       }
