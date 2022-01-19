@@ -171,21 +171,14 @@ describe("parser", () => {
     );
   });
 
-  it.each`
-    filename
-    ${"Exemption_1"}
-    ${"Exemption_2"}
-  `(
-    "should read and decode exemption certificate from file $filename",
-    async ({ filename }) => {
-      pipe(
-        fs.readFileSync(`__mocks__/qrcodes/${filename}.png`, {
-          encoding: "base64"
-        }),
-        data => parseQRCode(data, s => {}),
-        E.map(parsed => expect(ExemptionCertificate.is(parsed)).toEqual(true)),
-        E.mapLeft(_ => fail("Unable to parse image"))
-      );
-    }
-  );
+  it("should read and decode exemption certificate from file", async () => {
+    pipe(
+      fs.readFileSync(`__mocks__/qrcodes/Exemption.png`, {
+        encoding: "base64"
+      }),
+      data => parseQRCode(data, s => {}),
+      E.map(parsed => expect(ExemptionCertificate.is(parsed)).toEqual(true)),
+      E.mapLeft(_ => fail("Unable to parse image"))
+    );
+  });
 });

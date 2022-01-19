@@ -6,37 +6,36 @@ const fileLanguage = PreferredLanguageEnum.de_DE;
 
 export const getDetailPrinter = (ee: ExemptionEntry): string =>
   `
-**German translation coming soon..**  
-  
-## Certificate of Exemption  
+## Digitale Bescheinigung der Befreiung von der Impfung gegen COVID-19  
 ***  
-**Subject exempt from SARS-CoV-2 vaccination**  
+**NUR IN ITALIEN GÜLTIG**  
 ***  
 
-Target disease or agent  
+Krankheit oder Erreger  
 **${ee.tg}**  
 
-Fiscal code of the certifying doctor  
+Steuernummer des zertifizierenden Arztes  
 **${ee.fc}**  
   
-Certification validity start date  
+Datum des Beginns der Gültigkeit der Bescheinigung  
 **${formatDate(ee.df, fileLanguage)}**  
 
-End of validity date of the certification, if applicable  
-**${ee.du ? formatDate(ee.du, fileLanguage) : ""}**  
+Datum des Gültigkeitsende der Bescheinigung  
+**${formatDate(ee.du, fileLanguage)}**  
 
-Unique vaccination exemption code (CUEV)  
+Eindeutiger Kodex der Impfbefreiung (CUEV)  
 **${ee.cu}**  
 
-Certificate issuer  
+Subjekt, welches die digitale Befreiungsbescheinigung ausgestellt hat  
 **${formatCertificateIssuer(ee.is, fileLanguage)}**  
 
 ***  
-*This certification is valid only in Italy and can be used in place of the COVID-19 green certification
-for the performance of activities and the use of services in accordance with the provisions of the national legislation in force*
+*Diese Bescheinigung ist nur in Italien gültig und kann als Ersatz des Grünen COVID-19-Zertifikats 
+für die Ausübung von Tätigkeiten und die Nutzung der Diensten, 
+gemäß den geltenden nationalen Rechtsbestimmungen, verwendet werden.*  
 ***  
   
-For further information and privacy policy:  
+Für zusätzliche Informationen und Datenblatt zur Privacy:  
 [www.dgc.gov.it](https://www.dgc.gov.it); 
 [www.salute.gov.it](https://www.salute.gov.it)
 <br/><br/><br/><br/><br/>

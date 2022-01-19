@@ -6,10 +6,7 @@ import { some } from "fp-ts/lib/Option";
 import { Certificates } from "../certificate";
 import { printDetails, printInfo } from "../printer";
 
-import {
-  aValidExemptionCertificateWithEndDate,
-  aValidExemptionCertificateWithoutEndDate
-} from "../../__mocks__/certificates";
+import { aValidExemptionCertificateWithEndDate } from "../../__mocks__/certificates";
 
 describe.each`
   preferredLanguage
@@ -29,13 +26,9 @@ describe.each`
     expect(result).toMatchSnapshot();
   });
 
-  it.each`
-    scenario                            | certificate
-    ${"a certificate with end date"}    | ${aValidExemptionCertificateWithEndDate}
-    ${"a certificate without end date"} | ${aValidExemptionCertificateWithoutEndDate}
-  `("should print detail page for $scenario", ({ certificate }) => {
+  it("should print detail page for exemption certificate", () => {
     const decodedCertificate = pipe(
-      Certificates.decode(certificate),
+      Certificates.decode(aValidExemptionCertificateWithEndDate),
       getOrElseW(_ => {
         throw "Error decoding object";
       })

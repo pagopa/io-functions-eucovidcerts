@@ -7,11 +7,10 @@ const fileLanguage = PreferredLanguageEnum.de_DE;
 const uvci = (c: Certificates): string => printUvci(some(fileLanguage), c);
 
 const printExemptionInfo = `
-***
-TODO
-CERTIFICAZIONE VALIDA SOLO IN ITALIA  
-sostitutiva, ove previsto dalla normativa vigente, della Certificazione verde COVID-19
-***
+***  
+NUR IN ITALIEN GÜLTIG  
+Ersetzt, sofern dies von den geltenden Gesetzesbestimmungen vorgesehen ist, das Grüne COVID-19-Zertifikat  
+***  
 `;
 
 export const getInfoPrinter = (c: Certificates): string =>

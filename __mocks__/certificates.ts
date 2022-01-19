@@ -119,25 +119,3 @@ export const aValidExemptionCertificateWithEndDate = {
     }
   ]
 };
-
-export const aValidExemptionCertificateWithoutEndDate = {
-  ver: "1.0.0",
-  nam: {
-    fnt: "DI<CAPRIO",
-    fn: "Di Caprio",
-    gnt: "MARILU<TERESA",
-    gn: "Marilù Teresa"
-  },
-  dob: "1977-06-16",
-  e: [
-    {
-      fc: "AAABBB12A10H501F",
-      co: "IT",
-      ci: "01IT1B321FE2B68D42A7AB6A2EC83E8F09F3#8",
-      cu: "CUEV-ABCDE12345",
-      is: "Ministero della Salute",
-      tg: "840539006",
-      df: "2021-12-13"
-    }
-  ]
-};

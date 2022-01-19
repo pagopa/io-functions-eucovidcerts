@@ -20,8 +20,6 @@ import {
 } from "./certificate";
 
 const EUROPEAN_LOGO_ID = "greenpass";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ITALIAN_LOGO_ID = "esenzione";
 
 /* 
 Title and subtitle of certificate header 
@@ -44,43 +42,10 @@ const standardTitleAndSubtitle: {
   }
 };
 
-/* 
-Title and subtitle of exemption certificate header 
-for each supported language
-*/
-const exemptionTitleAndSubtitle: {
-  [key in SupportedLanguage]: Omit<HeaderInfo, "logo_id">;
-} = {
-  [PreferredLanguageEnum.it_IT]: {
-    subtitle: "",
-    title:
-      "Certificazione digitale di esenzione dalla vaccinazione anti-COVID-19"
-  },
-  [PreferredLanguageEnum.en_GB]: {
-    subtitle: "",
-    title: "Digital COVID-19 vaccination exemption certificate"
-  },
-  [PreferredLanguageEnum.de_DE]: {
-    subtitle: "",
-    title: "Digital COVID-19 vaccination exemption certificate"
-  }
-};
-
 const getStandardHeader = (language: SupportedLanguage): HeaderInfo => ({
   ...standardTitleAndSubtitle[language],
   logo_id: EUROPEAN_LOGO_ID
 });
-
-const getExemptionHeader = (language: SupportedLanguage): HeaderInfo => ({
-  ...exemptionTitleAndSubtitle[language],
-  logo_id: ITALIAN_LOGO_ID
-});
-
-const emptyHeader: HeaderInfo = {
-  logo_id: "",
-  subtitle: "",
-  title: ""
-};
 
 export const getHeaderInfoForLanguage = (
   lang: O.Option<PreferredLanguageEnum>
@@ -94,10 +59,16 @@ export const getHeaderInfoForLanguage = (
         .when(VacCertificate.is, _vc => getStandardHeader(language))
         .when(TestCertificate.is, _tc => getStandardHeader(language))
         .when(RecoveryCertificate.is, _rc => getStandardHeader(language))
-        .when(ExemptionCertificate.is, _ivc => getExemptionHeader(language))
+        .when(ExemptionCertificate.is, _ivc => getStandardHeader(language))
         .exhaustive()
   );
 
 export const getFallbackHeaderInfoForLanguage = (
-  _lang: O.Option<PreferredLanguageEnum>
-): HeaderInfo => emptyHeader;
+  lang: O.Option<PreferredLanguageEnum>
+): HeaderInfo =>
+  pipe(
+    lang,
+    O.filter(isSupportedLanguage),
+    O.getOrElse(() => DefaultLanguage),
+    l => getStandardHeader(l)
+  );

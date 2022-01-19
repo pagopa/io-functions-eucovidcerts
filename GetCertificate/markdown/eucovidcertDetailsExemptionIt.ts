@@ -6,9 +6,9 @@ const fileLanguage = PreferredLanguageEnum.it_IT;
 
 export const getDetailPrinter = (ee: ExemptionEntry): string =>
   `
-## Certificato di Esenzione  
+## Certificazione digitale di esenzione dalla vaccinazione anti-COVID-19  
 ***  
-**Soggetto esente alla vaccinazione anti SARS-CoV-2**  
+**VALIDA SOLO IN ITALIA**  
 ***  
 
 Malattia o agente bersaglio  
@@ -20,8 +20,8 @@ Codice fiscale del medico certificatore
 Data inizio validità della certificazione  
 **${formatDate(ee.df, fileLanguage)}**  
 
-Data di fine validità della certificazione, ove prevista  
-**${ee.du ? formatDate(ee.du, fileLanguage) : ""}**  
+Data di fine validità della certificazione  
+**${formatDate(ee.du, fileLanguage)}**  
 
 Codice univoco esenzione vaccinale (CUEV)  
 **${ee.cu}**  

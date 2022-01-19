@@ -6,22 +6,22 @@ const fileLanguage = PreferredLanguageEnum.en_GB;
 
 export const getDetailPrinter = (ee: ExemptionEntry): string =>
   `
-## Certificate of Exemption  
+## Digital COVID-19 vaccination exemption certificate  
 ***  
-**Subject exempt from SARS-CoV-2 vaccination**  
+**VALID ONLY IN ITALY**  
 ***  
 
-Target disease or agent  
+Disease or agent targeted  
 **${ee.tg}**  
 
-Fiscal code of the certifying doctor  
+Fiscal code of the certifying physician  
 **${ee.fc}**  
   
-Certification validity start date  
+Valid from  
 **${formatDate(ee.df, fileLanguage)}**  
 
-End of validity date of the certification, if applicable  
-**${ee.du ? formatDate(ee.du, fileLanguage) : ""}**  
+Valid until  
+**${formatDate(ee.du, fileLanguage)}**  
 
 Unique vaccination exemption code (CUEV)  
 **${ee.cu}**  
@@ -30,8 +30,8 @@ Certificate issuer
 **${formatCertificateIssuer(ee.is, fileLanguage)}**  
 
 ***  
-*This certification is valid only in Italy and can be used in place of the COVID-19 green certification
-for the performance of activities and the use of services in accordance with the provisions of the national legislation in force*
+*This certificate is valid only in Italy and can be used to replace the Digital 
+COVID Certificate to access services and activities in accordance with the current national legislation.*  
 ***  
   
 For further information and privacy policy:  
