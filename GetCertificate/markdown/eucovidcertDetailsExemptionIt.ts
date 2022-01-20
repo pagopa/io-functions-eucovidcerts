@@ -34,7 +34,7 @@ Soggetto che ha rilasciato la certificazione digitale di esenzione
 per lo svolgimento di attività e la fruizione di servizi secondo quanto previsto dalla normativa nazionale vigente*  
 ***  
   
-Per ulteriori informazioni e ed informativa privacy: 
+Per ulteriori informazioni ed informativa privacy: 
 [www.dgc.gov.it](https://www.dgc.gov.it); 
 [www.salute.gov.it](https://www.salute.gov.it)
 <br/><br/><br/><br/><br/>
