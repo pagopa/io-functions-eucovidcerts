@@ -138,6 +138,6 @@ export const getExemptionCertificateValidationErrors = (
   return pipe(
     checkIReadableMapValue(details, "tg", originalDetails),
     e.map(_ => ec),
-    e.mapLeft(_ => `exemption details|${_.join(", ")}`)
+    e.mapLeft(detail => `exemption details|${detail.join(", ")}`)
   );
 };
