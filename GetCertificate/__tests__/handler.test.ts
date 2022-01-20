@@ -16,7 +16,7 @@ import {
 import { fakeQRCodeInfo } from "../../utils/fakeDGCClient";
 import { StatusEnum } from "../../generated/definitions/ValidCertificate";
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
-import { string } from "fp-ts";
+import { RevokedCertificate } from "../../generated/definitions/RevokedCertificate";
 
 const aFiscalCode = "PRVPRV25A01H501B";
 
@@ -153,7 +153,7 @@ describe("GetCertificate", () => {
     ${"no language"}             | ${[]}
     ${"no language (undefined)"} | ${undefined}
   `(
-    "GIVEN an expired certificate request with $scenario WHEN the getCertificate is invoked THEN the getCertificate return an expired certificate",
+    "GIVEN an expired/revoked certificate request with $scenario WHEN the getCertificate is invoked THEN the getCertificate return a revoked certificate",
     async ({ preferred_languages }) => {
       const aDGCReturnValue = { status: 404 };
 
@@ -177,7 +177,7 @@ describe("GetCertificate", () => {
           kind: "IResponseSuccessJson",
           value: {
             info: expect.stringMatching("^.*[a-zA-Z]+.*$"), // at least one character
-            status: "expired",
+            status: "revoked",
             header_info: expect.objectContaining({
               logo_id: "",
               title: "",
@@ -185,6 +185,7 @@ describe("GetCertificate", () => {
             })
           }
         });
+        expect(RevokedCertificate.is((val as any).value)).toBe(true);
       } catch (error) {
         fail(error);
       }

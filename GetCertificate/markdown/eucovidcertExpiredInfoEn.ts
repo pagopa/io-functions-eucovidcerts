@@ -3,4 +3,4 @@
  */
 
 export const getInfoPrinter = (): string =>
-  `Your certificate in invalid: it may have expired or been temporarily revoked.`;
+  `Your certificate is invalid: it may have expired or been temporarily revoked.`;
