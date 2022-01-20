@@ -1,7 +1,11 @@
+import * as E from "fp-ts/Either";
+import { pipe } from "fp-ts/lib/function";
+
 import {
   VacCertificate,
   RecoveryCertificate,
-  TestCertificate
+  TestCertificate,
+  ExemptionCertificate
 } from "../certificate";
 import {
   decodeCertificateAndLogMissingValues,
@@ -13,7 +17,6 @@ import {
   aValidRecoveryCertificate,
   aValidVaccinationCertificate
 } from "../../__mocks__/certificates";
-import { isRight } from "fp-ts/lib/Either";
 
 describe.each`
   title                  | parser
@@ -76,7 +79,7 @@ describe("decodeCertificateAndLogMissingValues", () => {
       aValidAntigenTestCertificate
     );
 
-    expect(isRight(decodedValue)).toBe(true);
+    expect(E.isRight(decodedValue)).toBe(true);
     expect(TestCertificate.is((decodedValue as any).right)).toBe(true);
     expect(logWarningMock).not.toHaveBeenCalled();
   });
@@ -92,7 +95,7 @@ describe("decodeCertificateAndLogMissingValues", () => {
       ]
     });
 
-    expect(isRight(decodedValue)).toBe(true);
+    expect(E.isRight(decodedValue)).toBe(true);
     expect(RecoveryCertificate.is((decodedValue as any).right)).toBe(true);
     expect(logWarningMock).toHaveBeenCalledWith(
       'Missing map values|recovery details|tg "INVALID" value not found'
@@ -113,7 +116,7 @@ describe("decodeCertificateAndLogMissingValues", () => {
       ]
     });
 
-    expect(isRight(decodedValue)).toBe(true);
+    expect(E.isRight(decodedValue)).toBe(true);
     expect(TestCertificate.is((decodedValue as any).right)).toBe(true);
     expect(logWarningMock).toHaveBeenCalledWith(
       'Missing map values|test details|tg "INVALID_TG" value not found, tt "INVALID_TT" value not found, tr "IVALID_TR" value not found, ma "INVALID_MA" value not found'
@@ -134,7 +137,7 @@ describe("decodeCertificateAndLogMissingValues", () => {
       ]
     });
 
-    expect(isRight(decodedValue)).toBe(true);
+    expect(E.isRight(decodedValue)).toBe(true);
     expect(VacCertificate.is((decodedValue as any).right)).toBe(true);
     expect(logWarningMock).toHaveBeenCalledWith(
       'Missing map values|vaccination details|tg "INVALID_TG" value not found, vp "INVALID_VP" value not found, mp "IVALID_MP" value not found, ma "INVALID_MA" value not found'
@@ -150,7 +153,32 @@ describe("decodeCertificateAndLogMissingValues", () => {
       dob: ""
     });
 
-    expect(isRight(errorOrDecodedValue)).toBe(false);
+    expect(E.isRight(errorOrDecodedValue)).toBe(false);
     expect((errorOrDecodedValue as any).left).toBeInstanceOf(Error);
+  });
+});
+
+describe("parser", () => {
+  var fs = require("fs");
+  it("should read from png", async () => {
+    pipe(
+      fs.readFileSync("__mocks__/qrcodes/1.png", {
+        encoding: "base64"
+      }),
+      data => parseQRCode(data, s => {}),
+      E.map(parsed => expect(VacCertificate.is(parsed)).toEqual(true)),
+      E.mapLeft(_ => fail("Unable to parse image"))
+    );
+  });
+
+  it("should read and decode exemption certificate from file", async () => {
+    pipe(
+      fs.readFileSync(`__mocks__/qrcodes/Exemption.png`, {
+        encoding: "base64"
+      }),
+      data => parseQRCode(data, s => {}),
+      E.map(parsed => expect(ExemptionCertificate.is(parsed)).toEqual(true)),
+      E.mapLeft(_ => fail("Unable to parse image"))
+    );
   });
 });

@@ -133,7 +133,7 @@ describe("GetCertificate", () => {
           expect(val.value.detail!.length).toBeGreaterThan(0);
           expect(val.value.header_info).toBeDefined();
           expect(val.value.header_info).toMatchObject({
-            logo_id: expect.stringMatching("^.*[a-zA-Z0-9]+.*$"), // at least one character,
+            logo_id: "greenpass",
             title: expect.any(String),
             subtitle: expect.any(String)
           });
@@ -179,9 +179,9 @@ describe("GetCertificate", () => {
             info: expect.stringMatching("^.*[a-zA-Z]+.*$"), // at least one character
             status: "revoked",
             header_info: expect.objectContaining({
-              logo_id: "",
-              title: "",
-              subtitle: ""
+              logo_id: "greenpass",
+              title: expect.any(String),
+              subtitle: expect.any(String)
             })
           }
         });

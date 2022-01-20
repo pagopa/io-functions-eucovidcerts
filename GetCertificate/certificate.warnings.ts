@@ -7,6 +7,7 @@ import { sequenceT } from "fp-ts/lib/Apply";
 import { pipe } from "fp-ts/lib/function";
 import {
   Certificates,
+  ExemptionCertificate,
   RecoveryCertificate,
   TestCertificate,
   VacCertificate
@@ -73,7 +74,7 @@ export const getTestCertificateValidationErrors = (
       checkOptionalIReadableMapValue(details, "ma", originalDetails)
     ),
     e.map(_ => te),
-    e.mapLeft(_ => `test details|${_.join(", ")}`)
+    e.mapLeft(rawDetails => `test details|${rawDetails.join(", ")}`)
   );
 };
 
@@ -99,7 +100,7 @@ export const getVacCertificateValidationErrors = (
       checkIReadableMapValue(details, "ma", originalDetails)
     ),
     e.map(_ => ve),
-    e.mapLeft(_ => `vaccination details|${_.join(", ")}`)
+    e.mapLeft(rawDetails => `vaccination details|${rawDetails.join(", ")}`)
   );
 };
 
@@ -118,6 +119,25 @@ export const getRecoveryCertificateValidationErrors = (
   return pipe(
     checkIReadableMapValue(details, "tg", originalDetails),
     e.map(_ => rc),
-    e.mapLeft(_ => `recovery details|${_.join(", ")}`)
+    e.mapLeft(rawDetails => `recovery details|${rawDetails.join(", ")}`)
+  );
+};
+
+/**
+ * Lists all possible errors (if any) retrieving values
+ * from maps for a valid Exemption Certificate
+ */
+export const getExemptionCertificateValidationErrors = (
+  ec: ExemptionCertificate,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  originalObj: any
+): Either<string, Certificates> => {
+  const details = ec.e[0];
+  const originalDetails = originalObj.e[0];
+
+  return pipe(
+    checkIReadableMapValue(details, "tg", originalDetails),
+    e.map(_ => ec),
+    e.mapLeft(rawDetails => `exemption details|${rawDetails.join(", ")}`)
   );
 };

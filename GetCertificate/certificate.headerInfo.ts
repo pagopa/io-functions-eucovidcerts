@@ -13,20 +13,18 @@ import {
 
 import {
   Certificates,
+  ExemptionCertificate,
   RecoveryCertificate,
   TestCertificate,
   VacCertificate
 } from "./certificate";
 
 const EUROPEAN_LOGO_ID = "greenpass";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const ITALIAN_LOGO_ID = "esenzione";
 
 /* 
 Title and subtitle of certificate header 
-for each supported languageF
+for each supported language
 */
-
 const standardTitleAndSubtitle: {
   [key in SupportedLanguage]: Omit<HeaderInfo, "logo_id">;
 } = {
@@ -36,7 +34,7 @@ const standardTitleAndSubtitle: {
   },
   [PreferredLanguageEnum.en_GB]: {
     subtitle: "",
-    title: "EU Digital COVID Certificate"
+    title: "EU Digital COVID-19 Certificate"
   },
   [PreferredLanguageEnum.de_DE]: {
     subtitle: "",
@@ -48,12 +46,6 @@ const getStandardHeader = (language: SupportedLanguage): HeaderInfo => ({
   ...standardTitleAndSubtitle[language],
   logo_id: EUROPEAN_LOGO_ID
 });
-
-const emptyHeader: HeaderInfo = {
-  logo_id: "",
-  subtitle: "",
-  title: ""
-};
 
 export const getHeaderInfoForLanguage = (
   lang: O.Option<PreferredLanguageEnum>
@@ -67,9 +59,16 @@ export const getHeaderInfoForLanguage = (
         .when(VacCertificate.is, _vc => getStandardHeader(language))
         .when(TestCertificate.is, _tc => getStandardHeader(language))
         .when(RecoveryCertificate.is, _rc => getStandardHeader(language))
+        .when(ExemptionCertificate.is, _ivc => getStandardHeader(language))
         .exhaustive()
   );
 
 export const getFallbackHeaderInfoForLanguage = (
-  _lang: O.Option<PreferredLanguageEnum>
-): HeaderInfo => emptyHeader;
+  lang: O.Option<PreferredLanguageEnum>
+): HeaderInfo =>
+  pipe(
+    lang,
+    O.filter(isSupportedLanguage),
+    O.getOrElse(() => DefaultLanguage),
+    l => getStandardHeader(l)
+  );

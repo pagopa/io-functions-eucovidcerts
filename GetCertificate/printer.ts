@@ -15,7 +15,9 @@ import {
   VaccinationEntry,
   TestEntry,
   RecoveryCertificate,
-  RecoveryEntry
+  RecoveryEntry,
+  ExemptionCertificate,
+  ExemptionEntry
 } from "./certificate";
 import * as vacDetailsEn from "./markdown/eucovidcertDetailsVaccinationEn";
 import * as vacDetailsIt from "./markdown/eucovidcertDetailsVaccinationIt";
@@ -26,6 +28,9 @@ import * as testDetailsDe from "./markdown/eucovidcertDetailsTestDe";
 import * as recoveryDetailsIt from "./markdown/eucovidcertDetailsRecoveryIt";
 import * as recoveryDetailsEn from "./markdown/eucovidcertDetailsRecoveryEn";
 import * as recoveryDetailsDe from "./markdown/eucovidcertDetailsRecoveryDe";
+import * as exemptionDetailsIt from "./markdown/eucovidcertDetailsExemptionIt";
+import * as exemptionDetailsEn from "./markdown/eucovidcertDetailsExemptionEn";
+import * as exemptionDetailsDe from "./markdown/eucovidcertDetailsExemptionDe";
 import * as vacInfoMultilanguage from "./markdown/eucovidcertInfoVaccinationEn";
 import * as vacInfoGerman from "./markdown/eucovidcertInfoVaccinationDe";
 import * as expiredInfoIt from "./markdown/eucovidcertExpiredInfoIt";
@@ -58,9 +63,11 @@ interface IPrintersForLanguage {
   readonly detailVaccinePrinter: (v: VaccinationEntry) => string;
   readonly detailTestPrinter: (t: TestEntry) => string;
   readonly detailRecoveryPrinter: (r: RecoveryEntry) => string;
+  readonly detailExemptionPrinter: (r: ExemptionEntry) => string;
   readonly infoVaccinePrinter: (c: Certificates) => string;
   readonly infoTestPrinter: (c: Certificates) => string;
   readonly infoRecoveryPrinter: (c: Certificates) => string;
+  readonly infoExemptionPrinter: (c: Certificates) => string;
 }
 
 const printersConfigurations: {
@@ -71,27 +78,33 @@ const printersConfigurations: {
     detailVaccinePrinter: vacDetailsIt.getDetailPrinter,
     detailTestPrinter: testDetailsIt.getDetailPrinter,
     detailRecoveryPrinter: recoveryDetailsIt.getDetailPrinter,
+    detailExemptionPrinter: exemptionDetailsIt.getDetailPrinter,
     infoVaccinePrinter: vacInfoMultilanguage.getInfoPrinter,
     infoTestPrinter: vacInfoMultilanguage.getInfoPrinter,
-    infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
+    infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter,
+    infoExemptionPrinter: vacInfoMultilanguage.getInfoPrinter
   },
   [PreferredLanguageEnum.en_GB]: {
     expiredInfoPrinter: expiredInfoEn.getInfoPrinter,
     detailVaccinePrinter: vacDetailsEn.getDetailPrinter,
     detailTestPrinter: testDetailsEn.getDetailPrinter,
     detailRecoveryPrinter: recoveryDetailsEn.getDetailPrinter,
+    detailExemptionPrinter: exemptionDetailsEn.getDetailPrinter,
     infoVaccinePrinter: vacInfoMultilanguage.getInfoPrinter,
     infoTestPrinter: vacInfoMultilanguage.getInfoPrinter,
-    infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter
+    infoRecoveryPrinter: vacInfoMultilanguage.getInfoPrinter,
+    infoExemptionPrinter: vacInfoMultilanguage.getInfoPrinter
   },
   [PreferredLanguageEnum.de_DE]: {
     expiredInfoPrinter: expiredInfoDe.getInfoPrinter,
     detailVaccinePrinter: vacDetailsDe.getDetailPrinter,
     detailTestPrinter: testDetailsDe.getDetailPrinter,
     detailRecoveryPrinter: recoveryDetailsDe.getDetailPrinter,
+    detailExemptionPrinter: exemptionDetailsDe.getDetailPrinter,
     infoVaccinePrinter: vacInfoGerman.getInfoPrinter,
     infoTestPrinter: vacInfoGerman.getInfoPrinter,
-    infoRecoveryPrinter: vacInfoGerman.getInfoPrinter
+    infoRecoveryPrinter: vacInfoGerman.getInfoPrinter,
+    infoExemptionPrinter: vacInfoGerman.getInfoPrinter
   }
 };
 
@@ -143,6 +156,9 @@ export const printDetails = (
     .when(RecoveryCertificate.is, rc =>
       getPrinterForLanguage(lang).detailRecoveryPrinter(rc.r[0])
     )
+    .when(ExemptionCertificate.is, ec =>
+      getPrinterForLanguage(lang).detailExemptionPrinter(ec.e[0])
+    )
     .exhaustive();
 
 /**
@@ -173,6 +189,7 @@ export const printUvci = (
     .when(VacCertificate.is, cv => cv.v[0].ci)
     .when(TestCertificate.is, ct => ct.t[0].ci)
     .when(RecoveryCertificate.is, cr => cr.r[0].ci)
+    .when(ExemptionCertificate.is, ec => ec.e[0].ci)
     .exhaustive();
 
 /**
