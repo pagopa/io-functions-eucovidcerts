@@ -74,7 +74,7 @@ export const getTestCertificateValidationErrors = (
       checkOptionalIReadableMapValue(details, "ma", originalDetails)
     ),
     e.map(_ => te),
-    e.mapLeft(_ => `test details|${_.join(", ")}`)
+    e.mapLeft(rawDetails => `test details|${rawDetails.join(", ")}`)
   );
 };
 
@@ -100,7 +100,7 @@ export const getVacCertificateValidationErrors = (
       checkIReadableMapValue(details, "ma", originalDetails)
     ),
     e.map(_ => ve),
-    e.mapLeft(_ => `vaccination details|${_.join(", ")}`)
+    e.mapLeft(rawDetails => `vaccination details|${rawDetails.join(", ")}`)
   );
 };
 
@@ -119,7 +119,7 @@ export const getRecoveryCertificateValidationErrors = (
   return pipe(
     checkIReadableMapValue(details, "tg", originalDetails),
     e.map(_ => rc),
-    e.mapLeft(_ => `recovery details|${_.join(", ")}`)
+    e.mapLeft(rawDetails => `recovery details|${rawDetails.join(", ")}`)
   );
 };
 
@@ -138,6 +138,6 @@ export const getExemptionCertificateValidationErrors = (
   return pipe(
     checkIReadableMapValue(details, "tg", originalDetails),
     e.map(_ => ec),
-    e.mapLeft(detail => `exemption details|${detail.join(", ")}`)
+    e.mapLeft(rawDetails => `exemption details|${rawDetails.join(", ")}`)
   );
 };
