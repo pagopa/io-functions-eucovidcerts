@@ -4,7 +4,7 @@ exports[`Printer - Test - Detail - it_IT should print its markdown 1`] = `
 "
 ## Dati Vaccino  
 ***
-**Certificazione valida 270 giorni (9 mesi) dalla data dell’ultima somministrazione, salvo modifiche normative**
+**Certificazione valida 180 giorni (6 mesi) dalla data dell’ultima somministrazione, salvo modifiche normative**
 ***
 
 Malattia o agente bersaglio  
