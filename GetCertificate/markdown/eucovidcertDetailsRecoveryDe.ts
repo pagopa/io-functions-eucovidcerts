@@ -8,7 +8,7 @@ export const getDetailPrinter = (tr: RecoveryEntry): string =>
   `
 ## Heilungsurkunde
 ***
-Der Green Pass ist in der Europäischen Union bis zum Ende der Gültigkeitsdauer und in Italien 180 Tage (6 Monate) gültig
+**Der Green Pass ist in der Europäischen Union bis zum Ende der Gültigkeitsdauer und in Italien 180 Tage (6 Monate) gültig**
 ***
 
 Zielkrankheit oder Erreger, von dem die Person geheilt wird  
