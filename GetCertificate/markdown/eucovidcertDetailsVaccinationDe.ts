@@ -14,7 +14,7 @@ export const getDetailPrinter = (v: VaccinationEntry): string =>
 ***
 ${
   isVaccinationProcessEnded(v)
-    ? "**Mit Ausnahme von Änderungen in den Rechtsvorschriften ist der Green Pass 270 Tage (9 Monate) ab dem Datum der letzten Impfung gültig**"
+    ? "**Mit Ausnahme von Änderungen in den Rechtsvorschriften ist der Green Pass 180 Tage (6 Monate) ab dem Datum der letzten Impfung gültig**"
     : "**Der Green Pass gilt ab dem 15. Tag nach dem Verabreichungsdatum der Impfung bis zum maximal möglichen Termin der nächsten Dosis**"
 }
 ***
