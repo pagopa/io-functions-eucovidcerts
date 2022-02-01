@@ -8,7 +8,7 @@ export const getDetailPrinter = (tr: RecoveryEntry): string =>
   `
 ## Certificato di Guarigione
 ***
-**Certificazione valida in Unione Europea fino alla data di fine validità e valida in Italia 180 giorni (6 mesi) dalla data di inizio validità
+**Certificazione valida in Unione Europea fino alla data di fine validità e valida in Italia 180 giorni (6 mesi) dalla data di inizio validità**
 ***
 
 Malattia o agente bersaglio da cui la persona è guarita  
