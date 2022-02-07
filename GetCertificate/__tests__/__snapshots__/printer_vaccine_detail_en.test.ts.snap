@@ -48,3 +48,153 @@ For more information and to download the certificate in printable PDF format go 
 <br/><br/><br/><br/><br/>
 "
 `;
+
+exports[`Printer - Test - Detail - en_GB should print markdown in case of booster 2/1 1`] = `
+"
+## Vaccination Certificate  
+***
+**Certification valid from the date of the last administration without the need for further booster doses, subject to regulatory changes.
+    For technical reasons, a new QR code may be issued after 18 months (540 days) from the date of validity**
+***
+
+Disease or agent targeted  
+**COVID-19**  
+
+Vaccine/prophylaxis  
+**SARS-CoV-2 mRNA vaccine**  
+
+Vaccine medicinal product  
+**Comirnaty**   
+
+Vaccine marketing authorisation holder or manufacturer  
+**Biontech Manufacturing GmbH**  
+
+Number in a series of vaccinations doses / overall number of vaccination in the series  
+**2 / 1**  
+
+Date of vaccination  
+**2021-04-10**  
+
+State of vaccination  
+**IT**
+
+Certificate issuer  
+**Ministry of Health**  
+
+Unique certificate identifier  
+**01ITE7300E1AB2A84C719004F103DCB1F70A#6**  
+
+***
+
+*This certificate is not a travel document.  
+The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, including in consideration of the new variants of the virus.*  
+*Before traveling, please check the public health measures applied in the place of destination and the related restrictions also by consulting the website:*   
+[https://reopen.europa.eu](https://reopen.europa.eu)
+  
+***
+  
+For more information and to download the certificate in printable PDF format go to
+[www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Test - Detail - en_GB should print markdown in case of booster 3/2 1`] = `
+"
+## Vaccination Certificate  
+***
+**Certification valid from the date of the last administration without the need for further booster doses, subject to regulatory changes.
+    For technical reasons, a new QR code may be issued after 18 months (540 days) from the date of validity**
+***
+
+Disease or agent targeted  
+**COVID-19**  
+
+Vaccine/prophylaxis  
+**SARS-CoV-2 mRNA vaccine**  
+
+Vaccine medicinal product  
+**Comirnaty**   
+
+Vaccine marketing authorisation holder or manufacturer  
+**Biontech Manufacturing GmbH**  
+
+Number in a series of vaccinations doses / overall number of vaccination in the series  
+**3 / 2**  
+
+Date of vaccination  
+**2021-04-10**  
+
+State of vaccination  
+**IT**
+
+Certificate issuer  
+**Ministry of Health**  
+
+Unique certificate identifier  
+**01ITE7300E1AB2A84C719004F103DCB1F70A#6**  
+
+***
+
+*This certificate is not a travel document.  
+The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, including in consideration of the new variants of the virus.*  
+*Before traveling, please check the public health measures applied in the place of destination and the related restrictions also by consulting the website:*   
+[https://reopen.europa.eu](https://reopen.europa.eu)
+  
+***
+  
+For more information and to download the certificate in printable PDF format go to
+[www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Test - Detail - en_GB should print markdown in case of booster 3/3 1`] = `
+"
+## Vaccination Certificate  
+***
+**Certification valid from the date of the last administration without the need for further booster doses, subject to regulatory changes.
+    For technical reasons, a new QR code may be issued after 18 months (540 days) from the date of validity**
+***
+
+Disease or agent targeted  
+**COVID-19**  
+
+Vaccine/prophylaxis  
+**SARS-CoV-2 mRNA vaccine**  
+
+Vaccine medicinal product  
+**Comirnaty**   
+
+Vaccine marketing authorisation holder or manufacturer  
+**Biontech Manufacturing GmbH**  
+
+Number in a series of vaccinations doses / overall number of vaccination in the series  
+**3 / 3**  
+
+Date of vaccination  
+**2021-04-10**  
+
+State of vaccination  
+**IT**
+
+Certificate issuer  
+**Ministry of Health**  
+
+Unique certificate identifier  
+**01ITE7300E1AB2A84C719004F103DCB1F70A#6**  
+
+***
+
+*This certificate is not a travel document.  
+The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, including in consideration of the new variants of the virus.*  
+*Before traveling, please check the public health measures applied in the place of destination and the related restrictions also by consulting the website:*   
+[https://reopen.europa.eu](https://reopen.europa.eu)
+  
+***
+  
+For more information and to download the certificate in printable PDF format go to
+[www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
