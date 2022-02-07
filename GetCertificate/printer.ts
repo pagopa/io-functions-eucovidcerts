@@ -219,7 +219,7 @@ export const isBooster = (v: VaccinationEntry): boolean =>
  * @returns true if process ended, false otherwise
  */
 export const isVaccinationProcessEnded = (v: VaccinationEntry): boolean =>
-  v.dn === v.sd;
+  v.dn >= v.sd;
 
 /**
  * Test validity in hours, based on type
