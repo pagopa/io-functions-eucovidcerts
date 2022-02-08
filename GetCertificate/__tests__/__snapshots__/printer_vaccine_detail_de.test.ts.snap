@@ -53,8 +53,8 @@ exports[`Printer - Test - Detail - de_DE should print markdown in case of booste
 "
 ## Impfstoffdaten  
 ***
-**Zertifizierung gültig ab dem Datum der letzten Verabreichung, ohne dass weitere Auffrischungsdosen erforderlich sind, vorbehaltlich regulatorischer Änderungen.
-    Aus technischen Gründen kann nach 18 Monaten (540 Tagen) ab Gültigkeitsdatum ein neuer QR-Code ausgestellt werden**
+**Das Zertifikat gilt, vorbehaltlich gesetzlicher Änderungen, ab dem Datum der letzten Impfung, ohne dass weitere Verabreichungen erforderlich sind. 
+    Aus technischen Gründen kann ein neuer QR-Code nach 18 Monaten (540 Tage) ab dem Gültigkeitsdatum ausgestellt werden.**
 ***
 
 Zielkrankheit oder -wirkstoff  
@@ -103,8 +103,8 @@ exports[`Printer - Test - Detail - de_DE should print markdown in case of booste
 "
 ## Impfstoffdaten  
 ***
-**Zertifizierung gültig ab dem Datum der letzten Verabreichung, ohne dass weitere Auffrischungsdosen erforderlich sind, vorbehaltlich regulatorischer Änderungen.
-    Aus technischen Gründen kann nach 18 Monaten (540 Tagen) ab Gültigkeitsdatum ein neuer QR-Code ausgestellt werden**
+**Das Zertifikat gilt, vorbehaltlich gesetzlicher Änderungen, ab dem Datum der letzten Impfung, ohne dass weitere Verabreichungen erforderlich sind. 
+    Aus technischen Gründen kann ein neuer QR-Code nach 18 Monaten (540 Tage) ab dem Gültigkeitsdatum ausgestellt werden.**
 ***
 
 Zielkrankheit oder -wirkstoff  
@@ -153,8 +153,8 @@ exports[`Printer - Test - Detail - de_DE should print markdown in case of booste
 "
 ## Impfstoffdaten  
 ***
-**Zertifizierung gültig ab dem Datum der letzten Verabreichung, ohne dass weitere Auffrischungsdosen erforderlich sind, vorbehaltlich regulatorischer Änderungen.
-    Aus technischen Gründen kann nach 18 Monaten (540 Tagen) ab Gültigkeitsdatum ein neuer QR-Code ausgestellt werden**
+**Das Zertifikat gilt, vorbehaltlich gesetzlicher Änderungen, ab dem Datum der letzten Impfung, ohne dass weitere Verabreichungen erforderlich sind. 
+    Aus technischen Gründen kann ein neuer QR-Code nach 18 Monaten (540 Tage) ab dem Gültigkeitsdatum ausgestellt werden.**
 ***
 
 Zielkrankheit oder -wirkstoff  
