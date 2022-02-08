@@ -63,6 +63,10 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/PreviousCertificateResponseDTO'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/PreviousCertificateResponseDTO'
         '500':
           description: Internal Server Error
           schema:

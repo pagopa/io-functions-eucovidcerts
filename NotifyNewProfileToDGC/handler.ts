@@ -11,6 +11,7 @@ import { createDGCClientSelector } from "../utils/dgcClientSelector";
 import { errorsToError } from "../utils/conversions";
 
 const logPrefix = "NotifyNewProfile";
+const acceptedStatuses = [200, 404];
 
 export const NotifyNewProfile = (
   dgcClientSelector: ReturnType<typeof createDGCClientSelector>
@@ -36,7 +37,7 @@ export const NotifyNewProfile = (
     ),
     TE.chain(flow(TE.fromEither, TE.mapLeft(errorsToError))),
     TE.chain(_ => {
-      if (_.status === 200) {
+      if (acceptedStatuses.includes(_.status)) {
         return TE.of("OK");
       }
       return TE.left(
