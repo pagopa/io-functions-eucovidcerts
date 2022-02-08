@@ -15,8 +15,8 @@ export const getDetailPrinter = (v: VaccinationEntry): string =>
 ***
 ${
   isBooster(v)
-    ? `**Zertifizierung gültig ab dem Datum der letzten Verabreichung, ohne dass weitere Auffrischungsdosen erforderlich sind, vorbehaltlich regulatorischer Änderungen.
-    Aus technischen Gründen kann nach 18 Monaten (540 Tagen) ab Gültigkeitsdatum ein neuer QR-Code ausgestellt werden**`
+    ? `**Das Zertifikat gilt, vorbehaltlich gesetzlicher Änderungen, ab dem Datum der letzten Impfung, ohne dass weitere Verabreichungen erforderlich sind. 
+    Aus technischen Gründen kann ein neuer QR-Code nach 18 Monaten (540 Tage) ab dem Gültigkeitsdatum ausgestellt werden.**`
     : isVaccinationProcessEnded(v)
     ? "**Mit Ausnahme von Änderungen in den Rechtsvorschriften ist der Green Pass 180 Tage (6 Monate) ab dem Datum der letzten Impfung gültig**"
     : "**Der Green Pass gilt ab dem 15. Tag nach dem Verabreichungsdatum der Impfung bis zum maximal möglichen Termin der nächsten Dosis**"
