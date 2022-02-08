@@ -204,13 +204,22 @@ export const printExpiredOrRevokedInfo = (
 ): string => getPrinterForLanguage(lang).expiredInfoPrinter();
 
 /**
+ * Check if Vaccination is a Booster
+ *
+ * @param v the VaccinationEntry to check
+ * @returns true if is booster, false otherwise
+ */
+export const isBooster = (v: VaccinationEntry): boolean =>
+  v.dn === 3 || (v.dn === 2 && v.sd === 1);
+
+/**
  * Check if Vaccination has ended
  *
  * @param v the VaccinationEntry to check
  * @returns true if process ended, false otherwise
  */
 export const isVaccinationProcessEnded = (v: VaccinationEntry): boolean =>
-  v.dn >= v.sd; // we may have more doses than the total in case of additional, "booster doses"
+  v.dn >= v.sd;
 
 /**
  * Test validity in hours, based on type

@@ -48,3 +48,153 @@ Weitere Informationen und den Download des Zertifikats im druckfähigen PDF-Form
 <br/><br/><br/><br/><br/>
 "
 `;
+
+exports[`Printer - Test - Detail - de_DE should print markdown in case of booster 2/1 1`] = `
+"
+## Impfstoffdaten  
+***
+**Das Zertifikat gilt, vorbehaltlich gesetzlicher Änderungen, ab dem Datum der letzten Impfung, ohne dass weitere Verabreichungen erforderlich sind. 
+    Aus technischen Gründen kann ein neuer QR-Code nach 18 Monaten (540 Tage) ab dem Gültigkeitsdatum ausgestellt werden.**
+***
+
+Zielkrankheit oder -wirkstoff  
+**COVID-19**  
+
+Art des verabreichten Impfstoffs  
+**SARS-CoV-2 mRNA vaccine**  
+
+Impfstoffname  
+**Comirnaty**  
+
+Impfstoffhersteller oder MAH  
+**Biontech Manufacturing GmbH**  
+
+Anzahl der abgegebenen Dosis / Gesamtzahl der geplanten Dosen  
+**2 / 1**  
+
+Datum der letzten Verabreichung  
+**2021-04-10**  
+
+Staat, in dem die Impfung durchgeführt wurde  
+**IT**  
+
+Subjekt, das die Zertifizierung ausgestellt hat  
+**Gesundheitsministerium**  
+
+Eindeutige Kennung des Zertifikats  
+**01ITE7300E1AB2A84C719004F103DCB1F70A#6**  
+  
+***
+  
+*Diese Bescheinigung ist kein Reisedokument.  
+Die wissenschaftlichen Erkenntnisse zu COVID-19-Impfung, -Tests und -Wiederherstellung entwickeln sich weiter, auch unter Berücksichtigung der neuen Varianten des Virus.*  
+*Bitte informieren Sie sich vor der Reise über die am Zielort geltenden Gesundheitsmaßnahmen und die damit verbundenen Einschränkungen auch auf der Website:*   
+[https://reopen.europa.eu/de](https://reopen.europa.eu/de)
+  
+***
+  
+Weitere Informationen und den Download des Zertifikats im druckfähigen PDF-Format finden Sie auf der Website  
+[www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Test - Detail - de_DE should print markdown in case of booster 3/2 1`] = `
+"
+## Impfstoffdaten  
+***
+**Das Zertifikat gilt, vorbehaltlich gesetzlicher Änderungen, ab dem Datum der letzten Impfung, ohne dass weitere Verabreichungen erforderlich sind. 
+    Aus technischen Gründen kann ein neuer QR-Code nach 18 Monaten (540 Tage) ab dem Gültigkeitsdatum ausgestellt werden.**
+***
+
+Zielkrankheit oder -wirkstoff  
+**COVID-19**  
+
+Art des verabreichten Impfstoffs  
+**SARS-CoV-2 mRNA vaccine**  
+
+Impfstoffname  
+**Comirnaty**  
+
+Impfstoffhersteller oder MAH  
+**Biontech Manufacturing GmbH**  
+
+Anzahl der abgegebenen Dosis / Gesamtzahl der geplanten Dosen  
+**3 / 2**  
+
+Datum der letzten Verabreichung  
+**2021-04-10**  
+
+Staat, in dem die Impfung durchgeführt wurde  
+**IT**  
+
+Subjekt, das die Zertifizierung ausgestellt hat  
+**Gesundheitsministerium**  
+
+Eindeutige Kennung des Zertifikats  
+**01ITE7300E1AB2A84C719004F103DCB1F70A#6**  
+  
+***
+  
+*Diese Bescheinigung ist kein Reisedokument.  
+Die wissenschaftlichen Erkenntnisse zu COVID-19-Impfung, -Tests und -Wiederherstellung entwickeln sich weiter, auch unter Berücksichtigung der neuen Varianten des Virus.*  
+*Bitte informieren Sie sich vor der Reise über die am Zielort geltenden Gesundheitsmaßnahmen und die damit verbundenen Einschränkungen auch auf der Website:*   
+[https://reopen.europa.eu/de](https://reopen.europa.eu/de)
+  
+***
+  
+Weitere Informationen und den Download des Zertifikats im druckfähigen PDF-Format finden Sie auf der Website  
+[www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Test - Detail - de_DE should print markdown in case of booster 3/3 1`] = `
+"
+## Impfstoffdaten  
+***
+**Das Zertifikat gilt, vorbehaltlich gesetzlicher Änderungen, ab dem Datum der letzten Impfung, ohne dass weitere Verabreichungen erforderlich sind. 
+    Aus technischen Gründen kann ein neuer QR-Code nach 18 Monaten (540 Tage) ab dem Gültigkeitsdatum ausgestellt werden.**
+***
+
+Zielkrankheit oder -wirkstoff  
+**COVID-19**  
+
+Art des verabreichten Impfstoffs  
+**SARS-CoV-2 mRNA vaccine**  
+
+Impfstoffname  
+**Comirnaty**  
+
+Impfstoffhersteller oder MAH  
+**Biontech Manufacturing GmbH**  
+
+Anzahl der abgegebenen Dosis / Gesamtzahl der geplanten Dosen  
+**3 / 3**  
+
+Datum der letzten Verabreichung  
+**2021-04-10**  
+
+Staat, in dem die Impfung durchgeführt wurde  
+**IT**  
+
+Subjekt, das die Zertifizierung ausgestellt hat  
+**Gesundheitsministerium**  
+
+Eindeutige Kennung des Zertifikats  
+**01ITE7300E1AB2A84C719004F103DCB1F70A#6**  
+  
+***
+  
+*Diese Bescheinigung ist kein Reisedokument.  
+Die wissenschaftlichen Erkenntnisse zu COVID-19-Impfung, -Tests und -Wiederherstellung entwickeln sich weiter, auch unter Berücksichtigung der neuen Varianten des Virus.*  
+*Bitte informieren Sie sich vor der Reise über die am Zielort geltenden Gesundheitsmaßnahmen und die damit verbundenen Einschränkungen auch auf der Website:*   
+[https://reopen.europa.eu/de](https://reopen.europa.eu/de)
+  
+***
+  
+Weitere Informationen und den Download des Zertifikats im druckfähigen PDF-Format finden Sie auf der Website  
+[www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;

@@ -48,3 +48,153 @@ Per ulteriori informazioni e per scaricare il certificato in formato PDF stampab
 <br/><br/><br/><br/><br/>
 "
 `;
+
+exports[`Printer - Test - Detail - it_IT should print markdown in case of booster 2/1 1`] = `
+"
+## Dati Vaccino  
+***
+**Certificazione valida dalla data dell'ultima somministrazione senza necessità di ulteriori dosi di richiamo, salvo modifiche normative. 
+    Per esigenze tecniche potrà essere emesso un nuovo QR code dopo 18 mesi (540 giorni) dalla data di inizio validità**
+***
+
+Malattia o agente bersaglio  
+**COVID-19**  
+
+Tipo di vaccino somministrato  
+**SARS-CoV-2 mRNA vaccine**  
+
+Denominazione del vaccino  
+**Comirnaty**  
+
+Produttore o titolare dell’AIC del vaccino  
+**Biontech Manufacturing GmbH**  
+
+Numero della dose effettuata / numero totale dosi previste  
+**2 / 1**  
+
+Data dell’ultima somministrazione  
+**10-04-2021**  
+
+Stato in cui è stata eseguita la vaccinazione  
+**IT**  
+
+Soggetto che ha rilasciato la certificazione  
+**Ministero della Salute**  
+
+Identificativo univoco del certificato  
+**01ITE7300E1AB2A84C719004F103DCB1F70A#6**  
+  
+***
+
+*Questo certificato non è un documento di viaggio.  
+Le evidenze scientifiche sulla vaccinazione, sui test e sulla guarigione da COVID-19 continuano ad evolversi, anche in considerazione delle nuove varianti del virus.*  
+*Prima di viaggiare, si prega di controllare le misure di salute pubblica applicate nel luogo di destinazione e le relative restrizioni anche consultando il sito:*   
+[https://reopen.europa.eu/it](https://reopen.europa.eu/it)
+  
+***
+  
+Per ulteriori informazioni e per scaricare il certificato in formato PDF stampabile vai su 
+[www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Test - Detail - it_IT should print markdown in case of booster 3/2 1`] = `
+"
+## Dati Vaccino  
+***
+**Certificazione valida dalla data dell'ultima somministrazione senza necessità di ulteriori dosi di richiamo, salvo modifiche normative. 
+    Per esigenze tecniche potrà essere emesso un nuovo QR code dopo 18 mesi (540 giorni) dalla data di inizio validità**
+***
+
+Malattia o agente bersaglio  
+**COVID-19**  
+
+Tipo di vaccino somministrato  
+**SARS-CoV-2 mRNA vaccine**  
+
+Denominazione del vaccino  
+**Comirnaty**  
+
+Produttore o titolare dell’AIC del vaccino  
+**Biontech Manufacturing GmbH**  
+
+Numero della dose effettuata / numero totale dosi previste  
+**3 / 2**  
+
+Data dell’ultima somministrazione  
+**10-04-2021**  
+
+Stato in cui è stata eseguita la vaccinazione  
+**IT**  
+
+Soggetto che ha rilasciato la certificazione  
+**Ministero della Salute**  
+
+Identificativo univoco del certificato  
+**01ITE7300E1AB2A84C719004F103DCB1F70A#6**  
+  
+***
+
+*Questo certificato non è un documento di viaggio.  
+Le evidenze scientifiche sulla vaccinazione, sui test e sulla guarigione da COVID-19 continuano ad evolversi, anche in considerazione delle nuove varianti del virus.*  
+*Prima di viaggiare, si prega di controllare le misure di salute pubblica applicate nel luogo di destinazione e le relative restrizioni anche consultando il sito:*   
+[https://reopen.europa.eu/it](https://reopen.europa.eu/it)
+  
+***
+  
+Per ulteriori informazioni e per scaricare il certificato in formato PDF stampabile vai su 
+[www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Test - Detail - it_IT should print markdown in case of booster 3/3 1`] = `
+"
+## Dati Vaccino  
+***
+**Certificazione valida dalla data dell'ultima somministrazione senza necessità di ulteriori dosi di richiamo, salvo modifiche normative. 
+    Per esigenze tecniche potrà essere emesso un nuovo QR code dopo 18 mesi (540 giorni) dalla data di inizio validità**
+***
+
+Malattia o agente bersaglio  
+**COVID-19**  
+
+Tipo di vaccino somministrato  
+**SARS-CoV-2 mRNA vaccine**  
+
+Denominazione del vaccino  
+**Comirnaty**  
+
+Produttore o titolare dell’AIC del vaccino  
+**Biontech Manufacturing GmbH**  
+
+Numero della dose effettuata / numero totale dosi previste  
+**3 / 3**  
+
+Data dell’ultima somministrazione  
+**10-04-2021**  
+
+Stato in cui è stata eseguita la vaccinazione  
+**IT**  
+
+Soggetto che ha rilasciato la certificazione  
+**Ministero della Salute**  
+
+Identificativo univoco del certificato  
+**01ITE7300E1AB2A84C719004F103DCB1F70A#6**  
+  
+***
+
+*Questo certificato non è un documento di viaggio.  
+Le evidenze scientifiche sulla vaccinazione, sui test e sulla guarigione da COVID-19 continuano ad evolversi, anche in considerazione delle nuove varianti del virus.*  
+*Prima di viaggiare, si prega di controllare le misure di salute pubblica applicate nel luogo di destinazione e le relative restrizioni anche consultando il sito:*   
+[https://reopen.europa.eu/it](https://reopen.europa.eu/it)
+  
+***
+  
+Per ulteriori informazioni e per scaricare il certificato in formato PDF stampabile vai su 
+[www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;

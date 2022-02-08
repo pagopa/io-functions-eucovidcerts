@@ -3,6 +3,7 @@ import { VaccinationEntry } from "../certificate";
 import {
   formatCertificateIssuer,
   formatDate,
+  isBooster,
   isVaccinationProcessEnded
 } from "../printer";
 
@@ -13,7 +14,10 @@ export const getDetailPrinter = (v: VaccinationEntry): string =>
 ## Vaccination Certificate  
 ***
 ${
-  isVaccinationProcessEnded(v)
+  isBooster(v)
+    ? `**Certification valid from the date of the last administration without the need for additional doses, unless regulatory changes. 
+    For technical reasons, a new QR code may be issued 18 months (540 days) from the validity start date.**`
+    : isVaccinationProcessEnded(v)
     ? "**Certificate valid for 180 days (6 months) from the date of the last administration, unless regulatory changes are made**"
     : "**Certificate valid from the 15th day of the date of administration up to the maximum time allowed for the next dose**"
 }

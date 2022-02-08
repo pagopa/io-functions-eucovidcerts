@@ -1,6 +1,7 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { VaccinationEntry } from "../certificate";
 import {
+  isBooster,
   isVaccinationProcessEnded,
   formatDate,
   formatCertificateIssuer
@@ -13,7 +14,10 @@ export const getDetailPrinter = (v: VaccinationEntry): string =>
 ## Impfstoffdaten  
 ***
 ${
-  isVaccinationProcessEnded(v)
+  isBooster(v)
+    ? `**Das Zertifikat gilt, vorbehaltlich gesetzlicher Änderungen, ab dem Datum der letzten Impfung, ohne dass weitere Verabreichungen erforderlich sind. 
+    Aus technischen Gründen kann ein neuer QR-Code nach 18 Monaten (540 Tage) ab dem Gültigkeitsdatum ausgestellt werden.**`
+    : isVaccinationProcessEnded(v)
     ? "**Mit Ausnahme von Änderungen in den Rechtsvorschriften ist der Green Pass 180 Tage (6 Monate) ab dem Datum der letzten Impfung gültig**"
     : "**Der Green Pass gilt ab dem 15. Tag nach dem Verabreichungsdatum der Impfung bis zum maximal möglichen Termin der nächsten Dosis**"
 }
