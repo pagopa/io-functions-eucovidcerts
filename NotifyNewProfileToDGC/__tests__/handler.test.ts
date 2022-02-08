@@ -1,15 +1,13 @@
-import { right } from "fp-ts/lib/Either";
+import * as E from "fp-ts/lib/Either";
 import { context } from "../../__mocks__/durable-functions";
 import { NotifyNewProfile } from "../handler";
 
-const mockManagePreviousCertificates = jest.fn().mockImplementation(() =>
-  Promise.resolve(
-    right({
-      headers: {},
-      status: 200,
-      value: {}
-    })
-  )
+const mockManagePreviousCertificates = jest.fn().mockImplementation(async () =>
+  E.right({
+    headers: {},
+    status: 200,
+    value: {}
+  })
 );
 
 const mockSelect = jest.fn().mockImplementation(() => ({
@@ -26,7 +24,23 @@ describe("NotifyNewProfile", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  it("should succeded with a valid input", async () => {
+  it("should succeded with a valid input and response code 200", async () => {
+    const handler = NotifyNewProfile(mockGetDgcClientSelector);
+    const result = await handler(context, anInput);
+    expect(mockSelect).toBeCalledWith(anInput);
+    expect(mockManagePreviousCertificates).toBeCalledWith({
+      body: { cfSHA256: anInput }
+    });
+    expect(result).toEqual("OK");
+  });
+  it("should succeded with a valid input and response code 404", async () => {
+    mockManagePreviousCertificates.mockImplementationOnce(async () =>
+      E.right({
+        headers: {},
+        status: 404,
+        value: {}
+      })
+    );
     const handler = NotifyNewProfile(mockGetDgcClientSelector);
     const result = await handler(context, anInput);
     expect(mockSelect).toBeCalledWith(anInput);
@@ -44,14 +58,12 @@ describe("NotifyNewProfile", () => {
   });
 
   it("should fail if DGC response status code is not 200", async () => {
-    mockManagePreviousCertificates.mockImplementationOnce(() =>
-      Promise.resolve(
-        right({
-          headers: {},
-          status: 500,
-          value: {}
-        })
-      )
+    mockManagePreviousCertificates.mockImplementationOnce(async () =>
+      E.right({
+        headers: {},
+        status: 500,
+        value: {}
+      })
     );
     const handler = NotifyNewProfile(mockGetDgcClientSelector);
     await expect(handler(context, anInput)).rejects.toEqual(expect.any(Error));
