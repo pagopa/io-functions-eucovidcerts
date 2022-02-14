@@ -87,12 +87,12 @@ export const aValidRecoveryCertificate = {
   r: [
     {
       tg: "840539006",
-      du: "2021-05-10T10:27:15Z",
+      fr: "2021-04-10",
       co: "IT",
-      ci: "01ITA65E2BD36C9E4900B0273D2E7C92EEB9#1",
       is: "IT",
-      df: "2021-05-10T10:27:15Z",
-      fr: "2021-05-10T10:27:15Z"
+      df: "2021-04-20",
+      du: "2021-09-10",
+      ci: "01ITE7300E1AB2A84C719004F103DCB1F70A#6"
     }
   ]
 };
