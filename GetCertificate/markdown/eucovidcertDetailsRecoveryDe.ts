@@ -1,14 +1,21 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
-import { RecoveryEntry } from "../certificate";
+import { CBisCertificateTypeEnrichment, RecoveryEntry } from "../certificate";
 import { formatCertificateIssuer, formatDate } from "../printer";
 
 const fileLanguage = PreferredLanguageEnum.de_DE;
 
-export const getDetailPrinter = (tr: RecoveryEntry): string =>
+export const getDetailPrinter = (
+  tr: RecoveryEntry,
+  certificateTypeEnrichment?: string
+): string =>
   `
 ## Heilungsurkunde
 ***
-**Der Green Pass ist in der Europäischen Union bis zum Ende der Gültigkeitsdauer und in Italien 180 Tage (6 Monate) gültig**
+${
+  CBisCertificateTypeEnrichment.is(certificateTypeEnrichment)
+    ? `**TODO**`
+    : "**Der Green Pass ist in der Europäischen Union bis zum Ende der Gültigkeitsdauer und in Italien 180 Tage (6 Monate) gültig**"
+}
 ***
 
 Zielkrankheit oder Erreger, von dem die Person geheilt wird  

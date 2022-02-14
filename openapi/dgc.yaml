@@ -122,6 +122,9 @@ definitions:
       uvci:
         description: UVCI
         type: string
+      fglTipoDgc:
+          type: string
+          description: Indica il tipo di dgc
     type: object
   SearchSingleQrCodeResponseDTO:
     properties:

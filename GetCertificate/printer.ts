@@ -62,7 +62,10 @@ interface IPrintersForLanguage {
   readonly expiredInfoPrinter: () => string;
   readonly detailVaccinePrinter: (v: VaccinationEntry) => string;
   readonly detailTestPrinter: (t: TestEntry) => string;
-  readonly detailRecoveryPrinter: (r: RecoveryEntry) => string;
+  readonly detailRecoveryPrinter: (
+    r: RecoveryEntry,
+    certificateTypeEnrichment?: string
+  ) => string;
   readonly detailExemptionPrinter: (r: ExemptionEntry) => string;
   readonly infoVaccinePrinter: (c: Certificates) => string;
   readonly infoTestPrinter: (c: Certificates) => string;
@@ -144,7 +147,8 @@ export const getPrinterForLanguage = (
  */
 export const printDetails = (
   lang: o.Option<PreferredLanguage>,
-  c: Certificates
+  c: Certificates,
+  certificateTypeEnrichment?: string
 ): string =>
   match(c)
     .when(VacCertificate.is, vc =>
@@ -154,7 +158,10 @@ export const printDetails = (
       getPrinterForLanguage(lang).detailTestPrinter(tc.t[0])
     )
     .when(RecoveryCertificate.is, rc =>
-      getPrinterForLanguage(lang).detailRecoveryPrinter(rc.r[0])
+      getPrinterForLanguage(lang).detailRecoveryPrinter(
+        rc.r[0],
+        certificateTypeEnrichment
+      )
     )
     .when(ExemptionCertificate.is, ec =>
       getPrinterForLanguage(lang).detailExemptionPrinter(ec.e[0])
