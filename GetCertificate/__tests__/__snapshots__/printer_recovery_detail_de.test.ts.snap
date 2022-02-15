@@ -1,10 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Printer - Recovery - Detail - de_DE should print its markdown 1`] = `
+exports[`Printer - Recovery - Detail - de_DE should print extended validation if \`cbis\` flag is defined 1`] = `
 "
 ## Heilungsurkunde
 ***
-**Der Green Pass ist in der Europäischen Union bis zum Ende der Gültigkeitsdauer und in Italien 180 Tage (6 Monate) gültig**
+**Das Zertifikat gilt, vorbehaltlich gesetzlicher Änderungen, in der EU bis zur angegebenen Gültigkeit und in Italien ab dem Datum der letzten Impfung ohne dass weitere Verabreichungen erforderlich sind. 
+    Aus technischen Gründen kann ein neuer QR-Code nach 18 Monaten (540 Tage) ab dem Gültigkeitsdatum ausgestellt werden**
 ***
 
 Zielkrankheit oder Erreger, von dem die Person geheilt wird  
@@ -40,11 +41,11 @@ Weitere Informationen und den Download des Zertifikats im druckfähigen PDF-Form
 "
 `;
 
-exports[`Printer - Recovery - Detail - de_DE should print extended validation if \`cbis\` flag is defined 1`] = `
+exports[`Printer - Recovery - Detail - de_DE should print its markdown 1`] = `
 "
 ## Heilungsurkunde
 ***
-**TODO**
+**Der Green Pass ist in der Europäischen Union bis zum Ende der Gültigkeitsdauer und in Italien 180 Tage (6 Monate) gültig**
 ***
 
 Zielkrankheit oder Erreger, von dem die Person geheilt wird  

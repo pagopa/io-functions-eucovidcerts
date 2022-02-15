@@ -13,7 +13,8 @@ export const getDetailPrinter = (
 ***
 ${
   CBisCertificateTypeEnrichment.is(certificateTypeEnrichment)
-    ? `**TODO**`
+    ? `**Certification valid in the European Union until the date of end of validity and valid in Italy from the validity start date without the need for additional doses, unless regulatory changes. further doses of recall, subject to regulatory changes. 
+    For technical reasons, a new QR code may be issued 18 months (540 days) from the validity start date**`
     : "**Certificate valid in the European Union up to the end date of validity, and in Italy for 180 days (6 months) from the start date of validity.**"
 }
 ***  

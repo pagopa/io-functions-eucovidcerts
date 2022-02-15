@@ -1,10 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Printer - Recovery - Detail - en_GB should print its markdown 1`] = `
+exports[`Printer - Recovery - Detail - en_GB should print extended validation if \`cbis\` flag is defined 1`] = `
 "
 ## Recovery Certificate  
 ***
-**Certificate valid in the European Union up to the end date of validity, and in Italy for 180 days (6 months) from the start date of validity.**
+**Certification valid in the European Union until the date of end of validity and valid in Italy from the validity start date without the need for additional doses, unless regulatory changes. further doses of recall, subject to regulatory changes. 
+    For technical reasons, a new QR code may be issued 18 months (540 days) from the validity start date**
 ***  
 
 Disease or agent the citizen has recovered from  
@@ -40,11 +41,11 @@ For more information and to download the certificate in printable PDF format go 
 "
 `;
 
-exports[`Printer - Recovery - Detail - en_GB should print extended validation if \`cbis\` flag is defined 1`] = `
+exports[`Printer - Recovery - Detail - en_GB should print its markdown 1`] = `
 "
 ## Recovery Certificate  
 ***
-**TODO**
+**Certificate valid in the European Union up to the end date of validity, and in Italy for 180 days (6 months) from the start date of validity.**
 ***  
 
 Disease or agent the citizen has recovered from  
