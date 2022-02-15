@@ -17,11 +17,120 @@ import { fakeQRCodeInfo } from "../../utils/fakeDGCClient";
 import { StatusEnum } from "../../generated/definitions/ValidCertificate";
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { RevokedCertificate } from "../../generated/definitions/RevokedCertificate";
+var fs = require("fs");
 
 const aFiscalCode = "PRVPRV25A01H501B";
 
+const a200Result = {
+  status: 200,
+  value: {
+    data: {
+      qrcodeB64: fs.readFileSync("__mocks__/qrcodes/Recovery.png", {
+        encoding: "base64"
+      }),
+      uvci: "01ITE7300E1AB2A84C719004F103DCB1F70A#6"
+    }
+  }
+};
+
 describe("GetCertificate", () => {
   beforeEach(() => jest.clearAllMocks());
+
+  // --------------------
+  // Success
+  // --------------------
+
+  it("should return details and info in case QRCode is present", async () => {
+    const client = {
+      getCertificateByAutAndCF: async (_: any) => e.right(a200Result)
+    };
+
+    const mockClientSelector: ReturnType<typeof createDGCClientSelector> = {
+      select: (hashedFiscalCode): DGCClient => (client as any) as DGCClient
+    };
+    const val = await GetCertificateHandler(mockClientSelector)(context, {
+      fiscal_code: aFiscalCode as FiscalCode,
+      auth_code: "anAuthCode"
+    });
+    expect(val).toMatchObject({
+      kind: "IResponseSuccessJson",
+      value: expect.objectContaining({
+        detail: expect.stringMatching("[a-zA-Z]+"),
+        info: expect.stringMatching("[a-zA-Z]+")
+      })
+    });
+  });
+
+  it("should return details and info in case QRCode and fglTipoDgc are present", async () => {
+    const client = {
+      getCertificateByAutAndCF: async (_: any) =>
+        e.right({
+          ...a200Result,
+          value: {
+            data: {
+              ...a200Result.value.data,
+              fglTipoDgc: "cbis"
+            }
+          }
+        })
+    };
+
+    const mockClientSelector: ReturnType<typeof createDGCClientSelector> = {
+      select: (hashedFiscalCode): DGCClient => (client as any) as DGCClient
+    };
+    const val = await GetCertificateHandler(mockClientSelector)(context, {
+      fiscal_code: aFiscalCode as FiscalCode,
+      auth_code: "anAuthCode",
+      preferred_languages: [PreferredLanguageEnum.it_IT]
+    });
+    expect(val).toMatchObject({
+      kind: "IResponseSuccessJson",
+      value: expect.objectContaining({
+        detail: expect.stringContaining(
+          `Per esigenze tecniche potrà essere emesso un nuovo QR code dopo 18 mesi (540 giorni) dalla data di inizio validità`
+        ),
+        info: expect.stringMatching("[a-zA-Z]+")
+      })
+    });
+  });
+
+  it("should return a fake certificate in case of test users", async () => {
+    try {
+      const val = await GetCertificateHandler(
+        createDGCClientSelector(aConfig, aProcessEnv)
+      )(context, {
+        fiscal_code: aLoadTestFiscalCode,
+        auth_code: "anAuthCode"
+      });
+
+      expect(val.kind).toEqual("IResponseSuccessJson");
+      if (val.kind === "IResponseSuccessJson") {
+        expect(val.value.status).toEqual(StatusEnum.valid);
+        if (val.value.status === StatusEnum.valid) {
+          expect(val.value.qr_code.content).toEqual(
+            fakeQRCodeInfo.data!.qrcodeB64
+          );
+          expect(val.value.uvci).toEqual(fakeQRCodeInfo.data!.uvci);
+          expect(val.value.info).toBeDefined();
+          expect(val.value.info!.length).toBeGreaterThan(0);
+          expect(val.value.detail).toBeDefined();
+          expect(val.value.detail!.length).toBeGreaterThan(0);
+          expect(val.value.header_info).toBeDefined();
+          expect(val.value.header_info).toMatchObject({
+            logo_id: "greenpass",
+            title: expect.any(String),
+            subtitle: expect.any(String)
+          });
+        }
+      }
+    } catch (error) {
+      fail(error);
+    }
+  });
+
+  // --------------------
+  // Errors
+  // --------------------
 
   it("should log an error if dgc call fails", async () => {
     const client = {
@@ -108,40 +217,6 @@ describe("GetCertificate", () => {
         "GetCertificateParams|parseQRCode|unable to parse QRCode"
       )
     );
-  });
-
-  it("should return a fake certificate in case of test users", async () => {
-    try {
-      const val = await GetCertificateHandler(
-        createDGCClientSelector(aConfig, aProcessEnv)
-      )(context, {
-        fiscal_code: aLoadTestFiscalCode,
-        auth_code: "anAuthCode"
-      });
-
-      expect(val.kind).toEqual("IResponseSuccessJson");
-      if (val.kind === "IResponseSuccessJson") {
-        expect(val.value.status).toEqual(StatusEnum.valid);
-        if (val.value.status === StatusEnum.valid) {
-          expect(val.value.qr_code.content).toEqual(
-            fakeQRCodeInfo.data!.qrcodeB64
-          );
-          expect(val.value.uvci).toEqual(fakeQRCodeInfo.data!.uvci);
-          expect(val.value.info).toBeDefined();
-          expect(val.value.info!.length).toBeGreaterThan(0);
-          expect(val.value.detail).toBeDefined();
-          expect(val.value.detail!.length).toBeGreaterThan(0);
-          expect(val.value.header_info).toBeDefined();
-          expect(val.value.header_info).toMatchObject({
-            logo_id: "greenpass",
-            title: expect.any(String),
-            subtitle: expect.any(String)
-          });
-        }
-      }
-    } catch (error) {
-      fail(error);
-    }
   });
 
   it.each`
