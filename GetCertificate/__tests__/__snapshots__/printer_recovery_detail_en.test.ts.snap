@@ -1,5 +1,46 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Printer - Recovery - Detail - en_GB should print extended validation if \`cbis\` flag is defined 1`] = `
+"
+## Recovery Certificate  
+***
+**Certification valid in the European Union until the date of end of validity and valid in Italy from the validity start date without the need for additional doses, unless regulatory changes. further doses of recall, subject to regulatory changes. 
+    For technical reasons, a new QR code may be issued 18 months (540 days) from the validity start date**
+***  
+
+Disease or agent the citizen has recovered from  
+**COVID-19**  
+
+Date of first positive NAAT test result  
+**2021-04-10**  
+
+State of test  
+**IT**  
+
+Certificate issuer  
+  **Ministry of Health**  
+  
+Certificate valid From  
+**2021-04-20**  
+  
+Certificate valid Until  
+**2021-09-10**  
+
+***
+  
+*This certificate is not a travel document.  
+The scientific evidence on COVID-19 vaccination, testing and recovery continues to evolve, including in consideration of the new variants of the virus.*  
+*Before traveling, please check the public health measures applied in the place of destination and the related restrictions also by consulting the website:*   
+[https://reopen.europa.eu](https://reopen.europa.eu)
+  
+***
+  
+For more information and to download the certificate in printable PDF format go to
+[www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
 exports[`Printer - Recovery - Detail - en_GB should print its markdown 1`] = `
 "
 ## Recovery Certificate  

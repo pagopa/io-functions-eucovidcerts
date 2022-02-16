@@ -136,3 +136,12 @@ export type ItalianValidityOnlyCertificates = t.TypeOf<
   typeof ItalianValidityOnlyCertificates
 >;
 export const ItalianValidityOnlyCertificates = ExemptionCertificate;
+
+// *************************
+// Extra info
+// *************************
+
+export type CBisCertificateTypeEnrichment = t.TypeOf<
+  typeof CBisCertificateTypeEnrichment
+>;
+export const CBisCertificateTypeEnrichment = t.literal("cbis");

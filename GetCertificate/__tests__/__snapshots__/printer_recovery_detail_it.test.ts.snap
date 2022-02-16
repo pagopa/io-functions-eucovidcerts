@@ -39,3 +39,84 @@ Per ulteriori informazioni e per scaricare il certificato in formato PDF stampab
 <br/><br/><br/><br/><br/>
 "
 `;
+
+exports[`Printer - Recovery - Detail - it_IT should print extended validation if \`cbis\` flag is defined 1`] = `
+"
+## Certificato di Guarigione
+***
+**Certificazione valida in Unione Europea fino alla data di fine validità e valida in Italia dalla data di inizio validità senza necessità di ulteriori dosi di richiamo, salvo modifiche normative. 
+    Per esigenze tecniche potrà essere emesso un nuovo QR code dopo 18 mesi (540 giorni) dalla data di inizio validità**
+***
+
+Malattia o agente bersaglio da cui la persona è guarita  
+**COVID-19**  
+
+Data del primo test molecolare positivo  
+**10-04-2021**  
+
+Stato in cui è stato eseguito il primo test molecolare positivo  
+**IT**  
+
+Soggetto che ha rilasciato la certificazione  
+**Ministero della Salute**  
+ 
+Certificazione valida dal  
+**20-04-2021**  
+
+Certificazione valida fino al  
+**10-09-2021**  
+
+***
+
+*Questo certificato non è un documento di viaggio.  
+Le evidenze scientifiche sulla vaccinazione, sui test e sulla guarigione da COVID-19 continuano ad evolversi, anche in considerazione delle nuove varianti del virus.*  
+*Prima di viaggiare, si prega di controllare le misure di salute pubblica applicate nel luogo di destinazione e le relative restrizioni anche consultando il sito:*   
+[https://reopen.europa.eu/it](https://reopen.europa.eu/it)
+  
+***
+  
+Per ulteriori informazioni e per scaricare il certificato in formato PDF stampabile vai su 
+[www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
+exports[`Printer - Recovery - Detail - it_IT should print its markdown with placeholder, if some value is not in valueset 1`] = `
+"
+## Certificato di Guarigione
+***
+**Certificazione valida in Unione Europea fino alla data di fine validità e valida in Italia 180 giorni (6 mesi) dalla data di inizio validità**
+***
+
+Malattia o agente bersaglio da cui la persona è guarita  
+**---**  
+
+Data del primo test molecolare positivo  
+**10-04-2021**  
+
+Stato in cui è stato eseguito il primo test molecolare positivo  
+**IT**  
+
+Soggetto che ha rilasciato la certificazione  
+**Ministero della Salute**  
+ 
+Certificazione valida dal  
+**20-04-2021**  
+
+Certificazione valida fino al  
+**10-09-2021**  
+
+***
+
+*Questo certificato non è un documento di viaggio.  
+Le evidenze scientifiche sulla vaccinazione, sui test e sulla guarigione da COVID-19 continuano ad evolversi, anche in considerazione delle nuove varianti del virus.*  
+*Prima di viaggiare, si prega di controllare le misure di salute pubblica applicate nel luogo di destinazione e le relative restrizioni anche consultando il sito:*   
+[https://reopen.europa.eu/it](https://reopen.europa.eu/it)
+  
+***
+  
+Per ulteriori informazioni e per scaricare il certificato in formato PDF stampabile vai su 
+[www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;

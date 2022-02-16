@@ -1,14 +1,22 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
-import { RecoveryEntry } from "../certificate";
+import { CBisCertificateTypeEnrichment, RecoveryEntry } from "../certificate";
 import { formatCertificateIssuer, formatDate } from "../printer";
 
 const fileLanguage = PreferredLanguageEnum.it_IT;
 
-export const getDetailPrinter = (tr: RecoveryEntry): string =>
+export const getDetailPrinter = (
+  tr: RecoveryEntry,
+  certificateTypeEnrichment?: string
+): string =>
   `
 ## Certificato di Guarigione
 ***
-**Certificazione valida in Unione Europea fino alla data di fine validità e valida in Italia 180 giorni (6 mesi) dalla data di inizio validità**
+${
+  CBisCertificateTypeEnrichment.is(certificateTypeEnrichment)
+    ? `**Certificazione valida in Unione Europea fino alla data di fine validità e valida in Italia dalla data di inizio validità senza necessità di ulteriori dosi di richiamo, salvo modifiche normative. 
+    Per esigenze tecniche potrà essere emesso un nuovo QR code dopo 18 mesi (540 giorni) dalla data di inizio validità**`
+    : "**Certificazione valida in Unione Europea fino alla data di fine validità e valida in Italia 180 giorni (6 mesi) dalla data di inizio validità**"
+}
 ***
 
 Malattia o agente bersaglio da cui la persona è guarita  

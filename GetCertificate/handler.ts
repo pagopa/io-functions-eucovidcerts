@@ -90,30 +90,34 @@ export const processSuccessCertificateGeneration = (
     ),
     TE.map(i => i.value),
     // try to enhance raw certificate with parsed data
-    TE.map(({ data: { qrcodeB64 = "", uvci = undefined } = {} }) => ({
-      printedCertificate: pipe(
-        parseQRCode(qrcodeB64, warning =>
-          context.log.warn(`${LOG_PREFIX}|parseQRCode|${warning}`)
+    TE.map(
+      ({
+        data: { fglTipoDgc = undefined, qrcodeB64 = "", uvci = undefined } = {}
+      }) => ({
+        printedCertificate: pipe(
+          parseQRCode(qrcodeB64, warning =>
+            context.log.warn(`${LOG_PREFIX}|parseQRCode|${warning}`)
+          ),
+          E.mapLeft(_ => {
+            context.log.error(
+              `${LOG_PREFIX}|parseQRCode|unable to parse QRCode|${_.reason}`
+            );
+            return _;
+          }),
+          E.fold(
+            _ => undefined,
+            f => ({
+              detail: printDetails(selectedLanguage, f, fglTipoDgc),
+              header_info: getHeaderInfoForLanguage(selectedLanguage)(f),
+              info: printInfo(selectedLanguage, f),
+              uvci: printUvci(selectedLanguage, f)
+            })
+          )
         ),
-        E.mapLeft(_ => {
-          context.log.error(
-            `${LOG_PREFIX}|parseQRCode|unable to parse QRCode|${_.reason}`
-          );
-          return _;
-        }),
-        E.fold(
-          _ => undefined,
-          f => ({
-            detail: printDetails(selectedLanguage, f),
-            header_info: getHeaderInfoForLanguage(selectedLanguage)(f),
-            info: printInfo(selectedLanguage, f),
-            uvci: printUvci(selectedLanguage, f)
-          })
-        )
-      ),
-      qrcodeB64,
-      uvci
-    })),
+        qrcodeB64,
+        uvci
+      })
+    ),
     // compose a response payload
     TE.map(c => ({
       detail: c.printedCertificate?.detail,

@@ -1,5 +1,46 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Printer - Recovery - Detail - de_DE should print extended validation if \`cbis\` flag is defined 1`] = `
+"
+## Heilungsurkunde
+***
+**Das Zertifikat gilt, vorbehaltlich gesetzlicher Änderungen, in der EU bis zur angegebenen Gültigkeit und in Italien ab dem Datum der letzten Impfung ohne dass weitere Verabreichungen erforderlich sind. 
+    Aus technischen Gründen kann ein neuer QR-Code nach 18 Monaten (540 Tage) ab dem Gültigkeitsdatum ausgestellt werden**
+***
+
+Zielkrankheit oder Erreger, von dem die Person geheilt wird  
+**COVID-19**  
+
+Datum des ersten positiven Molekulartests  
+**2021-04-10**  
+
+Zustand, in dem der erste positive Molekulartest durchgeführt wurde  
+**IT**  
+
+Subjekt, das die Zertifizierung ausgestellt hat  
+**Gesundheitsministerium**  
+ 
+Zertifizierung gültig ab  
+**2021-04-20**  
+
+Zertifizierung gültig bis  
+**2021-09-10**  
+
+***
+
+*Diese Bescheinigung ist kein Reisedokument.  
+Die wissenschaftlichen Erkenntnisse zu COVID-19-Impfung, -Tests und -Wiederherstellung entwickeln sich weiter, auch unter Berücksichtigung der neuen Varianten des Virus.*  
+*Bitte informieren Sie sich vor der Reise über die am Zielort geltenden Gesundheitsmaßnahmen und die damit verbundenen Einschränkungen auch auf der Website:*   
+[https://reopen.europa.eu/de](https://reopen.europa.eu/de)
+  
+***
+  
+Weitere Informationen und den Download des Zertifikats im druckfähigen PDF-Format finden Sie auf der Website  
+[www.dgc.gov.it](https://www.dgc.gov.it)
+<br/><br/><br/><br/><br/>
+"
+`;
+
 exports[`Printer - Recovery - Detail - de_DE should print its markdown 1`] = `
 "
 ## Heilungsurkunde

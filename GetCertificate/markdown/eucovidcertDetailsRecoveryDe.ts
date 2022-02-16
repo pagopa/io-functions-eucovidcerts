@@ -1,14 +1,22 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
-import { RecoveryEntry } from "../certificate";
+import { CBisCertificateTypeEnrichment, RecoveryEntry } from "../certificate";
 import { formatCertificateIssuer, formatDate } from "../printer";
 
 const fileLanguage = PreferredLanguageEnum.de_DE;
 
-export const getDetailPrinter = (tr: RecoveryEntry): string =>
+export const getDetailPrinter = (
+  tr: RecoveryEntry,
+  certificateTypeEnrichment?: string
+): string =>
   `
 ## Heilungsurkunde
 ***
-**Der Green Pass ist in der Europäischen Union bis zum Ende der Gültigkeitsdauer und in Italien 180 Tage (6 Monate) gültig**
+${
+  CBisCertificateTypeEnrichment.is(certificateTypeEnrichment)
+    ? `**Das Zertifikat gilt, vorbehaltlich gesetzlicher Änderungen, in der EU bis zur angegebenen Gültigkeit und in Italien ab dem Datum der letzten Impfung ohne dass weitere Verabreichungen erforderlich sind. 
+    Aus technischen Gründen kann ein neuer QR-Code nach 18 Monaten (540 Tage) ab dem Gültigkeitsdatum ausgestellt werden**`
+    : "**Der Green Pass ist in der Europäischen Union bis zum Ende der Gültigkeitsdauer und in Italien 180 Tage (6 Monate) gültig**"
+}
 ***
 
 Zielkrankheit oder Erreger, von dem die Person geheilt wird  
