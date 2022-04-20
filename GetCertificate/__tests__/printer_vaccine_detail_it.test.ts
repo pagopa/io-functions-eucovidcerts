@@ -29,6 +29,7 @@ describe(`Printer - Test - Detail - ${language}`, () => {
     doseNumber | totalDoses
     ${3}       | ${2}
     ${3}       | ${3}
+    ${4}       | ${4}
     ${2}       | ${1}
   `(
     "should print markdown in case of booster $doseNumber/$totalDoses",

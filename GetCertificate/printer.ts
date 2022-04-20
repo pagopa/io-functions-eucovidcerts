@@ -217,7 +217,7 @@ export const printExpiredOrRevokedInfo = (
  * @returns true if is booster, false otherwise
  */
 export const isBooster = (v: VaccinationEntry): boolean =>
-  v.dn === 3 || (v.dn === 2 && v.sd === 1);
+  (v.dn === 4 && v.sd === 4) || v.dn === 3 || (v.dn === 2 && v.sd === 1);
 
 /**
  * Check if Vaccination has ended
