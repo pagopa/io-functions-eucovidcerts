@@ -1,4 +1,4 @@
-FROM node:10.14.2-alpine
+FROM node:14.16.0-alpine
 
 WORKDIR /opt/cosmosdb
 
