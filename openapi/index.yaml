@@ -1,6 +1,6 @@
 swagger: '2.0'
 info:
-  version: 1.26.2
+  version: 1.26.3
   title: EU Covid Certificate service for IO App
 host: example.com
 schemes:
