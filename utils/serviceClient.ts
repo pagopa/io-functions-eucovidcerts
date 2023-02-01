@@ -136,7 +136,7 @@ export const createClient = (
             // If the profile was not found or service is not authorized returns status code 403
             TE.filterOrElseW(
               _ => responseRaw.status !== 404 && responseRaw.status !== 403,
-              _ => ResponseErrorForbiddenNotAuthorizedForRecipient
+              _ => ResponseErrorInternal(`x->${responseRaw.status}`)
             ),
             // If the response is not 200 returns status code 500
             TE.filterOrElseW(
