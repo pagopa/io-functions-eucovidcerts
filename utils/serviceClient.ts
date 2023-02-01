@@ -142,7 +142,9 @@ export const createClient = (
             TE.filterOrElseW(
               _ => responseRaw.ok,
               _ =>
-                ResponseErrorInternal(`Error calling client api: ${String(_)}`)
+                ResponseErrorInternal(
+                  `Error calling client api: ${JSON.stringify(_)}`
+                )
             )
           )
         ),
