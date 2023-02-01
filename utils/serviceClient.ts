@@ -5,7 +5,6 @@ import { flow, pipe } from "fp-ts/lib/function";
 import {
   IResponseErrorInternal,
   IResponseErrorForbiddenNotAuthorizedForRecipient,
-  ResponseErrorForbiddenNotAuthorizedForRecipient,
   ResponseErrorInternal
 } from "@pagopa/ts-commons/lib/responses";
 
@@ -136,7 +135,18 @@ export const createClient = (
             // If the profile was not found or service is not authorized returns status code 403
             TE.filterOrElseW(
               _ => responseRaw.status !== 404 && responseRaw.status !== 403,
-              _ => ResponseErrorInternal(`x->${responseRaw.status}`)
+              _ =>
+                ResponseErrorInternal(
+                  JSON.stringify({
+                    body: JSON.stringify({ fiscal_code: fiscalCode }),
+                    headers: {
+                      ...proxyHeaders(reqHeaders),
+                      ["X-Functions-Key"]: apiKey
+                    },
+                    method: "POST",
+                    url: `${selectApiUrl(fiscalCode).href}/profiles`
+                  })
+                )
             ),
             // If the response is not 200 returns status code 500
             TE.filterOrElseW(
