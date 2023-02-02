@@ -118,7 +118,10 @@ export const createClient = (
               },
               method: "POST"
             }),
-          error => ResponseErrorInternal(String(error))
+          error =>
+            ResponseErrorInternal(
+              `failed profile request parse ${String(error)}`
+            )
         ),
         x => x,
         TE.chain(responseRaw =>
@@ -129,7 +132,8 @@ export const createClient = (
               unknown
             >(
               () => responseRaw.json(),
-              error => ResponseErrorInternal(String(error))
+              error =>
+                ResponseErrorInternal(`failed json parse ${String(error)}`)
             ),
 
             // If the profile was not found or service is not authorized returns status code 403
