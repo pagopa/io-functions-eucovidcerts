@@ -138,7 +138,9 @@ export const createClient = (
                 async () => JSON.parse(text),
                 error =>
                   ResponseErrorInternal(
-                    `failed json parse ${String(error)} text=${text}`
+                    `failed json parse ${String(error)} text=${text} code=${
+                      responseRaw.status
+                    }`
                   )
               )
             ),
