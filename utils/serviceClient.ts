@@ -126,14 +126,21 @@ export const createClient = (
         x => x,
         TE.chain(responseRaw =>
           pipe(
-            TE.tryCatch<
-              | IResponseErrorInternal
-              | IResponseErrorForbiddenNotAuthorizedForRecipient,
-              unknown
-            >(
-              () => responseRaw.json(),
+            TE.tryCatch(
+              () => responseRaw.text(),
               error =>
-                ResponseErrorInternal(`failed json parse ${String(error)}`)
+                ResponseErrorInternal(
+                  `failed retrieve response ${String(error)}`
+                )
+            ),
+            TE.chain(text =>
+              TE.tryCatch(
+                async () => JSON.parse(text),
+                error =>
+                  ResponseErrorInternal(
+                    `failed json parse ${String(error)} text=${text}`
+                  )
+              )
             ),
 
             // If the profile was not found or service is not authorized returns status code 403
