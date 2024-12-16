@@ -74,7 +74,7 @@ stages:
 
 
   # Prepare Artifact
-  - stage: Deploy_staging
+  - stage: Deploy_production
     dependsOn:
       - Release
     jobs:
@@ -128,41 +128,7 @@ stages:
               appName: '$(PRODUCTION_APP_NAME)'
               package: '$(Build.ArtifactStagingDirectory)/'
               deploymentMethod: 'auto'
-              deployToSlotOrASE: true
-              slotName: 'staging'
             displayName: Deploy to staging slot
-
-  # Check that the staging instance is healthy
-  - stage: Healthcheck
-    pool:
-      name: io-prod-linux
-    dependsOn:
-      - Deploy_staging
-    jobs:
-      - job: 'do_healthcheck'       
-        steps:  
-        - checkout: none
-        - script: |
-            # fails if response status is not 2xx
-            curl -f 'https://$(PRODUCTION_APP_NAME)-staging.azurewebsites.net/$(HEALTHCHECK_PATH)'
-          displayName: 'Healthcheck'
-
-  # Promote the staging instance to production
-  - stage: Deploy_production
-    dependsOn:
-      - Healthcheck
-      - Deploy_staging
-    jobs:
-      - job: 'do_deploy'       
-        steps:  
-          - task: AzureAppServiceManage@0   
-            inputs:
-              azureSubscription: '$(PRODUCTION_AZURE_SUBSCRIPTION)'
-              resourceGroupName: '$(PRODUCTION_RESOURCE_GROUP_NAME)'
-              webAppName: '$(PRODUCTION_APP_NAME)'
-              sourceSlot: staging
-              swapWithProduction: true
-            displayName: Swap with production slot
 
 
   # Publish client SDK to NPM
