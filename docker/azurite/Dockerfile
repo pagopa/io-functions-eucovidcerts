@@ -1,4 +1,4 @@
-FROM node:14.16.0-alpine as builder
+FROM node:14.16.0-alpine@sha256:0a6a21d28509f56155007444075ef4fdd36eef0a97924623cb641d3766e3b8d3 as builder
 
 WORKDIR /opt/azurite
 
@@ -10,7 +10,7 @@ RUN git clone https://github.com/Azure/Azurite /opt/azurite && \
 
 RUN npm install
 
-FROM node:14.16.0-alpine
+FROM node:14.16.0-alpine@sha256:0a6a21d28509f56155007444075ef4fdd36eef0a97924623cb641d3766e3b8d3
 
 COPY --from=builder /opt/azurite /opt/azurite
 
