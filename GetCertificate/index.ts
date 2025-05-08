@@ -1,9 +1,9 @@
 import { AzureFunction, Context } from "@azure/functions";
-
-import * as express from "express";
+import createAzureFunctionHandler from "@pagopa/express-azure-functions/dist/src/createAzureFunctionsHandler";
 import { secureExpressApp } from "@pagopa/io-functions-commons/dist/src/utils/express";
 import { setAppContext } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/context_middleware";
-import createAzureFunctionHandler from "@pagopa/express-azure-functions/dist/src/createAzureFunctionsHandler";
+import * as express from "express";
+
 import { initTelemetryClient } from "../utils/appinsights";
 import { getConfigOrThrow } from "../utils/config";
 import { createDGCClientSelector } from "../utils/dgcClientSelector";

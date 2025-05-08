@@ -1,14 +1,14 @@
 import { AzureFunction, Context } from "@azure/functions";
-import * as express from "express";
-import { TelemetryClient } from "applicationinsights";
-
+import createAzureFunctionHandler from "@pagopa/express-azure-functions/dist/src/createAzureFunctionsHandler";
 import { secureExpressApp } from "@pagopa/io-functions-commons/dist/src/utils/express";
 import { setAppContext } from "@pagopa/io-functions-commons/dist/src/utils/middlewares/context_middleware";
-import createAzureFunctionHandler from "@pagopa/express-azure-functions/dist/src/createAzureFunctionsHandler";
 import { getFetch } from "@pagopa/ts-commons/lib/agent";
+import { TelemetryClient } from "applicationinsights";
+import * as express from "express";
+
+import { initTelemetryClient } from "../utils/appinsights";
 import { getConfigOrThrow } from "../utils/config";
 import { createClient } from "../utils/serviceClient";
-import { initTelemetryClient } from "../utils/appinsights";
 import { getSubmitMessageForUserHandler } from "./handler";
 
 const config = getConfigOrThrow();

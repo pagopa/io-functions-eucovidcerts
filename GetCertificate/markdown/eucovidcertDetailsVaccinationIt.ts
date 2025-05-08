@@ -1,10 +1,11 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
+
 import { VaccinationEntry } from "../certificate";
 import {
-  isBooster,
-  isVaccinationProcessEnded,
+  formatCertificateIssuer,
   formatDate,
-  formatCertificateIssuer
+  isBooster,
+  isVaccinationProcessEnded
 } from "../printer";
 
 const fileLanguage = PreferredLanguageEnum.it_IT;
@@ -18,8 +19,8 @@ ${
     ? `**Certificazione valida dalla data dell'ultima somministrazione senza necessità di ulteriori dosi di richiamo, salvo modifiche normative. 
     Per esigenze tecniche potrà essere emesso un nuovo QR code dopo 18 mesi (540 giorni) dalla data di inizio validità**`
     : isVaccinationProcessEnded(v)
-    ? "**Certificazione valida 180 giorni (6 mesi) dalla data dell’ultima somministrazione, salvo modifiche normative**"
-    : "**Certificazione valida dal 15° giorno dalla data di somministrazione e fino al tempo massimo previsto per la dose successiva**"
+      ? "**Certificazione valida 180 giorni (6 mesi) dalla data dell’ultima somministrazione, salvo modifiche normative**"
+      : "**Certificazione valida dal 15° giorno dalla data di somministrazione e fino al tempo massimo previsto per la dose successiva**"
 }
 ***
 

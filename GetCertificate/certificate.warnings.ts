@@ -1,10 +1,11 @@
+import { sequenceT } from "fp-ts/lib/Apply";
 import { Either } from "fp-ts/lib/Either";
 import * as e from "fp-ts/lib/Either";
+import { NonEmptyArray, getSemigroup } from "fp-ts/lib/NonEmptyArray";
 import { isSome } from "fp-ts/lib/Option";
 import * as o from "fp-ts/lib/Option";
-import { getSemigroup, NonEmptyArray } from "fp-ts/lib/NonEmptyArray";
-import { sequenceT } from "fp-ts/lib/Apply";
 import { pipe } from "fp-ts/lib/function";
+
 import {
   Certificates,
   ExemptionCertificate,
@@ -73,8 +74,8 @@ export const getTestCertificateValidationErrors = (
       checkITranslatableMapValue(details, "tr", originalDetails),
       checkOptionalIReadableMapValue(details, "ma", originalDetails)
     ),
-    e.map(_ => te),
-    e.mapLeft(rawDetails => `test details|${rawDetails.join(", ")}`)
+    e.map(() => te),
+    e.mapLeft((rawDetails) => `test details|${rawDetails.join(", ")}`)
   );
 };
 
@@ -99,8 +100,8 @@ export const getVacCertificateValidationErrors = (
       checkIReadableMapValue(details, "mp", originalDetails),
       checkIReadableMapValue(details, "ma", originalDetails)
     ),
-    e.map(_ => ve),
-    e.mapLeft(rawDetails => `vaccination details|${rawDetails.join(", ")}`)
+    e.map(() => ve),
+    e.mapLeft((rawDetails) => `vaccination details|${rawDetails.join(", ")}`)
   );
 };
 
@@ -118,8 +119,8 @@ export const getRecoveryCertificateValidationErrors = (
 
   return pipe(
     checkIReadableMapValue(details, "tg", originalDetails),
-    e.map(_ => rc),
-    e.mapLeft(rawDetails => `recovery details|${rawDetails.join(", ")}`)
+    e.map(() => rc),
+    e.mapLeft((rawDetails) => `recovery details|${rawDetails.join(", ")}`)
   );
 };
 
@@ -137,7 +138,7 @@ export const getExemptionCertificateValidationErrors = (
 
   return pipe(
     checkIReadableMapValue(details, "tg", originalDetails),
-    e.map(_ => ec),
-    e.mapLeft(rawDetails => `exemption details|${rawDetails.join(", ")}`)
+    e.map(() => ec),
+    e.mapLeft((rawDetails) => `exemption details|${rawDetails.join(", ")}`)
   );
 };

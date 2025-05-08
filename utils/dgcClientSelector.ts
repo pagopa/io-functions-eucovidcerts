@@ -1,8 +1,8 @@
 import { Client as DGCClient, createClient } from "../generated/dgc/client";
 import { IConfig } from "./config";
 import { toSHA256 } from "./conversions";
-import { getFetchWithClientCertificate } from "./httpsAgent";
 import { fakeClient } from "./fakeDGCClient";
+import { getFetchWithClientCertificate } from "./httpsAgent";
 
 /**
  * Defines a selector object of a type T.
@@ -66,7 +66,7 @@ export const createDGCClientSelector = (
       hashedUATFiscalCodes.includes(hashedFiscalCode)
         ? uatClient
         : hashedLoadTestFiscalCodes.includes(hashedFiscalCode)
-        ? loadTestClient
-        : prodClient
+          ? loadTestClient
+          : prodClient
   };
 };

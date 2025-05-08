@@ -4,39 +4,39 @@ import {
   PreferredLanguageEnum
 } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import * as o from "fp-ts/lib/Option";
+import { pipe } from "fp-ts/lib/function";
 import * as moment from "moment-timezone";
 import { match } from "ts-pattern";
-import { pipe } from "fp-ts/lib/function";
+
 import { DefaultLanguage, SupportedLanguage } from "../utils/conversions";
 import {
   Certificates,
-  TestCertificate,
-  VacCertificate,
-  VaccinationEntry,
-  TestEntry,
+  ExemptionCertificate,
+  ExemptionEntry,
   RecoveryCertificate,
   RecoveryEntry,
-  ExemptionCertificate,
-  ExemptionEntry
+  TestCertificate,
+  TestEntry,
+  VacCertificate,
+  VaccinationEntry
 } from "./certificate";
+import * as exemptionDetailsDe from "./markdown/eucovidcertDetailsExemptionDe";
+import * as exemptionDetailsEn from "./markdown/eucovidcertDetailsExemptionEn";
+import * as exemptionDetailsIt from "./markdown/eucovidcertDetailsExemptionIt";
+import * as recoveryDetailsDe from "./markdown/eucovidcertDetailsRecoveryDe";
+import * as recoveryDetailsEn from "./markdown/eucovidcertDetailsRecoveryEn";
+import * as recoveryDetailsIt from "./markdown/eucovidcertDetailsRecoveryIt";
+import * as testDetailsDe from "./markdown/eucovidcertDetailsTestDe";
+import * as testDetailsEn from "./markdown/eucovidcertDetailsTestEn";
+import * as testDetailsIt from "./markdown/eucovidcertDetailsTestIt";
+import * as vacDetailsDe from "./markdown/eucovidcertDetailsVaccinationDe";
 import * as vacDetailsEn from "./markdown/eucovidcertDetailsVaccinationEn";
 import * as vacDetailsIt from "./markdown/eucovidcertDetailsVaccinationIt";
-import * as vacDetailsDe from "./markdown/eucovidcertDetailsVaccinationDe";
-import * as testDetailsIt from "./markdown/eucovidcertDetailsTestIt";
-import * as testDetailsEn from "./markdown/eucovidcertDetailsTestEn";
-import * as testDetailsDe from "./markdown/eucovidcertDetailsTestDe";
-import * as recoveryDetailsIt from "./markdown/eucovidcertDetailsRecoveryIt";
-import * as recoveryDetailsEn from "./markdown/eucovidcertDetailsRecoveryEn";
-import * as recoveryDetailsDe from "./markdown/eucovidcertDetailsRecoveryDe";
-import * as exemptionDetailsIt from "./markdown/eucovidcertDetailsExemptionIt";
-import * as exemptionDetailsEn from "./markdown/eucovidcertDetailsExemptionEn";
-import * as exemptionDetailsDe from "./markdown/eucovidcertDetailsExemptionDe";
-import * as vacInfoMultilanguage from "./markdown/eucovidcertInfoVaccinationEn";
-import * as vacInfoGerman from "./markdown/eucovidcertInfoVaccinationDe";
-import * as expiredInfoIt from "./markdown/eucovidcertExpiredInfoIt";
-import * as expiredInfoEn from "./markdown/eucovidcertExpiredInfoEn";
 import * as expiredInfoDe from "./markdown/eucovidcertExpiredInfoDe";
-
+import * as expiredInfoEn from "./markdown/eucovidcertExpiredInfoEn";
+import * as expiredInfoIt from "./markdown/eucovidcertExpiredInfoIt";
+import * as vacInfoGerman from "./markdown/eucovidcertInfoVaccinationDe";
+import * as vacInfoMultilanguage from "./markdown/eucovidcertInfoVaccinationEn";
 import { labTestTypes, molecularTest } from "./valuesets/labTestTypes";
 
 const TIME_ZONE = "Europe/Rome";
@@ -126,12 +126,14 @@ export const getPrinterForLanguage = (
 ): IPrintersForLanguage =>
   pipe(
     lang,
-    o.chain(l =>
+    o.chain((l) =>
       o.fromNullable(
-        (printersConfigurations as Record<
-          PreferredLanguage,
-          IPrintersForLanguage
-        >)[l]
+        (
+          printersConfigurations as Record<
+            PreferredLanguage,
+            IPrintersForLanguage
+          >
+        )[l]
       )
     ),
     o.getOrElse(() => defaultPrinter)
@@ -151,19 +153,19 @@ export const printDetails = (
   certificateTypeEnrichment?: string
 ): string =>
   match(c)
-    .when(VacCertificate.is, vc =>
+    .when(VacCertificate.is, (vc) =>
       getPrinterForLanguage(lang).detailVaccinePrinter(vc.v[0])
     )
-    .when(TestCertificate.is, tc =>
+    .when(TestCertificate.is, (tc) =>
       getPrinterForLanguage(lang).detailTestPrinter(tc.t[0])
     )
-    .when(RecoveryCertificate.is, rc =>
+    .when(RecoveryCertificate.is, (rc) =>
       getPrinterForLanguage(lang).detailRecoveryPrinter(
         rc.r[0],
         certificateTypeEnrichment
       )
     )
-    .when(ExemptionCertificate.is, ec =>
+    .when(ExemptionCertificate.is, (ec) =>
       getPrinterForLanguage(lang).detailExemptionPrinter(ec.e[0])
     )
     .exhaustive();
@@ -193,10 +195,10 @@ export const printUvci = (
   c: Certificates
 ): string =>
   match(c)
-    .when(VacCertificate.is, cv => cv.v[0].ci)
-    .when(TestCertificate.is, ct => ct.t[0].ci)
-    .when(RecoveryCertificate.is, cr => cr.r[0].ci)
-    .when(ExemptionCertificate.is, ec => ec.e[0].ci)
+    .when(VacCertificate.is, (cv) => cv.v[0].ci)
+    .when(TestCertificate.is, (ct) => ct.t[0].ci)
+    .when(RecoveryCertificate.is, (cr) => cr.r[0].ci)
+    .when(ExemptionCertificate.is, (ec) => ec.e[0].ci)
     .exhaustive();
 
 /**
@@ -245,10 +247,8 @@ export const testValidity = (v: TestEntry): string =>
  * @returns a formatted date
  */
 export const formatDate = (d: Date, lang: SupportedLanguage): string =>
-  pipe(dateFormatForLanguage[lang], format =>
-    moment(d)
-      .tz(TIME_ZONE)
-      .format(format)
+  pipe(dateFormatForLanguage[lang], (format) =>
+    moment(d).tz(TIME_ZONE).format(format)
   );
 
 /**
@@ -259,11 +259,8 @@ export const formatDate = (d: Date, lang: SupportedLanguage): string =>
  * @returns a formatted date with time
  */
 export const formatDateAndTime = (d: Date, lang: SupportedLanguage): string =>
-  // eslint-disable-next-line sonarjs/no-identical-functions
-  pipe(dateAndTimeFormatForLanguage[lang], format =>
-    moment(d)
-      .tz(TIME_ZONE)
-      .format(format)
+  pipe(dateAndTimeFormatForLanguage[lang], (format) =>
+    moment(d).tz(TIME_ZONE).format(format)
   );
 
 /**

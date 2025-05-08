@@ -1,8 +1,8 @@
-import * as E from "fp-ts/lib/Either";
-
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
 import { HttpsUrlFromString } from "@pagopa/ts-commons/lib/url";
+import * as E from "fp-ts/lib/Either";
 import { pipe } from "fp-ts/lib/function";
+
 import { IConfig } from "../utils/config";
 
 export const aLoadTestFiscalCode = "AAAAAA00A00A000A" as FiscalCode;
@@ -23,7 +23,7 @@ export const aUATCert = "uat_cert";
 export const aUATKey = "uat_key";
 export const aUATCA = "uat_ca";
 
-export const aConfig = ({
+export const aConfig = {
   DGC_UAT_CLIENT_CERT: aUATCert,
   DGC_UAT_CLIENT_KEY: aUATKey,
   DGC_UAT_SERVER_CA: aUATCA,
@@ -47,6 +47,6 @@ export const aConfig = ({
     HttpsUrlFromString.decode(aPRODUrl),
     E.getOrElseW(() => fail)
   )
-} as unknown) as IConfig;
+} as unknown as IConfig;
 
 export const aProcessEnv: NodeJS.ProcessEnv = {};

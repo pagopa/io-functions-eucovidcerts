@@ -1,14 +1,13 @@
-import * as crypto from "crypto";
-import * as t from "io-ts";
-
-import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
-import { errorsToReadableMessages } from "@pagopa/ts-commons/lib/reporters";
-import { Errors } from "io-ts";
 import {
   PreferredLanguage,
   PreferredLanguageEnum
 } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
+import { errorsToReadableMessages } from "@pagopa/ts-commons/lib/reporters";
+import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
+import * as crypto from "crypto";
 import * as o from "fp-ts/lib/Option";
+import * as t from "io-ts";
+import { Errors } from "io-ts";
 
 /**
  * Convert a string into SHA256
@@ -17,10 +16,7 @@ import * as o from "fp-ts/lib/Option";
  * @returns
  */
 export const toSHA256 = (source: FiscalCode): string =>
-  crypto
-    .createHash("sha256")
-    .update(source)
-    .digest("hex");
+  crypto.createHash("sha256").update(source).digest("hex");
 
 export const errorsToError = (errors: Errors): Error =>
   new Error(errorsToReadableMessages(errors).join("|"));
@@ -41,7 +37,7 @@ const supportedLanguages = [
 
 export const DefaultLanguage: SupportedLanguage = PreferredLanguageEnum.en_GB;
 
-export type SupportedLanguage = typeof supportedLanguages[number];
+export type SupportedLanguage = (typeof supportedLanguages)[number];
 
 export const isSupportedLanguage = (
   lang: PreferredLanguage
@@ -65,22 +61,20 @@ export interface IReadonlyMap {
  * A function that returns a Codec mapping an input key with a pre-created ITranslatable
  */
 export const toTWithMap = <T>(
-  map: {
-    readonly [key: string]: T;
-  },
+  map: Readonly<Record<string, T>>,
   placeholder_key?: string
 ): t.Type<T, string, string> =>
   new t.Type<T, string, string>(
     "toTWithMap",
     (value: unknown): value is T =>
-      Object.values(map).some(v => v === value) || !!placeholder_key,
+      Object.values(map).some((v) => v === value) || !!placeholder_key,
     (v, c) =>
       map[v]
         ? t.success(map[v])
         : placeholder_key
-        ? t.success(map[placeholder_key])
-        : t.failure(v, c, "Value not contained in map"),
-    value => Object.keys(map).find(key => map[key] === value) ?? ""
+          ? t.success(map[placeholder_key])
+          : t.failure(v, c, "Value not contained in map"),
+    (value) => Object.keys(map).find((key) => map[key] === value) ?? ""
   );
 
 /**
@@ -88,9 +82,7 @@ export const toTWithMap = <T>(
  * if string is empty, return undefined
  */
 export const toTWithMapOptional = <T>(
-  map: {
-    readonly [key: string]: T;
-  },
+  map: Readonly<Record<string, T>>,
   placeholder_key?: string
 ): t.Type<o.Option<T>, string, string> =>
   new t.Type<o.Option<T>, string, string>(
@@ -98,18 +90,18 @@ export const toTWithMapOptional = <T>(
     (value: unknown): value is o.Option<T> =>
       (!!value &&
         (o.isNone(value as o.Option<T>) ||
-          Object.values(map).some(v => v === (value as o.Some<T>).value))) ||
+          Object.values(map).some((v) => v === (value as o.Some<T>).value))) ||
       !!placeholder_key,
     (v, c) =>
       v
         ? map[v]
           ? t.success(o.some(map[v]))
           : placeholder_key
-          ? t.success(o.some(map[placeholder_key]))
-          : t.failure(v, c, "Value not contained in map")
+            ? t.success(o.some(map[placeholder_key]))
+            : t.failure(v, c, "Value not contained in map")
         : t.success(o.none),
-    value =>
+    (value) =>
       o.isSome(value)
-        ? Object.keys(map).find(key => map[key] === value.value) ?? ""
+        ? (Object.keys(map).find((key) => map[key] === value.value) ?? "")
         : ""
   );

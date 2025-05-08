@@ -1,5 +1,6 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { isSome } from "fp-ts/lib/Option";
+
 import { TestEntry } from "../certificate";
 import {
   formatCertificateIssuer,
