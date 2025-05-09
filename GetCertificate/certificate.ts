@@ -1,19 +1,20 @@
 /* eslint-disable sort-keys */
+import { DateFromString } from "@pagopa/ts-commons/lib/dates";
+import { WithinRangeInteger } from "@pagopa/ts-commons/lib/numbers";
 /**
  * Certificate parsing utilities
  */
 import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import * as t from "io-ts";
-import { WithinRangeInteger } from "@pagopa/ts-commons/lib/numbers";
-import { DateFromString } from "@pagopa/ts-commons/lib/dates";
+
 import { toTWithMap, toTWithMapOptional } from "../utils/conversions";
 import { diseaseAgentTargeted } from "./valuesets/diseaseAgentTargeted";
-import { vaccineProphylaxis } from "./valuesets/vaccineProphylaxis";
-import { vaccineMedicinalProduct } from "./valuesets/vaccineMedicinalProduct";
-import { marketingAuthorizationHolder } from "./valuesets/marketingAuthorizationHolders";
-import { labTestTypes } from "./valuesets/labTestTypes";
 import { labTestManufactorers } from "./valuesets/labTestManufactorers";
+import { labTestTypes } from "./valuesets/labTestTypes";
+import { marketingAuthorizationHolder } from "./valuesets/marketingAuthorizationHolders";
 import { testResults } from "./valuesets/testResults";
+import { vaccineMedicinalProduct } from "./valuesets/vaccineMedicinalProduct";
+import { vaccineProphylaxis } from "./valuesets/vaccineProphylaxis";
 
 const PLACEHOLDER_KEY = "placeholder";
 

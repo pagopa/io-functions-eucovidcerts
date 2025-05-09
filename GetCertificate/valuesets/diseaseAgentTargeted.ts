@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable sort-keys */
 import { IReadonlyMap } from "../../utils/conversions";
 import { VALUESET_PLACEHOLDER } from "./placeholder";

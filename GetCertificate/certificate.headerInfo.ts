@@ -1,16 +1,14 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
-import { pipe } from "fp-ts/lib/function";
-
 import * as O from "fp-ts/lib/Option";
+import { pipe } from "fp-ts/lib/function";
 import { match } from "ts-pattern";
-import { HeaderInfo } from "../generated/definitions/HeaderInfo";
 
+import { HeaderInfo } from "../generated/definitions/HeaderInfo";
 import {
   DefaultLanguage,
-  isSupportedLanguage,
-  SupportedLanguage
+  SupportedLanguage,
+  isSupportedLanguage
 } from "../utils/conversions";
-
 import {
   Certificates,
   ExemptionCertificate,
@@ -47,21 +45,21 @@ const getStandardHeader = (language: SupportedLanguage): HeaderInfo => ({
   logo_id: EUROPEAN_LOGO_ID
 });
 
-export const getHeaderInfoForLanguage = (
-  lang: O.Option<PreferredLanguageEnum>
-) => (certificate: Certificates): HeaderInfo =>
-  pipe(
-    lang,
-    O.filter(isSupportedLanguage),
-    O.getOrElse(() => DefaultLanguage),
-    language =>
-      match(certificate)
-        .when(VacCertificate.is, _vc => getStandardHeader(language))
-        .when(TestCertificate.is, _tc => getStandardHeader(language))
-        .when(RecoveryCertificate.is, _rc => getStandardHeader(language))
-        .when(ExemptionCertificate.is, _ivc => getStandardHeader(language))
-        .exhaustive()
-  );
+export const getHeaderInfoForLanguage =
+  (lang: O.Option<PreferredLanguageEnum>) =>
+  (certificate: Certificates): HeaderInfo =>
+    pipe(
+      lang,
+      O.filter(isSupportedLanguage),
+      O.getOrElse(() => DefaultLanguage),
+      (language) =>
+        match(certificate)
+          .when(VacCertificate.is, () => getStandardHeader(language))
+          .when(TestCertificate.is, () => getStandardHeader(language))
+          .when(RecoveryCertificate.is, () => getStandardHeader(language))
+          .when(ExemptionCertificate.is, () => getStandardHeader(language))
+          .exhaustive()
+    );
 
 export const getFallbackHeaderInfoForLanguage = (
   lang: O.Option<PreferredLanguageEnum>
@@ -70,5 +68,5 @@ export const getFallbackHeaderInfoForLanguage = (
     lang,
     O.filter(isSupportedLanguage),
     O.getOrElse(() => DefaultLanguage),
-    l => getStandardHeader(l)
+    (l) => getStandardHeader(l)
   );

@@ -1,5 +1,6 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
 import { some } from "fp-ts/lib/Option";
+
 import { Certificates, ItalianValidityOnlyCertificates } from "../certificate";
 import { formatDate, printUvci } from "../printer";
 

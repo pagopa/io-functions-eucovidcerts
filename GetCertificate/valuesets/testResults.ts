@@ -1,6 +1,6 @@
-/* eslint-disable sonarjs/no-duplicate-string */
 /* eslint-disable sort-keys */
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
+
 import { IReadonlyTranslatableMap } from "../../utils/conversions";
 import { VALUESET_PLACEHOLDER } from "./placeholder";
 

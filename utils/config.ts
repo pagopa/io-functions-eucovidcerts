@@ -6,19 +6,17 @@
  * The configuration is evaluate eagerly at the first access to the module. The module exposes convenient methods to access such value.
  */
 
+import { IntegerFromString } from "@pagopa/ts-commons/lib/numbers";
+import { readableReport } from "@pagopa/ts-commons/lib/reporters";
+import { FiscalCode, NonEmptyString } from "@pagopa/ts-commons/lib/strings";
+import { withDefault } from "@pagopa/ts-commons/lib/types";
+import * as E from "fp-ts/lib/Either";
+import { pipe } from "fp-ts/lib/function";
 import * as t from "io-ts";
 import { ValidationError } from "io-ts";
 
-import * as E from "fp-ts/lib/Either";
-import { pipe } from "fp-ts/lib/function";
-
-import { readableReport } from "@pagopa/ts-commons/lib/reporters";
-import { withDefault } from "@pagopa/ts-commons/lib/types";
-import { IntegerFromString } from "@pagopa/ts-commons/lib/numbers";
-import { FiscalCode, NonEmptyString } from "@pagopa/ts-commons/lib/strings";
-
-import { HttpsUrlFromString } from "./url";
 import { CommaSeparatedListOf } from "./comma-separated-list";
+import { HttpsUrlFromString } from "./url";
 
 const DCGConfigPROD = t.interface({
   DGC_PROD_CLIENT_CERT: NonEmptyString,

@@ -1,14 +1,15 @@
-import * as zlib from "pako";
+import { readableReport } from "@pagopa/ts-commons/lib/reporters";
+import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
 import { Either, toError } from "fp-ts/lib/Either";
 import * as E from "fp-ts/lib/Either";
+import { pipe } from "fp-ts/lib/function";
 import { Errors } from "io-ts";
-import { PNG, PNGWithMetadata } from "pngjs";
 import jsQR from "jsqr";
 import { QRCode } from "jsqr";
-import { readableReport } from "@pagopa/ts-commons/lib/reporters";
+import * as zlib from "pako";
+import { PNG, PNGWithMetadata } from "pngjs";
 import { match } from "ts-pattern";
-import { pipe } from "fp-ts/lib/function";
-import { NonEmptyString } from "@pagopa/ts-commons/lib/strings";
+
 import {
   Certificates,
   ExemptionCertificate,
@@ -85,18 +86,17 @@ interface IQRParsingFailure {
  * @param stepName the name of the step to be logged. If the function is not anonymous, its name is used. Otherwise it must be specified
  * @returns either an error or the result of the specific step
  */
-export const withTrace = <T, I>(
-  fn: (i: I) => Either<Error | Errors, T>,
-  stepName = fn.name
-) => (i: I): Either<Error, T> =>
-  pipe(
-    fn(i),
-    E.mapLeft(error => {
-      const message =
-        error instanceof Error ? error.message : readableReport(error);
-      return new Error(`step: ${stepName}, error: ${message}`);
-    })
-  );
+export const withTrace =
+  <T, I>(fn: (i: I) => Either<Error | Errors, T>, stepName = fn.name) =>
+  (i: I): Either<Error, T> =>
+    pipe(
+      fn(i),
+      E.mapLeft((error) => {
+        const message =
+          error instanceof Error ? error.message : readableReport(error);
+        return new Error(`step: ${stepName}, error: ${message}`);
+      })
+    );
 
 /**
  * A wrapper for Certificate.decode,
@@ -105,35 +105,35 @@ export const withTrace = <T, I>(
  * @param logWarning a function used to log warning text
  * @returns Either a decoded certificate or a validation error
  */
-export const decodeCertificateAndLogMissingValues = (
-  logWarning: (warn: string) => void
-) => (x: unknown): ReturnType<typeof Certificates.decode> => {
-  const decodedValude = Certificates.decode(x);
+export const decodeCertificateAndLogMissingValues =
+  (logWarning: (warn: string) => void) =>
+  (x: unknown): ReturnType<typeof Certificates.decode> => {
+    const decodedValude = Certificates.decode(x);
 
-  pipe(
-    decodedValude,
-    E.map(value => {
-      pipe(
-        match(value)
-          .when(TestCertificate.is, te =>
-            getTestCertificateValidationErrors(te, x)
-          )
-          .when(VacCertificate.is, vc =>
-            getVacCertificateValidationErrors(vc, x)
-          )
-          .when(RecoveryCertificate.is, rc =>
-            getRecoveryCertificateValidationErrors(rc, x)
-          )
-          .when(ExemptionCertificate.is, ec =>
-            getExemptionCertificateValidationErrors(ec, x)
-          )
-          .exhaustive(),
-        E.mapLeft((err: string) => logWarning(`Missing map values|${err}`))
-      );
-    })
-  );
-  return decodedValude;
-};
+    pipe(
+      decodedValude,
+      E.map((value) => {
+        pipe(
+          match(value)
+            .when(TestCertificate.is, (te) =>
+              getTestCertificateValidationErrors(te, x)
+            )
+            .when(VacCertificate.is, (vc) =>
+              getVacCertificateValidationErrors(vc, x)
+            )
+            .when(RecoveryCertificate.is, (rc) =>
+              getRecoveryCertificateValidationErrors(rc, x)
+            )
+            .when(ExemptionCertificate.is, (ec) =>
+              getExemptionCertificateValidationErrors(ec, x)
+            )
+            .exhaustive(),
+          E.mapLeft((err: string) => logWarning(`Missing map values|${err}`))
+        );
+      })
+    );
+    return decodedValude;
+  };
 
 // exported for testing purpose
 export const extractDataFromPng = (
@@ -144,30 +144,30 @@ export const extractDataFromPng = (
     E.chain(withTrace(base64ToBuffer)),
     E.chain(withTrace(bufferToPng)),
     E.chain(withTrace(pngToQrcode)),
-    E.map(qr => qr.data)
+    E.map((qr) => qr.data)
   );
 
 // exported for testing purpose
-export const decodeCertificateData = (logWarning: (warn: string) => void) => (
-  data: string
-): Either<Error, Certificates> =>
-  pipe(
-    E.right(data),
-    E.map(removePrefix),
-    E.chain(withTrace(base45Decode)),
-    E.chain(withTrace(inflate)),
-    E.chain(withTrace(borcDecodeFirst)),
-    E.map(cose => cose.value[2]),
-    E.chain(withTrace(bordDecode)),
-    E.chain(withTrace(readHCert)),
-    E.map(m => m.get(1)),
-    E.chain(
-      withTrace(
-        decodeCertificateAndLogMissingValues(logWarning),
-        "Certificates.decode"
+export const decodeCertificateData =
+  (logWarning: (warn: string) => void) =>
+  (data: string): Either<Error, Certificates> =>
+    pipe(
+      E.right(data),
+      E.map(removePrefix),
+      E.chain(withTrace(base45Decode)),
+      E.chain(withTrace(inflate)),
+      E.chain(withTrace(borcDecodeFirst)),
+      E.map((cose) => cose.value[2]),
+      E.chain(withTrace(bordDecode)),
+      E.chain(withTrace(readHCert)),
+      E.map((m) => m.get(1)),
+      E.chain(
+        withTrace(
+          decodeCertificateAndLogMissingValues(logWarning),
+          "Certificates.decode"
+        )
       )
-    )
-  );
+    );
 
 /**
  * Parse a qr code image to get Certificate information payload
@@ -183,7 +183,7 @@ export const parseQRCode = (
     // formal input validation
     qrcode,
     NonEmptyString.decode,
-    E.mapLeft(_ => new Error("can not decode an empty string")),
+    E.mapLeft(() => new Error("can not decode an empty string")),
 
     // get data from encoded png string
     E.chain(extractDataFromPng),
@@ -192,5 +192,5 @@ export const parseQRCode = (
     E.chain(decodeCertificateData(logWarning)),
 
     // map an eventually occurred error
-    E.mapLeft(_ => ({ qrcode, reason: _.message }))
+    E.mapLeft((_) => ({ qrcode, reason: _.message }))
   );

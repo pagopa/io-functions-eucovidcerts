@@ -1,22 +1,21 @@
-import { TelemetryClient } from "applicationinsights";
-import * as express from "express";
-import * as t from "io-ts";
-import * as E from "fp-ts/lib/Either";
-import * as TE from "fp-ts/lib/TaskEither";
-import { toError } from "fp-ts/lib/Either";
-import { flow, pipe } from "fp-ts/lib/function";
 import { Context } from "@azure/functions";
-
 import {
+  IResponseErrorForbiddenNotAuthorizedForRecipient,
+  IResponseErrorGeneric,
   IResponseErrorInternal,
   IResponseErrorValidation,
-  IResponseErrorGeneric,
-  ResponseErrorFromValidationErrors,
   ResponseErrorForbiddenNotAuthorizedForRecipient,
-  IResponseErrorForbiddenNotAuthorizedForRecipient,
+  ResponseErrorFromValidationErrors,
   ResponseErrorInternal
 } from "@pagopa/ts-commons/lib/responses";
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
+import { TelemetryClient } from "applicationinsights";
+import * as express from "express";
+import * as E from "fp-ts/lib/Either";
+import { toError } from "fp-ts/lib/Either";
+import * as TE from "fp-ts/lib/TaskEither";
+import { flow, pipe } from "fp-ts/lib/function";
+import * as t from "io-ts";
 
 import { IServiceClient } from "../utils/serviceClient";
 
@@ -33,20 +32,20 @@ const WithFiscalCode = t.interface({
  * @param fetchResponse
  * @returns either void or an internal error
  */
-const applyToExpressResponse = (expressResponse: express.Response) => (
-  fetchResponse: Response
-): TE.TaskEither<IResponseErrorInternal, void> =>
-  TE.tryCatch(
-    async () => {
-      for (const [key, value] of fetchResponse.headers.entries()) {
-        expressResponse.set(key, value);
-      }
-      expressResponse
-        .status(fetchResponse.status || 500)
-        .json(await fetchResponse.json());
-    },
-    _ => ResponseErrorInternal(toError(_).message)
-  );
+const applyToExpressResponse =
+  (expressResponse: express.Response) =>
+  (fetchResponse: Response): TE.TaskEither<IResponseErrorInternal, void> =>
+    TE.tryCatch(
+      async () => {
+        for (const [key, value] of fetchResponse.headers.entries()) {
+          expressResponse.set(key, value);
+        }
+        expressResponse
+          .status(fetchResponse.status || 500)
+          .json(await fetchResponse.json());
+      },
+      (_) => ResponseErrorInternal(toError(_).message)
+    );
 
 // kind of failures specific of this proxy implementation
 type ProxyFailures =
@@ -75,26 +74,26 @@ export const submitMessageForUser = (
         WithFiscalCode.decode,
         E.bimap(
           ResponseErrorFromValidationErrors(WithFiscalCode),
-          fc => fc.fiscal_code
+          (fc) => fc.fiscal_code
         ),
         TE.fromEither
       )
     ),
-    TE.chainW(fiscal_code =>
+    TE.chainW((fiscal_code) =>
       pipe(
         client.getLimitedProfileByPost(
           request.headers,
           fiscal_code,
           request.app.get("context") as Context
         ),
-        TE.map(e => ({ ...e, fiscal_code }))
+        TE.map((e) => ({ ...e, fiscal_code }))
       )
     ),
     TE.filterOrElseW(
-      profile => profile.sender_allowed,
+      (profile) => profile.sender_allowed,
       () => ResponseErrorForbiddenNotAuthorizedForRecipient
     ),
-    TE.chainW(profile =>
+    TE.chainW((profile) =>
       client.submitMessageForUser(
         profile.fiscal_code,
         request.headers,
@@ -104,22 +103,23 @@ export const submitMessageForUser = (
     )
   );
 
-export const getSubmitMessageForUserHandler = (
-  client: IServiceClient,
-  telemetryClient: TelemetryClient
-): express.RequestHandler => async (request, response): Promise<void> =>
-  // call proxy logic
-  {
-    // eslint-disable-next-line sonarjs/prefer-immediate-return
-    const p = pipe(
-      submitMessageForUser(client, telemetryClient, request),
-      // map a response coming from the downstream service onto the current response
-      TE.chainW(applyToExpressResponse(response)),
+export const getSubmitMessageForUserHandler =
+  (
+    client: IServiceClient,
+    telemetryClient: TelemetryClient
+  ): express.RequestHandler =>
+  async (request, response): Promise<void> =>
+    // call proxy logic
+    {
+      const p = pipe(
+        submitMessageForUser(client, telemetryClient, request),
+        // map a response coming from the downstream service onto the current response
+        TE.chainW(applyToExpressResponse(response)),
 
-      // map an error occurred into this proxy onto the current response
-      TE.mapLeft(_ => _.apply(response)),
-      TE.toUnion
-    );
+        // map an error occurred into this proxy onto the current response
+        TE.mapLeft((_) => _.apply(response)),
+        TE.toUnion
+      );
 
-    return p();
-  };
+      return p();
+    };

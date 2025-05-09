@@ -1,4 +1,5 @@
 import { PreferredLanguageEnum } from "@pagopa/io-functions-commons/dist/generated/definitions/PreferredLanguage";
+
 import { ExemptionEntry } from "../certificate";
 import { formatCertificateIssuer, formatDate } from "../printer";
 

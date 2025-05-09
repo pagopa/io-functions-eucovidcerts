@@ -1,21 +1,18 @@
-import * as TE from "fp-ts/lib/TaskEither";
-import * as E from "fp-ts/lib/Either";
-import { flow, pipe } from "fp-ts/lib/function";
-
+import { Context } from "@azure/functions";
+import { LimitedProfile } from "@pagopa/io-functions-commons/dist/generated/definitions/LimitedProfile";
 import {
-  IResponseErrorInternal,
   IResponseErrorForbiddenNotAuthorizedForRecipient,
+  IResponseErrorInternal,
   ResponseErrorForbiddenNotAuthorizedForRecipient,
   ResponseErrorInternal
 } from "@pagopa/ts-commons/lib/responses";
-
-import { LimitedProfile } from "@pagopa/io-functions-commons/dist/generated/definitions/LimitedProfile";
-
 import { FiscalCode } from "@pagopa/ts-commons/lib/strings";
-
-import { toError } from "fp-ts/lib/Either";
-import { Context } from "@azure/functions";
 import { ValidUrl } from "@pagopa/ts-commons/lib/url";
+import * as E from "fp-ts/lib/Either";
+import { toError } from "fp-ts/lib/Either";
+import * as TE from "fp-ts/lib/TaskEither";
+import { flow, pipe } from "fp-ts/lib/function";
+
 import { toSHA256 } from "./conversions";
 
 /**
@@ -72,18 +69,15 @@ export const createPoolSelector = (
   pool: ReadonlyArray<ValidUrl>
 ): ((fiscalCode: FiscalCode) => ValidUrl) => {
   const alphabet = Array.from({ length: 16 }).map((_, i) => i.toString(16));
-  // eslint-disable-next-line sonarjs/no-unused-collection
   const chunks = Array<ReadonlyArray<string>>();
   const chunkSize = Math.ceil(alphabet.length / pool.length);
 
-  // eslint-disable-next-line functional/no-let
   for (let i = 0; i < pool.length; i++) {
-    // eslint-disable-next-line functional/immutable-data
     chunks.push(alphabet.slice(i * chunkSize, i * chunkSize + chunkSize));
   }
   return (fiscalCode): ValidUrl => {
     const [firstChar] = toSHA256(fiscalCode);
-    const i = chunks.findIndex(e => e.includes(firstChar));
+    const i = chunks.findIndex((e) => e.includes(firstChar));
     return pool[i] || pool[0];
   };
 };
@@ -106,6 +100,7 @@ export const createClient = (
     getLimitedProfileByPost: (
       reqHeaders,
       fiscalCode,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       _context
     ): ReturnType<IServiceClient["getLimitedProfileByPost"]> =>
       pipe(
@@ -119,10 +114,10 @@ export const createClient = (
               },
               method: "POST"
             }),
-          error => ResponseErrorInternal(String(error))
+          (error) => ResponseErrorInternal(String(error))
         ),
-        x => x,
-        TE.chain(responseRaw =>
+        (x) => x,
+        TE.chain((responseRaw) =>
           pipe(
             TE.tryCatch<
               | IResponseErrorInternal
@@ -130,18 +125,18 @@ export const createClient = (
               unknown
             >(
               () => responseRaw.json(),
-              error => ResponseErrorInternal(String(error))
+              (error) => ResponseErrorInternal(String(error))
             ),
 
             // If the profile was not found or service is not authorized returns status code 403
             TE.filterOrElseW(
-              _ => responseRaw.status !== 404 && responseRaw.status !== 403,
-              _ => ResponseErrorForbiddenNotAuthorizedForRecipient
+              () => responseRaw.status !== 404 && responseRaw.status !== 403,
+              () => ResponseErrorForbiddenNotAuthorizedForRecipient
             ),
             // If the response is not 200 returns status code 500
             TE.filterOrElseW(
-              _ => responseRaw.ok,
-              _ =>
+              () => responseRaw.ok,
+              (_) =>
                 ResponseErrorInternal(`Error calling client api: ${String(_)}`)
             )
           )
@@ -149,7 +144,7 @@ export const createClient = (
         TE.chainW(
           flow(
             LimitedProfile.decode,
-            E.mapLeft(_ => ResponseErrorInternal(`Failed to decode profile`)),
+            E.mapLeft(() => ResponseErrorInternal(`Failed to decode profile`)),
             TE.fromEither
           )
         )
@@ -172,7 +167,7 @@ export const createClient = (
 
               method: "POST"
             }),
-          e => ResponseErrorInternal(toError(e).message)
+          (e) => ResponseErrorInternal(toError(e).message)
         )
       )
   };
